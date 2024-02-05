@@ -9,6 +9,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import PrimeVue from 'primevue/config';
 
 import 'primevue/resources/themes/aura-light-green/theme.css'
+import 'primeicons/primeicons.css'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
