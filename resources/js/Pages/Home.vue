@@ -3,7 +3,5 @@
 </script>
 
 <template>
-    <main>
-        <slot />
-    </main>
+    Hello
 </template>
