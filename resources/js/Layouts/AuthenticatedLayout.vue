@@ -2,7 +2,7 @@
 
 <template>
     <div class="flex">
-        <div class="h-screen w-[300px] bg-black dark:text-white max-sm:hidden">
+        <div class="h-screen w-[260px] flex-shrink-0 bg-black dark:text-white max-sm:hidden">
             <nav class="h-full">
 
             </nav>
