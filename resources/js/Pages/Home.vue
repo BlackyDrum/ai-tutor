@@ -9,13 +9,13 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
     <AuthenticatedLayout>
         <Head title="Home" />
 
-        <div class="w-full h-screen flex flex-col justify-center items-center dark:bg-app-gray-light dark:text-white">
+        <div
+            class="w-full h-screen flex flex-col justify-center items-center dark:bg-app-gray-light dark:text-white"
+        >
             <div class="mb-4 border rounded-full">
                 <ApplicationLogo class="w-16" />
             </div>
-            <div class="text-2xl font-bold">
-                How can I help you?
-            </div>
+            <div class="text-2xl font-bold">How can I help you?</div>
         </div>
     </AuthenticatedLayout>
 </template>
