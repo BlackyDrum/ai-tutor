@@ -13,7 +13,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
             <div class="mb-4 border rounded-full">
                 <ApplicationLogo class="w-16" />
             </div>
-            <div class="text-3xl font-bold">
+            <div class="text-2xl font-bold">
                 How can I help you?
             </div>
         </div>
