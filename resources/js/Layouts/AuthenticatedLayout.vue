@@ -16,7 +16,6 @@ const appName = import.meta.env.VITE_APP_NAME;
     <div
         @click="showResponsiveNavBar = !showResponsiveNavBar"
         class="fixed z-30 dark:text-white right-0 mr-3 mt-3 cursor-pointer"
-        :class="{ 'text-white': showResponsiveNavBar }"
     >
         <span class="pi pi-bars"></span>
     </div>
