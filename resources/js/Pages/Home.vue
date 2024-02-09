@@ -23,7 +23,7 @@ import InputText from "primevue/inputtext";
             </div>
             <div class="mb-10 w-full text-center">
                 <InputText
-                    class="h-14 max-xl:w-3/4 w-1/2 bg-app-light rounded-lg dark:text-white"
+                    class="h-14 max-xl:w-3/4 w-1/2 dark:bg-app-light rounded-lg dark:text-white"
                     placeholder="Type your Message..."
                 />
             </div>
