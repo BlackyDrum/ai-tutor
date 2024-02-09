@@ -1,7 +1,16 @@
 <script setup></script>
 
 <template>
-    <main>
-        <slot />
-    </main>
+    <div class="flex">
+        <div class="h-screen w-[300px] bg-black dark:text-white max-sm:hidden">
+            <nav class="h-full">
+
+            </nav>
+        </div>
+        <div class="w-full">
+            <main>
+                <slot />
+            </main>
+        </div>
+    </div>
 </template>
