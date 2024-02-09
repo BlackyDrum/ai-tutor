@@ -10,7 +10,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
         <Head title="Home" />
 
         <div
-            class="w-full h-screen flex flex-col justify-center items-center dark:bg-app-gray-light dark:text-white"
+            class="w-full h-screen flex flex-col justify-center items-center dark:bg-app-light dark:text-white"
         >
             <div class="mb-4 border rounded-full">
                 <ApplicationLogo class="w-16" />

@@ -16,8 +16,8 @@ export default {
                 sans: ["Figtree", ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                "app-gray-light": "#343541",
-                "app-gray-dark": "#202123",
+                "app-light": "#343541",
+                "app-dark": "#202123",
             },
         },
     },

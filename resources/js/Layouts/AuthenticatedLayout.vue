@@ -30,11 +30,11 @@ const showResponsiveNavBar = ref(false);
                     </div>
                     <div
                         v-if="showProfileOP"
-                        class="bg-app-gray-dark p-2 rounded-lg mb-2 transition-all"
+                        class="bg-app-dark p-2 rounded-lg mb-2 transition-all"
                     >
                         <div
                             @click="router.post('/logout')"
-                            class="flex gap-4 hover:bg-app-gray-light cursor-pointer p-2 rounded-lg"
+                            class="flex gap-4 hover:bg-app-light cursor-pointer p-2 rounded-lg"
                         >
                             <div>
                                 <span class="pi pi-sign-out"></span>
@@ -44,8 +44,8 @@ const showResponsiveNavBar = ref(false);
                     </div>
                     <div
                         @click="showProfileOP = !showProfileOP"
-                        :class="{ 'bg-app-gray-light': showProfileOP }"
-                        class="flex gap-4 hover:bg-app-gray-light cursor-pointer p-2 rounded-lg"
+                        :class="{ 'bg-app-light': showProfileOP }"
+                        class="flex gap-4 hover:bg-app-light cursor-pointer p-2 rounded-lg"
                     >
                         <Avatar
                             :label="$page.props.auth.user.name[0]"
