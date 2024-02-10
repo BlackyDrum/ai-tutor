@@ -15,17 +15,17 @@ const appName = import.meta.env.VITE_APP_NAME;
 <template>
     <div
         @click="showResponsiveNavBar = !showResponsiveNavBar"
-        class="fixed right-0 mr-3 mt-3 cursor-pointer dark:text-white"
+        class="fixed right-0 mr-3 mt-3 p-2 rounded-full cursor-pointer dark:text-white hover:bg-gray-800/50"
     >
         <span class="pi pi-bars"></span>
     </div>
 
     <div class="flex">
         <div
-            class="h-screen w-[260px] flex-shrink-0 bg-black text-white max-sm:fixed"
-            :class="{ hidden: !showResponsiveNavBar }"
+            class="h-screen w-[260px] flex-shrink-0 bg-black text-white transition-all max-sm:fixed"
+            :class="{ 'w-0' : !showResponsiveNavBar }"
         >
-            <nav class="h-full w-full p-2">
+            <nav class="h-full w-full p-2" :class="{'hidden' : !showResponsiveNavBar}">
                 <div class="h-full w-full flex flex-col">
                     <div
                         @click="router.get('/')"
