@@ -14,16 +14,16 @@ import InputText from "primevue/inputtext";
             class="w-full h-screen flex flex-col justify-center items-center dark:bg-app-light dark:text-white"
         >
             <div
-                class="flex flex-col flex-1 items-center justify-center w-full"
+                class="w-full flex flex-col flex-1 items-center justify-center"
             >
                 <div class="mb-4 border rounded-full">
                     <ApplicationLogo class="w-16" />
                 </div>
                 <div class="text-2xl font-bold">How can I help you?</div>
             </div>
-            <div class="mb-10 w-full text-center">
+            <div class="w-full mb-10 text-center">
                 <InputText
-                    class="h-14 max-xl:w-3/4 w-1/2 dark:bg-app-light rounded-lg dark:text-white"
+                    class="w-1/2 h-14 rounded-lg dark:text-white dark:bg-app-light max-xl:w-3/4"
                     placeholder="Type your Message..."
                 />
             </div>

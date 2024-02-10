@@ -15,21 +15,21 @@ const appName = import.meta.env.VITE_APP_NAME;
 <template>
     <div
         @click="showResponsiveNavBar = !showResponsiveNavBar"
-        class="fixed z-30 dark:text-white right-0 mr-3 mt-3 cursor-pointer"
+        class="fixed right-0 mr-3 mt-3 cursor-pointer dark:text-white"
     >
         <span class="pi pi-bars"></span>
     </div>
 
     <div class="flex">
         <div
-            class="h-screen w-[260px] flex-shrink-0 z-20 bg-black text-white max-sm:fixed"
+            class="h-screen w-[260px] flex-shrink-0 bg-black text-white max-sm:fixed"
             :class="{ hidden: !showResponsiveNavBar }"
         >
             <nav class="h-full w-full p-2">
                 <div class="h-full w-full flex flex-col">
                     <div
                         @click="router.get('/')"
-                        class="flex hover:bg-app-light cursor-pointer p-2 rounded-lg"
+                        class="flex p-2 rounded-lg cursor-pointer hover:bg-app-light"
                     >
                         <div>
                             <ApplicationLogo class="w-8" />
@@ -37,22 +37,22 @@ const appName = import.meta.env.VITE_APP_NAME;
                         <div class="self-center ml-3">
                             {{ appName }}
                         </div>
-                        <div class="ml-auto self-center">
+                        <div class="self-center ml-auto">
                             <span class="pi pi-pencil"></span>
                         </div>
                     </div>
-                    <div class="flex-1 h-[60%]">
+                    <div class="h-[60%] flex-1">
                         <ScrollPanel class="w-full h-full p-2">
                             <p v-for="i in 100">Chat #{{ i }}</p>
                         </ScrollPanel>
                     </div>
                     <div
                         v-if="showProfileOP"
-                        class="bg-app-dark p-2 rounded-lg mb-2 transition-all"
+                        class="p-2 mb-2 rounded-lg bg-app-dark transition-all"
                     >
                         <div
                             @click="router.post('/logout')"
-                            class="flex gap-4 hover:bg-app-light cursor-pointer p-2 rounded-lg"
+                            class="flex gap-4 p-2 cursor-pointer rounded-lg hover:bg-app-light"
                         >
                             <div>
                                 <span class="pi pi-sign-out"></span>
@@ -63,7 +63,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <div
                         @click="showProfileOP = !showProfileOP"
                         :class="{ 'bg-app-light': showProfileOP }"
-                        class="flex gap-4 hover:bg-app-light cursor-pointer p-2 rounded-lg"
+                        class="flex gap-4 p-2 cursor-pointer rounded-lg hover:bg-app-light"
                     >
                         <Avatar
                             :label="$page.props.auth.user.name[0]"
@@ -85,3 +85,9 @@ const appName = import.meta.env.VITE_APP_NAME;
         </div>
     </div>
 </template>
+
+<style>
+.p-scrollpanel-bar-x {
+    display: none;
+}
+</style>
