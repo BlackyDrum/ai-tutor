@@ -22,10 +22,10 @@ const appName = import.meta.env.VITE_APP_NAME;
 
     <div class="flex">
         <div
-            class="h-screen w-[260px] flex-shrink-0 bg-black text-white transition-all max-sm:fixed"
-            :class="{ 'w-0' : !showResponsiveNavBar }"
+            class="h-screen w-[260px] flex-shrink-0 bg-black text-white max-sm:fixed"
+            :class="{ 'hidden' : !showResponsiveNavBar }"
         >
-            <nav class="h-full w-full p-2" :class="{'hidden' : !showResponsiveNavBar}">
+            <nav class="h-full w-full p-2">
                 <div class="h-full w-full flex flex-col">
                     <div
                         @click="router.get('/')"
