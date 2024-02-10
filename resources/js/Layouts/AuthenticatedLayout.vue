@@ -48,11 +48,20 @@ const appName = import.meta.env.VITE_APP_NAME;
                     </div>
                     <div
                         v-if="showProfileOP"
-                        class="p-2 mb-2 rounded-lg bg-app-dark transition-all"
+                        class="p-1 mb-2 rounded-lg bg-app-dark"
                     >
                         <div
+                            class="flex gap-4 p-2 mb-1 cursor-not-allowed opacity-30 rounded-lg"
+                        >
+                            <div>
+                                <span class="pi pi-user"></span>
+                            </div>
+                            <div>Profile</div>
+                        </div>
+                        <hr class="border-0 h-px bg-gray-500/40">
+                        <div
                             @click="router.post('/logout')"
-                            class="flex gap-4 p-2 cursor-pointer rounded-lg hover:bg-app-light"
+                            class="flex gap-4 p-2 mt-1 cursor-pointer rounded-lg hover:bg-app-light"
                         >
                             <div>
                                 <span class="pi pi-sign-out"></span>
@@ -68,7 +77,6 @@ const appName = import.meta.env.VITE_APP_NAME;
                         <Avatar
                             :label="$page.props.auth.user.name[0]"
                             class="bg-[#E67E22]"
-                            size="large"
                             shape="circle"
                         />
                         <div class="self-center">
