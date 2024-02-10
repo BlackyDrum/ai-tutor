@@ -13,7 +13,7 @@ const appName = import.meta.env.VITE_APP_NAME;
         <Head title="Home" />
 
         <div
-            class="w-full h-screen flex flex-col justify-center items-center dark:bg-app-light dark:text-white"
+            class="w-full h-dvh flex flex-col justify-center items-center dark:bg-app-light dark:text-white"
         >
             <div
                 class="w-full flex flex-col flex-1 items-center justify-center"

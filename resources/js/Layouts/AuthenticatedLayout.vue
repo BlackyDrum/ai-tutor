@@ -22,7 +22,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
     <div class="flex">
         <div
-            class="h-screen w-[260px] flex-shrink-0 bg-black text-white max-sm:fixed"
+            class="h-dvh w-[260px] flex-shrink-0 bg-black text-white max-sm:fixed"
             :class="{ 'hidden' : !showResponsiveNavBar }"
         >
             <nav class="h-full w-full p-2">
