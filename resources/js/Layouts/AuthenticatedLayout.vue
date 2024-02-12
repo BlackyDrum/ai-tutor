@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import {onBeforeMount, ref} from "vue";
 import { router } from "@inertiajs/vue3";
 
 import ScrollPanel from "primevue/scrollpanel";
@@ -7,9 +7,15 @@ import Avatar from "primevue/avatar";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
 const showProfileOP = ref(false);
-const showResponsiveNavBar = ref(false);
+const showResponsiveNavBar = ref(true);
 
 const appName = import.meta.env.VITE_APP_NAME;
+
+onBeforeMount(() => {
+    if (window.innerWidth <= 640) {
+        showResponsiveNavBar.value = false;
+    }
+})
 </script>
 
 <template>
