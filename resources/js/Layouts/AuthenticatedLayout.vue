@@ -55,9 +55,9 @@ const appName = import.meta.env.VITE_APP_NAME;
                                 class="flex gap-4 p-2 mb-1 cursor-not-allowed opacity-30 rounded-lg"
                             >
                                 <div>
-                                    <span class="pi pi-user"></span>
+                                    <span class="pi pi-cog"></span>
                                 </div>
-                                <div>Profile</div>
+                                <div>Settings</div>
                             </div>
                             <hr class="border-0 h-px bg-gray-500/40">
                             <div
