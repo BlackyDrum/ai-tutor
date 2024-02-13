@@ -33,6 +33,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Maximum Requests Limit
+    |--------------------------------------------------------------------------
+    |
+    | This value defines the maximum number of requests that the application
+    | can handle per minute per user or IP address. This is primarily used
+    | for rate limiting to protect the application from excessive use or
+    | potential denial of service attacks.
+    |
+    */
+
+    'max_requests' => 30,
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Debug Mode
     |--------------------------------------------------------------------------
     |
