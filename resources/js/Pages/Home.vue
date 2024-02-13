@@ -30,7 +30,10 @@ const appName = import.meta.env.VITE_APP_NAME;
                 />
             </div>
             <div class="my-2 text-center text-xs text-gr">
-                {{appName}} can make mistakes. Please contact <a class="underline" href="mailto:remmy@fh-aachen.de">remmy@fh-aachen.de</a>
+                {{ appName }} can make mistakes. Please contact
+                <a class="underline" href="mailto:remmy@fh-aachen.de"
+                    >remmy@fh-aachen.de</a
+                >
                 for technical assistance.
             </div>
         </div>

@@ -1,5 +1,5 @@
 <script setup>
-import {onBeforeMount, ref} from "vue";
+import { onBeforeMount, ref } from "vue";
 import { router } from "@inertiajs/vue3";
 
 import ScrollPanel from "primevue/scrollpanel";
@@ -15,7 +15,7 @@ onBeforeMount(() => {
     if (window.innerWidth <= 640) {
         showResponsiveNavBar.value = false;
     }
-})
+});
 </script>
 
 <template>
@@ -29,7 +29,7 @@ onBeforeMount(() => {
     <div class="flex">
         <div
             class="h-dvh w-[260px] flex-shrink-0 bg-black text-white max-sm:fixed"
-            :class="{ 'hidden' : !showResponsiveNavBar }"
+            :class="{ hidden: !showResponsiveNavBar }"
         >
             <nav class="h-full w-full p-2">
                 <div class="h-full w-full flex flex-col">
@@ -65,7 +65,7 @@ onBeforeMount(() => {
                                 </div>
                                 <div>Settings</div>
                             </div>
-                            <hr class="border-0 h-px bg-gray-500/40">
+                            <hr class="border-0 h-px bg-gray-500/40" />
                             <div
                                 @click="router.post('/logout')"
                                 class="flex gap-4 p-2 mt-1 cursor-pointer rounded-lg hover:bg-app-light"
