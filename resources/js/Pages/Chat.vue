@@ -28,7 +28,9 @@ const handleCreateConversation = () => {
         conversation_id: page.url.slice(page.url.lastIndexOf('/') + 1)
     })
         .then(result => {
-            router.reload();
+            router.reload( {
+                onFinish: () => document.getElementById('scroll-container').scrollTop = Number.MAX_SAFE_INTEGER
+            });
         })
         .catch(error => {
             toast.add({ severity: 'error', summary: 'Error', detail: error.response.data.message, life: 5000 });
@@ -48,7 +50,7 @@ const handleCreateConversation = () => {
         <div
             class="w-full h-dvh flex flex-col justify-center items-center dark:bg-app-light dark:text-white"
         >
-            <div class="flex-1 overflow-y-auto py-4 px-6">
+            <div id="scroll-container" class="flex-1 overflow-y-auto py-4 px-6">
                 <div v-for="message in messages">
                     <div class="max-w-[48rem] max-xl:max-w-[30rem] max-lg:max-w-[20rem] min-w-[48rem] max-xl:min-w-[30rem] max-lg:min-w-[20rem]">
                         <div class="flex flex-col mt-6">
