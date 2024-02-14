@@ -1,11 +1,12 @@
 <script setup>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { Head, router } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { useToast } from "primevue/usetoast";
 
-import {Head, router} from "@inertiajs/vue3";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+
 import InputText from "primevue/inputtext";
-import {ref} from "vue";
-import { useToast } from 'primevue/usetoast';
 
 const appName = import.meta.env.VITE_APP_NAME;
 
@@ -14,25 +15,30 @@ const toast = useToast();
 const userMessage = ref("");
 const isSendingRequest = ref(false);
 
-
 const handleCreateConversation = () => {
     if (userMessage.value.length === 0 || isSendingRequest.value) return;
 
     isSendingRequest.value = true;
 
-    window.axios.post('/create-conversation', {
-        message: userMessage.value
-    })
-        .then(result => {
-            router.get(`/chat/${result.data.id}`)
+    window.axios
+        .post("/create-conversation", {
+            message: userMessage.value,
         })
-        .catch(error => {
-            toast.add({ severity: 'error', summary: 'Error', detail: error.response.data.message, life: 5000 });
+        .then((result) => {
+            router.get(`/chat/${result.data.id}`);
+        })
+        .catch((error) => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message,
+                life: 5000,
+            });
         })
         .finally(() => {
             isSendingRequest.value = false;
-        })
-}
+        });
+};
 </script>
 
 <template>

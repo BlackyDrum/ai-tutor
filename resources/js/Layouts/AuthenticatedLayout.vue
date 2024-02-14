@@ -1,16 +1,17 @@
 <script setup>
-import { onBeforeMount, ref } from "vue";
 import { router } from "@inertiajs/vue3";
+import { onBeforeMount, ref } from "vue";
+
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
 import ScrollPanel from "primevue/scrollpanel";
-import Toast from 'primevue/toast';
+import Toast from "primevue/toast";
 import Avatar from "primevue/avatar";
-import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+
+const appName = import.meta.env.VITE_APP_NAME;
 
 const showProfileOP = ref(false);
 const showResponsiveNavBar = ref(true);
-
-const appName = import.meta.env.VITE_APP_NAME;
 
 onBeforeMount(() => {
     if (window.innerWidth <= 640) {
