@@ -21,7 +21,7 @@ onBeforeMount(() => {
 <template>
     <div
         @click="showResponsiveNavBar = !showResponsiveNavBar"
-        class="fixed right-0 mr-3 mt-3 p-2 rounded-full cursor-pointer dark:text-white hover:bg-gray-800/50"
+        class="fixed right-0 mr-3 z-100 mt-3 p-2 rounded-full cursor-pointer dark:text-white hover:bg-gray-800/50"
     >
         <span class="pi pi-bars"></span>
     </div>

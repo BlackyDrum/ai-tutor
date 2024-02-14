@@ -1,11 +1,26 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
-import { Head } from "@inertiajs/vue3";
+import {Head, router} from "@inertiajs/vue3";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import InputText from "primevue/inputtext";
+import {ref} from "vue";
 
 const appName = import.meta.env.VITE_APP_NAME;
+
+const userMessage = ref("");
+
+const handleCreateConversation = () => {
+    window.axios.post('/create-conversation', {
+        message: userMessage.value
+    })
+        .then(result => {
+            router.get(`/chat/${result.data.id}`)
+        })
+        .catch(error => {
+            console.log(error)
+        })
+}
 </script>
 
 <template>
@@ -25,6 +40,8 @@ const appName = import.meta.env.VITE_APP_NAME;
             </div>
             <div class="w-full text-center">
                 <InputText
+                    v-model="userMessage"
+                    @keydown.enter="handleCreateConversation"
                     class="w-1/2 h-14 rounded-lg dark:text-white dark:bg-app-light max-xl:w-3/4"
                     placeholder="Type your Message..."
                 />
