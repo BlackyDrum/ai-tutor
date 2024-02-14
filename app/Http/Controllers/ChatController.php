@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Messages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -11,14 +12,10 @@ class ChatController extends Controller
 {
     public function show(string $id)
     {
-        $token = HomeController::getBearerToken();
-
-        $response = Http::withToken($token)->withoutVerifying()->get(config('api.url') . '/agents/get-messages', [
-            'conversation_id' => $id
-        ]);
+        $messages = Messages::query()->where('conversation_id', '=', $id)->orderBy('created_at')->get();
 
         return Inertia::render('Chat', [
-            'messages' => $response->json(),
+            'messages' => $messages,
         ]);
     }
 
@@ -29,6 +26,12 @@ class ChatController extends Controller
         $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
             'conversation_id' => $request->input('conversation_id'),
             'message' => $request->input('message'),
+        ]);
+
+        Messages::query()->create([
+            'user_message' => $request->input('message'),
+            'agent_message' => $response->json()['response'],
+            'conversation_id' => $request->input('conversation_id'),
         ]);
     }
 }

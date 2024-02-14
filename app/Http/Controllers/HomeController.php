@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conversations;
+use App\Models\Messages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -26,16 +28,31 @@ class HomeController extends Controller
 
         $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
             'agent_id' => 'da9bdacf-9a0f-4e77-bc48-5e6656b87674',
-            'creating_user' => Auth::user()->name,
+            'creating_user' => config('api.username'),
             'max_tokens' => 1000,
             'temperature' => 0.5,
         ]);
 
         $conversationID = $response1->json()['id'];
 
-        Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
+        Conversations::query()->create([
+            'id' => $conversationID,
+            'agent_id' => 'da9bdacf-9a0f-4e77-bc48-5e6656b87674',
+            'creating_user' => config('api.username'),
+            'max_tokens' => 1000,
+            'temperature' => 0.5,
+            'user_id' => Auth::id(),
+        ]);
+
+        $response2 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
             'conversation_id' => $conversationID,
             'message' => $message
+        ]);
+
+        Messages::query()->create([
+            'user_message' => $message,
+            'agent_message' => $response2->json()['response'],
+            'conversation_id' => $conversationID
         ]);
 
         return response()->json(['id' => $conversationID]);

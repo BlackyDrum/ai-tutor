@@ -25,7 +25,7 @@ const handleCreateConversation = () => {
             router.reload();
         })
         .catch(error => {
-
+            console.log(error)
         })
         .finally(() => {
             userMessage.value = "";
@@ -43,7 +43,7 @@ const handleCreateConversation = () => {
         >
             <div class="flex-1 overflow-y-auto py-4 px-6">
                 <div v-for="message in messages">
-                    <div class="max-w-[48rem] max-xl:max-w-[30rem] max-lg:max-w-[20rem]">
+                    <div class="max-w-[48rem] max-xl:max-w-[30rem] max-lg:max-w-[20rem] min-w-[48rem] max-xl:min-w-[30rem] max-lg:min-w-[20rem]">
                         <div class="flex flex-col mt-6">
                             <div class="font-bold">
                                 You
