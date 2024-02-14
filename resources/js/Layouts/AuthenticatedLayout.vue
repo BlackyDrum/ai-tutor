@@ -3,6 +3,7 @@ import { onBeforeMount, ref } from "vue";
 import { router } from "@inertiajs/vue3";
 
 import ScrollPanel from "primevue/scrollpanel";
+import Toast from 'primevue/toast';
 import Avatar from "primevue/avatar";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
@@ -19,6 +20,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
+    <Toast />
     <div
         @click="showResponsiveNavBar = !showResponsiveNavBar"
         class="fixed right-0 mr-3 z-100 mt-3 p-2 rounded-full cursor-pointer dark:text-white hover:bg-gray-800/50"

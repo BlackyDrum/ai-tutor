@@ -3,8 +3,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 import {Head, router, usePage} from "@inertiajs/vue3";
 import InputText from "primevue/inputtext";
-import ScrollPanel from "primevue/scrollpanel";
 import {ref} from "vue";
+import { useToast } from 'primevue/usetoast';
 
 defineProps({
     messages: Array
@@ -13,12 +13,16 @@ defineProps({
 const appName = import.meta.env.VITE_APP_NAME;
 
 const page = usePage();
+const toast = useToast();
 
 const userMessage = ref("");
 const isSendingRequest = ref(false);
 
 const handleCreateConversation = () => {
+    if (userMessage.value.length === 0 || isSendingRequest.value) return;
+
     isSendingRequest.value = true;
+
     window.axios.post('/chat/chat-agent', {
         message: userMessage.value,
         conversation_id: page.url.slice(page.url.lastIndexOf('/') + 1)
@@ -27,7 +31,7 @@ const handleCreateConversation = () => {
             router.reload();
         })
         .catch(error => {
-            console.log(error)
+            toast.add({ severity: 'error', summary: 'Error', detail: error.response.data.message, life: 5000 });
         })
         .finally(() => {
             userMessage.value = "";

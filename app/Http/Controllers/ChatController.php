@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conversations;
 use App\Models\Messages;
+use App\Rules\ValidateConversationOwner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -12,6 +14,12 @@ class ChatController extends Controller
 {
     public function show(string $id)
     {
+        $conversation = Conversations::query()->find($id);
+
+        if (empty($conversation) || $conversation->user_id !== Auth::id()) {
+            return redirect('/');
+        }
+
         $messages = Messages::query()->where('conversation_id', '=', $id)->orderBy('created_at')->get();
 
         return Inertia::render('Chat', [
@@ -21,6 +29,11 @@ class ChatController extends Controller
 
     public function chat(Request $request)
     {
+        $request->validate([
+            'message' => 'required|string|min:1',
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,id', new ValidateConversationOwner()],
+        ]);
+
         $token = HomeController::getBearerToken();
 
         $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [

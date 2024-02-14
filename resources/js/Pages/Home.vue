@@ -5,12 +5,21 @@ import {Head, router} from "@inertiajs/vue3";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import InputText from "primevue/inputtext";
 import {ref} from "vue";
+import { useToast } from 'primevue/usetoast';
 
 const appName = import.meta.env.VITE_APP_NAME;
 
+const toast = useToast();
+
 const userMessage = ref("");
+const isSendingRequest = ref(false);
+
 
 const handleCreateConversation = () => {
+    if (userMessage.value.length === 0 || isSendingRequest.value) return;
+
+    isSendingRequest.value = true;
+
     window.axios.post('/create-conversation', {
         message: userMessage.value
     })
@@ -18,7 +27,10 @@ const handleCreateConversation = () => {
             router.get(`/chat/${result.data.id}`)
         })
         .catch(error => {
-            console.log(error)
+            toast.add({ severity: 'error', summary: 'Error', detail: error.response.data.message, life: 5000 });
+        })
+        .finally(() => {
+            isSendingRequest.value = false;
         })
 }
 </script>
@@ -42,6 +54,7 @@ const handleCreateConversation = () => {
                 <InputText
                     v-model="userMessage"
                     @keydown.enter="handleCreateConversation"
+                    :disabled="isSendingRequest"
                     class="w-1/2 h-14 rounded-lg dark:text-white dark:bg-app-light max-xl:w-3/4"
                     placeholder="Type your Message..."
                 />
