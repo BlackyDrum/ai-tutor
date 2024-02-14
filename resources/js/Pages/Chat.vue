@@ -9,6 +9,7 @@ import InputText from "primevue/inputtext";
 
 defineProps({
     messages: Array,
+    conversation_id: String,
 });
 
 const appName = import.meta.env.VITE_APP_NAME;
@@ -27,7 +28,7 @@ const handleCreateConversation = () => {
     window.axios
         .post("/chat/chat-agent", {
             message: userMessage.value,
-            conversation_id: page.url.slice(page.url.lastIndexOf("/") + 1),
+            conversation_id: page.props.conversation_id,
         })
         .then((result) => {
             router.reload({
