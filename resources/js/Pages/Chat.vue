@@ -15,8 +15,10 @@ const appName = import.meta.env.VITE_APP_NAME;
 const page = usePage();
 
 const userMessage = ref("");
+const isSendingRequest = ref(false);
 
 const handleCreateConversation = () => {
+    isSendingRequest.value = true;
     window.axios.post('/chat/chat-agent', {
         message: userMessage.value,
         conversation_id: page.url.slice(page.url.lastIndexOf('/') + 1)
@@ -29,6 +31,7 @@ const handleCreateConversation = () => {
         })
         .finally(() => {
             userMessage.value = "";
+            isSendingRequest.value = false;
         })
 }
 
@@ -67,6 +70,7 @@ const handleCreateConversation = () => {
                 <InputText
                     v-model="userMessage"
                     @keydown.enter="handleCreateConversation"
+                    :disabled="isSendingRequest"
                     class="w-1/2 h-14 rounded-lg dark:text-white dark:bg-app-light max-xl:w-3/4"
                     placeholder="Type your Message..."
                 />
