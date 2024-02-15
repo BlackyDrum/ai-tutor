@@ -4,8 +4,7 @@ import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-
-import InputText from "primevue/inputtext";
+import Prompt from "@/Components/Prompt.vue";
 
 defineProps({
     messages: Array,
@@ -17,17 +16,16 @@ const appName = import.meta.env.VITE_APP_NAME;
 const page = usePage();
 const toast = useToast();
 
-const userMessage = ref("");
 const isSendingRequest = ref(false);
 
-const handleCreateConversation = () => {
-    if (userMessage.value.length === 0 || isSendingRequest.value) return;
+const handleCreateConversation = userMessage => {
+    if (userMessage.length === 0 || isSendingRequest.value) return;
 
     isSendingRequest.value = true;
 
     window.axios
         .post("/chat/chat-agent", {
-            message: userMessage.value,
+            message: userMessage,
             conversation_id: page.props.conversation_id,
         })
         .then((result) => {
@@ -46,7 +44,6 @@ const handleCreateConversation = () => {
             });
         })
         .finally(() => {
-            userMessage.value = "";
             isSendingRequest.value = false;
         });
 };
@@ -81,22 +78,7 @@ const handleCreateConversation = () => {
                     </div>
                 </div>
             </div>
-            <div class="w-full text-center">
-                <InputText
-                    v-model="userMessage"
-                    @keydown.enter="handleCreateConversation"
-                    :disabled="isSendingRequest"
-                    class="w-1/2 h-14 rounded-lg dark:text-white dark:bg-app-light max-xl:w-3/4"
-                    placeholder="Type your Message..."
-                />
-            </div>
-            <div class="my-2 text-center text-xs text-gr">
-                {{ appName }} can make mistakes. Please contact
-                <a class="underline" href="mailto:remmy@fh-aachen.de"
-                    >remmy@fh-aachen.de</a
-                >
-                for technical assistance.
-            </div>
+            <Prompt :sending="isSendingRequest" @isSubmitting="handleCreateConversation"/>
         </div>
     </AuthenticatedLayout>
 </template>
