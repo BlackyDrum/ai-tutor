@@ -1,11 +1,13 @@
 <script setup>
-import { Head, usePage } from "@inertiajs/vue3";
-import { onMounted, ref} from "vue";
-import { useToast } from "primevue/usetoast";
+import {Head, usePage} from "@inertiajs/vue3";
+import {onMounted, ref} from "vue";
+import {useToast} from "primevue/usetoast";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";
 import Prompt from "@/Components/Prompt.vue";
+
+import Message from 'primevue/message';
 
 defineProps({
     messages: Array,
@@ -61,15 +63,12 @@ const handleCreateConversation = userMessage => {
             scroll();
         })
         .catch((error) => {
-            toast.add({
-                severity: "error",
-                summary: "Error",
-                detail: error.response.data.message || error.response.data,
-                life: 5000,
-            });
+            page.props.messages[page.props.messages.length - 1].error = error.response.data.message || error.response.data;
         })
         .finally(() => {
             isSendingRequest.value = false;
+
+            scroll();
         });
 };
 
@@ -98,8 +97,11 @@ const scroll = () => {
                             <div class="font-bold">
                                 {{ appName }}
                             </div>
-                            <div>
+                            <div v-if="typeof message.error === 'undefined'">
                                 {{ message.agent_message }}
+                            </div>
+                            <div v-else>
+                                <Message severity="error" :closable="false">{{message.error}}</Message>
                             </div>
                         </div>
                     </div>

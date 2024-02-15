@@ -24,14 +24,14 @@ onBeforeMount(() => {
     <Toast />
     <div
         @click="showResponsiveNavBar = !showResponsiveNavBar"
-        class="fixed right-0 mr-3 z-100 mt-3 p-2 rounded-full cursor-pointer dark:text-white hover:bg-gray-800/50"
+        class="fixed right-0 mr-3 z-50 mt-3 p-2 rounded-full cursor-pointer dark:text-white hover:bg-gray-800/50"
     >
         <span class="pi pi-bars"></span>
     </div>
 
     <div class="flex">
         <div
-            class="h-dvh w-[260px] flex-shrink-0 bg-black text-white max-sm:fixed"
+            class="h-dvh w-[260px] z-20 flex-shrink-0 bg-black text-white max-sm:fixed"
             :class="{ hidden: !showResponsiveNavBar }"
         >
             <nav class="h-full w-full p-2">
