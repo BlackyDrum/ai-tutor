@@ -81,17 +81,3 @@ const handleCreateConversation = userMessage => {
         </Main>
     </AuthenticatedLayout>
 </template>
-<style>
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #ffffff;
-    border-radius: 4px;
-}
-</style>
