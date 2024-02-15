@@ -73,7 +73,7 @@ const handleCreateConversation = userMessage => {
 };
 
 const scroll = () => {
-    document.getElementById("scroll-container").scrollTop = Number.MAX_SAFE_INTEGER;
+    document.getElementById("scroll-container").scrollTo(0,Number.MAX_SAFE_INTEGER);
 }
 </script>
 
