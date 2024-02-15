@@ -42,10 +42,12 @@ class ChatController extends Controller
             'message' => $request->input('message'),
         ]);
 
-        Messages::query()->create([
+        $message = Messages::query()->create([
             'user_message' => $request->input('message'),
             'agent_message' => $response->json()['response'],
             'conversation_id' => $request->input('conversation_id'),
         ]);
+
+        return response()->json($message);
     }
 }

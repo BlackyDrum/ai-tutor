@@ -1,6 +1,6 @@
 <script setup>
-import { Head, router, usePage } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { Head, usePage } from "@inertiajs/vue3";
+import { onMounted, ref} from "vue";
 import { useToast } from "primevue/usetoast";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -19,10 +19,32 @@ const toast = useToast();
 
 const isSendingRequest = ref(false);
 
+onMounted(() => {
+    scroll();
+})
+
 const handleCreateConversation = userMessage => {
     if (userMessage.length === 0 || isSendingRequest.value) return;
 
     isSendingRequest.value = true;
+
+    // We need to use a promise here, because we have to wait for the messages
+    // prop to fully re-render, in order to scroll to the bottom.
+    // Another option would be to use a timeout.
+    new Promise((resolve, reject) => {
+        page.props.messages.push({
+            agent_message: "",
+            conversation_id: page.props.conversation_id,
+            created_at: null,
+            id: null,
+            updated_at: null,
+            user_message: userMessage
+        });
+        resolve();
+    })
+        .then(() => {
+            scroll();
+        })
 
     window.axios
         .post("/chat/chat-agent", {
@@ -30,17 +52,19 @@ const handleCreateConversation = userMessage => {
             conversation_id: page.props.conversation_id,
         })
         .then((result) => {
-            router.reload({
-                onFinish: () =>
-                    (document.getElementById("scroll-container").scrollTop =
-                        Number.MAX_SAFE_INTEGER),
-            });
+            const lastMessage = page.props.messages[page.props.messages.length - 1];
+            const { agent_message, created_at, id, updated_at } = result.data;
+
+            Object.assign(lastMessage, { agent_message, created_at, id, updated_at });
+        })
+        .then(() => {
+            scroll();
         })
         .catch((error) => {
             toast.add({
                 severity: "error",
                 summary: "Error",
-                detail: error.response.data.message,
+                detail: error.response.data.message || error.response.data,
                 life: 5000,
             });
         })
@@ -48,6 +72,10 @@ const handleCreateConversation = userMessage => {
             isSendingRequest.value = false;
         });
 };
+
+const scroll = () => {
+    document.getElementById("scroll-container").scrollTop = Number.MAX_SAFE_INTEGER;
+}
 </script>
 
 <template>

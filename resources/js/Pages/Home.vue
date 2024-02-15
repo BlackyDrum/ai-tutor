@@ -28,7 +28,7 @@ const handleCreateConversation = userMessage => {
             toast.add({
                 severity: "error",
                 summary: "Error",
-                detail: error.response.data.message,
+                detail: error.response.data.message || error.response.data,
                 life: 5000,
             });
         })
