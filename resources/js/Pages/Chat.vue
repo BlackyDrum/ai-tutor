@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Main from "@/Layouts/Main.vue";
 import Prompt from "@/Components/Prompt.vue";
 
 defineProps({
@@ -53,9 +54,7 @@ const handleCreateConversation = userMessage => {
     <AuthenticatedLayout>
         <Head title="Chat" />
 
-        <div
-            class="w-full h-dvh flex flex-col justify-center items-center dark:bg-app-light dark:text-white"
-        >
+        <Main>
             <div id="scroll-container" class="flex-1 overflow-y-auto py-4 px-6">
                 <div v-for="message in messages">
                     <div
@@ -79,7 +78,7 @@ const handleCreateConversation = userMessage => {
                 </div>
             </div>
             <Prompt :sending="isSendingRequest" @isSubmitting="handleCreateConversation"/>
-        </div>
+        </Main>
     </AuthenticatedLayout>
 </template>
 <style>

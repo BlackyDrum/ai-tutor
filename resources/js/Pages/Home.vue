@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Main from "@/Layouts/Main.vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Prompt from "@/Components/Prompt.vue";
 
@@ -41,9 +42,7 @@ const handleCreateConversation = userMessage => {
     <AuthenticatedLayout>
         <Head title="Home" />
 
-        <div
-            class="w-full h-dvh flex flex-col justify-center items-center dark:bg-app-light dark:text-white"
-        >
+        <Main>
             <div
                 class="w-full flex flex-col flex-1 items-center justify-center"
             >
@@ -53,6 +52,6 @@ const handleCreateConversation = userMessage => {
                 <div class="text-2xl font-bold">How can I help you?</div>
             </div>
             <Prompt :sending="isSendingRequest" @isSubmitting="handleCreateConversation"/>
-        </div>
+        </Main>
     </AuthenticatedLayout>
 </template>
