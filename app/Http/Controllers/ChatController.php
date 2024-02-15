@@ -37,10 +37,18 @@ class ChatController extends Controller
 
         $token = HomeController::getBearerToken();
 
+        if (is_array($token)) {
+            return response()->json($token['reason'], intval($token['status']));
+        }
+
         $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
             'conversation_id' => $request->input('conversation_id'),
             'message' => $request->input('message'),
         ]);
+
+        if ($response->failed()) {
+            return response()->json($response->reason(), $response->status());
+        }
 
         $message = Messages::query()->create([
             'user_message' => $request->input('message'),

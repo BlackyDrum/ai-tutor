@@ -6,6 +6,7 @@ use App\Models\Conversations;
 use App\Models\Messages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
@@ -24,6 +25,10 @@ class HomeController extends Controller
 
         $token = self::getBearerToken();
 
+        if (is_array($token)) {
+            return response()->json($token['reason'], intval($token['status']));
+        }
+
         $message = $request->input('message');
 
         $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
@@ -33,7 +38,14 @@ class HomeController extends Controller
             'temperature' => 0.5,
         ]);
 
+        if ($response1->failed()) {
+            return response()->json($response1->reason(), $response1->status());
+        }
+
         $conversationID = $response1->json()['id'];
+
+        // We use a transaction here, allowing rollback in case the following API request fails.
+        DB::beginTransaction();
 
         Conversations::query()->create([
             'id' => $conversationID,
@@ -49,11 +61,19 @@ class HomeController extends Controller
             'message' => $message
         ]);
 
+        if ($response2->failed()) {
+            DB::rollBack();
+
+            return response()->json($response2->reason(), $response2->status());
+        }
+
         Messages::query()->create([
             'user_message' => $message,
             'agent_message' => $response2->json()['response'],
             'conversation_id' => $conversationID
         ]);
+
+        DB::commit();
 
         return response()->json(['id' => $conversationID]);
     }
@@ -68,6 +88,13 @@ class HomeController extends Controller
             'client_id' => config('api.client_id'),
             'client_secret' => config('api.client_secret'),
         ]);
+
+        if ($response->failed()) {
+            return [
+                'reason' => $response->reason(),
+                'status' => $response->status(),
+            ];
+        }
 
         return $response->json()['access_token'];
     }
