@@ -6,6 +6,7 @@ import { useToast } from "primevue/usetoast";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";
 import Prompt from "@/Components/Prompt.vue";
+import LoadingDots from "@/Components/LoadingDots.vue";
 
 import Message from "primevue/message";
 
@@ -95,7 +96,7 @@ const scroll = () => {
                 id="scroll-container"
                 class="flex-1 overflow-y-auto pb-8 px-4 max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"
             >
-                <div v-for="message in messages" :key="message.id">
+                <div v-for="(message, index) in messages" :key="message.id">
                     <div class="flex flex-col mt-6">
                         <div class="font-bold">You</div>
                         <div>
@@ -105,6 +106,9 @@ const scroll = () => {
                     <div class="flex flex-col mt-6">
                         <div class="font-bold">
                             {{ appName }}
+                        </div>
+                        <div v-if="isSendingRequest && index === messages.length - 1">
+                            <LoadingDots />
                         </div>
                         <div v-if="typeof message.error === 'undefined'">
                             {{ message.agent_message }}

@@ -7,6 +7,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Prompt from "@/Components/Prompt.vue";
+import LoadingDots from "@/Components/LoadingDots.vue";
 
 const toast = useToast();
 
@@ -25,6 +26,8 @@ const handleCreateConversation = (userMessage) => {
             router.get(`/chat/${result.data.id}`);
         })
         .catch((error) => {
+            isSendingRequest.value = false;
+
             toast.add({
                 severity: "error",
                 summary: "Error",
@@ -32,9 +35,6 @@ const handleCreateConversation = (userMessage) => {
                 life: 5000,
             });
         })
-        .finally(() => {
-            isSendingRequest.value = false;
-        });
 };
 </script>
 
@@ -46,10 +46,11 @@ const handleCreateConversation = (userMessage) => {
             <div
                 class="w-full flex flex-col flex-1 items-center justify-center"
             >
-                <div class="mb-4 border rounded-full">
+                <div v-if="!isSendingRequest" class="mb-4 border rounded-full">
                     <ApplicationLogo class="w-16" />
                 </div>
-                <div class="text-2xl font-bold">How can I help you?</div>
+                <div v-if="!isSendingRequest" class="text-2xl font-bold">How can I help you?</div>
+                <LoadingDots v-if="isSendingRequest" />
             </div>
             <Prompt
                 :sending="isSendingRequest"
