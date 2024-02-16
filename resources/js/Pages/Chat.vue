@@ -1,13 +1,13 @@
 <script setup>
-import {Head, usePage} from "@inertiajs/vue3";
-import {onMounted, ref} from "vue";
-import {useToast} from "primevue/usetoast";
+import { Head, usePage } from "@inertiajs/vue3";
+import { onMounted, ref } from "vue";
+import { useToast } from "primevue/usetoast";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";
 import Prompt from "@/Components/Prompt.vue";
 
-import Message from 'primevue/message';
+import Message from "primevue/message";
 
 defineProps({
     messages: Array,
@@ -23,9 +23,9 @@ const isSendingRequest = ref(false);
 
 onMounted(() => {
     scroll();
-})
+});
 
-const handleCreateConversation = userMessage => {
+const handleCreateConversation = (userMessage) => {
     if (userMessage.length === 0 || isSendingRequest.value) return;
 
     isSendingRequest.value = true;
@@ -40,13 +40,12 @@ const handleCreateConversation = userMessage => {
             created_at: null,
             id: null,
             updated_at: null,
-            user_message: userMessage
+            user_message: userMessage,
         });
         resolve();
-    })
-        .then(() => {
-            scroll();
-        })
+    }).then(() => {
+        scroll();
+    });
 
     window.axios
         .post("/chat/chat-agent", {
@@ -54,16 +53,23 @@ const handleCreateConversation = userMessage => {
             conversation_id: page.props.conversation_id,
         })
         .then((result) => {
-            const lastMessage = page.props.messages[page.props.messages.length - 1];
+            const lastMessage =
+                page.props.messages[page.props.messages.length - 1];
             const { agent_message, created_at, id, updated_at } = result.data;
 
-            Object.assign(lastMessage, { agent_message, created_at, id, updated_at });
+            Object.assign(lastMessage, {
+                agent_message,
+                created_at,
+                id,
+                updated_at,
+            });
         })
         .then(() => {
             scroll();
         })
         .catch((error) => {
-            page.props.messages[page.props.messages.length - 1].error = error.response.data.message || error.response.data;
+            page.props.messages[page.props.messages.length - 1].error =
+                error.response.data.message || error.response.data;
         })
         .finally(() => {
             isSendingRequest.value = false;
@@ -73,8 +79,10 @@ const handleCreateConversation = userMessage => {
 };
 
 const scroll = () => {
-    document.getElementById("scroll-container").scrollTo(0,Number.MAX_SAFE_INTEGER);
-}
+    document
+        .getElementById("scroll-container")
+        .scrollTo(0, Number.MAX_SAFE_INTEGER);
+};
 </script>
 
 <template>
@@ -101,13 +109,18 @@ const scroll = () => {
                                 {{ message.agent_message }}
                             </div>
                             <div v-else>
-                                <Message severity="error" :closable="false">{{message.error}}</Message>
+                                <Message severity="error" :closable="false">{{
+                                    message.error
+                                }}</Message>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <Prompt :sending="isSendingRequest" @isSubmitting="handleCreateConversation"/>
+            <Prompt
+                :sending="isSendingRequest"
+                @isSubmitting="handleCreateConversation"
+            />
         </Main>
     </AuthenticatedLayout>
 </template>

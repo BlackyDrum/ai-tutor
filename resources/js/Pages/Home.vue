@@ -12,7 +12,7 @@ const toast = useToast();
 
 const isSendingRequest = ref(false);
 
-const handleCreateConversation = userMessage => {
+const handleCreateConversation = (userMessage) => {
     if (userMessage.length === 0 || isSendingRequest.value) return;
 
     isSendingRequest.value = true;
@@ -51,7 +51,10 @@ const handleCreateConversation = userMessage => {
                 </div>
                 <div class="text-2xl font-bold">How can I help you?</div>
             </div>
-            <Prompt :sending="isSendingRequest" @isSubmitting="handleCreateConversation"/>
+            <Prompt
+                :sending="isSendingRequest"
+                @isSubmitting="handleCreateConversation"
+            />
         </Main>
     </AuthenticatedLayout>
 </template>

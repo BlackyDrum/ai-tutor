@@ -1,6 +1,6 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-import {onBeforeMount, ref} from "vue";
+import { onBeforeMount, ref } from "vue";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
