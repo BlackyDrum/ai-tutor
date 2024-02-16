@@ -94,7 +94,7 @@ const scroll = () => {
         <Main>
             <div
                 id="scroll-container"
-                class="flex-1 overflow-y-auto pb-8 px-4 max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"
+                class="w-full flex-1 pb-8 px-4 overflow-y-auto max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"
             >
                 <div v-for="(message, index) in messages" :key="message.id">
                     <div class="flex flex-col mt-6">
