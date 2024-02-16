@@ -81,7 +81,8 @@ const handleCreateConversation = (userMessage) => {
 const scroll = () => {
     document
         .getElementById("scroll-container")
-        .scrollTo(0, Number.MAX_SAFE_INTEGER);
+        .scrollTo(0, document.getElementById("scroll-container").scrollHeight);
+
 };
 </script>
 
@@ -90,29 +91,28 @@ const scroll = () => {
         <Head title="Chat" />
 
         <Main>
-            <div id="scroll-container" class="flex-1 overflow-y-auto py-4 px-6">
+            <div
+                id="scroll-container"
+                class="flex-1 overflow-y-auto pb-8 px-4 max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"
+            >
                 <div v-for="message in messages" :key="message.id">
-                    <div
-                        class="max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem] min-w-[48rem] max-xl:min-w-[40rem] max-lg:min-w-[20rem]"
-                    >
-                        <div class="flex flex-col mt-6">
-                            <div class="font-bold">You</div>
-                            <div>
-                                {{ message.user_message }}
-                            </div>
+                    <div class="flex flex-col mt-6">
+                        <div class="font-bold">You</div>
+                        <div>
+                            {{ message.user_message }}
                         </div>
-                        <div class="flex flex-col mt-6">
-                            <div class="font-bold">
-                                {{ appName }}
-                            </div>
-                            <div v-if="typeof message.error === 'undefined'">
-                                {{ message.agent_message }}
-                            </div>
-                            <div v-else>
-                                <Message severity="error" :closable="false">{{
-                                    message.error
-                                }}</Message>
-                            </div>
+                    </div>
+                    <div class="flex flex-col mt-6">
+                        <div class="font-bold">
+                            {{ appName }}
+                        </div>
+                        <div v-if="typeof message.error === 'undefined'">
+                            {{ message.agent_message }}
+                        </div>
+                        <div v-else>
+                            <Message severity="error" :closable="false">{{
+                                message.error
+                            }}</Message>
                         </div>
                     </div>
                 </div>
