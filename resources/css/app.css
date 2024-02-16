@@ -9,21 +9,20 @@
     @tailwind utilities;
 }
 
-@layer components {
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        @apply bg-app-dark dark:bg-white rounded-lg
-    }
-}
-
 :root {
     --app-light: #343541;
     --app-dark: #202123;
+}
+
+@media (prefers-color-scheme: light) {
+    #scroll-container {
+        scrollbar-width: thin;
+        scrollbar-color: var(--app-light) #00000000;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    #scroll-container {
+        scrollbar-width: thin;
+        scrollbar-color: #ffffff #00000000;
+    }
 }
