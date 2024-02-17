@@ -7,8 +7,10 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";
 import Prompt from "@/Components/Prompt.vue";
 import LoadingDots from "@/Components/LoadingDots.vue";
+import UserAvatar from "@/Components/UserAvatar.vue";
 
 import Message from "primevue/message";
+import Avatar from "primevue/avatar";
 
 defineProps({
     messages: Array,
@@ -101,31 +103,44 @@ const scroll = () => {
                 class="w-full flex-1 pb-8 px-4 overflow-y-auto max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"
             >
                 <div v-for="(message, index) in messages" :key="message.id">
-                    <div class="flex flex-col mt-6">
-                        <div class="font-bold">You</div>
-                        <div>
-                            {{ message.user_message }}
+                    <div class="flex gap-3 mt-6">
+                        <div class="max-md:hidden">
+                            <UserAvatar />
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="font-bold">You</div>
+                            <div>
+                                {{ message.user_message }}
+                            </div>
                         </div>
                     </div>
-                    <div class="flex flex-col mt-6">
-                        <div class="font-bold">
-                            {{ appName }}
+                    <div class="flex gap-3 mt-6">
+                        <div class="max-md:hidden">
+                            <Avatar
+                                image="/static/img/app-logo.png"
+                                shape="circle"
+                            />
                         </div>
-                        <div
-                            v-if="
-                                isSendingRequest &&
-                                index === messages.length - 1
-                            "
-                        >
-                            <LoadingDots />
-                        </div>
-                        <div v-if="typeof message.error === 'undefined'">
-                            {{ message.agent_message }}
-                        </div>
-                        <div v-else>
-                            <Message severity="error" :closable="false">{{
-                                message.error
-                            }}</Message>
+                        <div class="flex flex-col">
+                            <div class="font-bold">
+                                {{ appName }}
+                            </div>
+                            <div
+                                v-if="
+                                    isSendingRequest &&
+                                    index === messages.length - 1
+                                "
+                            >
+                                <LoadingDots />
+                            </div>
+                            <div v-if="typeof message.error === 'undefined'">
+                                {{ message.agent_message }}
+                            </div>
+                            <div v-else>
+                                <Message severity="error" :closable="false">{{
+                                    message.error
+                                }}</Message>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,11 +1,11 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-import {onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue";
+import { onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import UserAvatar from "@/Components/UserAvatar.vue";
 
 import ScrollPanel from "primevue/scrollpanel";
-import Avatar from "primevue/avatar";
 
 const appName = import.meta.env.VITE_APP_NAME;
 
@@ -17,18 +17,18 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-    window.addEventListener('resize', handleResize);
-})
+    window.addEventListener("resize", handleResize);
+});
 
 onBeforeUnmount(() => {
-    window.removeEventListener('resize', handleResize);
-})
+    window.removeEventListener("resize", handleResize);
+});
 
 const handleResize = () => {
     if (window.innerWidth <= 640) {
         showResponsiveNavBar.value = false;
     }
-}
+};
 </script>
 
 <template>
@@ -94,11 +94,7 @@ const handleResize = () => {
                     :class="{ 'bg-app-light': showProfileOP }"
                     class="flex gap-4 p-2 cursor-pointer rounded-lg hover:bg-app-light"
                 >
-                    <Avatar
-                        :label="$page.props.auth.user.name[0]"
-                        class="bg-[#E67E22]"
-                        shape="circle"
-                    />
+                    <UserAvatar />
                     <div class="self-center">
                         {{ $page.props.auth.user.name }}
                     </div>
