@@ -21,9 +21,12 @@ const page = usePage();
 const toast = useToast();
 
 const isSendingRequest = ref(false);
+const promptComponent = ref();
 
 onMounted(() => {
     scroll();
+
+    promptComponent.value.focusInput();
 });
 
 const handleCreateConversation = (userMessage) => {
@@ -75,6 +78,8 @@ const handleCreateConversation = (userMessage) => {
         .finally(() => {
             isSendingRequest.value = false;
 
+            promptComponent.value.focusInput();
+
             scroll();
         });
 };
@@ -83,7 +88,6 @@ const scroll = () => {
     document
         .getElementById("scroll-container")
         .scrollTo(0, document.getElementById("scroll-container").scrollHeight);
-
 };
 </script>
 
@@ -107,7 +111,12 @@ const scroll = () => {
                         <div class="font-bold">
                             {{ appName }}
                         </div>
-                        <div v-if="isSendingRequest && index === messages.length - 1">
+                        <div
+                            v-if="
+                                isSendingRequest &&
+                                index === messages.length - 1
+                            "
+                        >
                             <LoadingDots />
                         </div>
                         <div v-if="typeof message.error === 'undefined'">
@@ -124,6 +133,7 @@ const scroll = () => {
             <Prompt
                 :sending="isSendingRequest"
                 @isSubmitting="handleCreateConversation"
+                ref="promptComponent"
             />
         </Main>
     </AuthenticatedLayout>
