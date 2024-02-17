@@ -14,15 +14,20 @@
     --app-dark: #202123;
 }
 
+#scroll-container {
+    scrollbar-width: thin;
+    scrollbar-color: #00000000 #00000000;
+}
+
 @media (prefers-color-scheme: light) {
-    #scroll-container {
+    #scroll-container:hover {
         scrollbar-width: thin;
         scrollbar-color: var(--app-light) #00000000;
     }
 }
 @media (prefers-color-scheme: dark) {
-    #scroll-container {
+    #scroll-container:hover {
         scrollbar-width: thin;
-        scrollbar-color: #ffffff #00000000;
+        scrollbar-color: #ffffff transparent;
     }
 }
