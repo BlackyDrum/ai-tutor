@@ -1,6 +1,6 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { onBeforeMount, ref } from "vue";
+import {onBeforeMount, onBeforeUnmount, onMounted, ref} from "vue";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
@@ -13,10 +13,22 @@ const showProfileOP = ref(false);
 const showResponsiveNavBar = ref(true);
 
 onBeforeMount(() => {
+    handleResize();
+});
+
+onMounted(() => {
+    window.addEventListener('resize', handleResize);
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleResize);
+})
+
+const handleResize = () => {
     if (window.innerWidth <= 640) {
         showResponsiveNavBar.value = false;
     }
-});
+}
 </script>
 
 <template>
