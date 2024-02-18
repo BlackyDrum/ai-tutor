@@ -4,7 +4,6 @@ import { onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import showdown from "showdown";
-import DomPurify from "dompurify";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";

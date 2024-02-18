@@ -20,7 +20,6 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
-        "dompurify": "^3.0.8",
         "primeicons": "^6.0.1",
         "primevue": "^3.48.0",
         "showdown": "^2.1.0"
