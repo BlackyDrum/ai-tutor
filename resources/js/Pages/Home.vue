@@ -1,6 +1,6 @@
 <script setup>
 import { Head, router } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
@@ -12,6 +12,11 @@ import LoadingDots from "@/Components/LoadingDots.vue";
 const toast = useToast();
 
 const isSendingRequest = ref(false);
+const prompt = ref();
+
+onMounted(() => {
+    prompt.value.focusInput();
+});
 
 const handleCreateConversation = (userMessage) => {
     if (userMessage.length === 0 || isSendingRequest.value) return;
@@ -34,7 +39,7 @@ const handleCreateConversation = (userMessage) => {
                 detail: error.response.data.message || error.response.data,
                 life: 5000,
             });
-        })
+        });
 };
 </script>
 
@@ -49,12 +54,15 @@ const handleCreateConversation = (userMessage) => {
                 <div v-if="!isSendingRequest" class="mb-4 border rounded-full">
                     <ApplicationLogo class="w-16" />
                 </div>
-                <div v-if="!isSendingRequest" class="text-2xl font-bold">How can I help you?</div>
+                <div v-if="!isSendingRequest" class="text-2xl font-bold">
+                    How can I help you?
+                </div>
                 <LoadingDots v-if="isSendingRequest" />
             </div>
             <Prompt
                 :sending="isSendingRequest"
                 @isSubmitting="handleCreateConversation"
+                ref="prompt"
             />
         </Main>
     </AuthenticatedLayout>
