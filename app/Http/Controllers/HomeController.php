@@ -69,7 +69,7 @@ class HomeController extends Controller
 
         Messages::query()->create([
             'user_message' => $message,
-            'agent_message' => $response2->json()['response'],
+            'agent_message' => htmlspecialchars($response2->json()['response']),
             'conversation_id' => $conversationID
         ]);
 

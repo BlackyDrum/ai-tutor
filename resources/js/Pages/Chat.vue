@@ -96,6 +96,31 @@ const scroll = () => {
         .getElementById("scroll-container")
         .scrollTo(0, document.getElementById("scroll-container").scrollHeight);
 };
+
+// Decode all HTML entities inside a code tag
+const decodeHtmlEntitiesInCodeBlocks = htmlString => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+
+    const decodeHtml = (str) => {
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = str;
+        return textarea.value;
+    };
+
+    const codeElements = doc.querySelectorAll('code');
+    codeElements.forEach((code) => {
+        Array.from(code.childNodes).forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                node.nodeValue = decodeHtml(node.nodeValue);
+            }
+        });
+    });
+
+    const serializer = new XMLSerializer();
+    const serialized = serializer.serializeToString(doc);
+    return serialized.substring(serialized.indexOf('<body>') + 6, serialized.indexOf('</body>'));
+}
 </script>
 
 <template>
@@ -142,7 +167,7 @@ const scroll = () => {
                                 class="prose dark:prose-invert"
                                 v-if="typeof message.error === 'undefined'"
                                 v-html="
-                                    DomPurify.sanitize(converter.makeHtml(message.agent_message))
+                                    decodeHtmlEntitiesInCodeBlocks(converter.makeHtml(message.agent_message))
                                 "
                             ></div>
                             <div v-else>
