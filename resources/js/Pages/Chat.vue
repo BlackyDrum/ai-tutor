@@ -4,6 +4,7 @@ import { onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import showdown from "showdown";
+import DOMPurify from "dompurify";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";
@@ -97,17 +98,17 @@ const scroll = () => {
 };
 
 // Decode all HTML entities inside a code tag
-const decodeHtmlEntitiesInCodeBlocks = htmlString => {
+const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, 'text/html');
+    const doc = parser.parseFromString(htmlString, "text/html");
 
     const decodeHtml = (str) => {
-        const textarea = document.createElement('textarea');
+        const textarea = document.createElement("textarea");
         textarea.innerHTML = str;
         return textarea.value;
     };
 
-    const codeElements = doc.querySelectorAll('code');
+    const codeElements = doc.querySelectorAll("code");
     codeElements.forEach((code) => {
         Array.from(code.childNodes).forEach((node) => {
             if (node.nodeType === Node.TEXT_NODE) {
@@ -118,8 +119,11 @@ const decodeHtmlEntitiesInCodeBlocks = htmlString => {
 
     const serializer = new XMLSerializer();
     const serialized = serializer.serializeToString(doc);
-    return serialized.substring(serialized.indexOf('<body>') + 6, serialized.indexOf('</body>'));
-}
+    return serialized.substring(
+        serialized.indexOf("<body>") + 6,
+        serialized.indexOf("</body>"),
+    );
+};
 </script>
 
 <template>
@@ -166,7 +170,13 @@ const decodeHtmlEntitiesInCodeBlocks = htmlString => {
                                 class="prose dark:prose-invert"
                                 v-if="typeof message.error === 'undefined'"
                                 v-html="
-                                    decodeHtmlEntitiesInCodeBlocks(converter.makeHtml(message.agent_message))
+                                    decodeHtmlEntitiesInCodeBlocks(
+                                        DOMPurify.sanitize(
+                                            converter.makeHtml(
+                                                message.agent_message,
+                                            ),
+                                        ),
+                                    )
                                 "
                             ></div>
                             <div v-else>
