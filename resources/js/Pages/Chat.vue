@@ -26,6 +26,7 @@ const page = usePage();
 const toast = useToast();
 
 let converter = new showdown.Converter();
+const forbidTags = ["a", "img"];
 
 const isSendingRequest = ref(false);
 const promptComponent = ref();
@@ -175,6 +176,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                                             converter.makeHtml(
                                                 message.agent_message,
                                             ),
+                                            { FORBID_TAGS: forbidTags },
                                         ),
                                     )
                                 "
