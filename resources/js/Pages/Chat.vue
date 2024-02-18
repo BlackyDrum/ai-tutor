@@ -4,6 +4,7 @@ import { onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import showdown from "showdown";
+import DomPurify from "dompurify";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";
@@ -141,7 +142,7 @@ const scroll = () => {
                                 class="prose dark:prose-invert"
                                 v-if="typeof message.error === 'undefined'"
                                 v-html="
-                                    converter.makeHtml(message.agent_message)
+                                    DomPurify.sanitize(converter.makeHtml(message.agent_message))
                                 "
                             ></div>
                             <div v-else>
