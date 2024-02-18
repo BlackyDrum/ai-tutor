@@ -12,6 +12,9 @@ import ToastService from "primevue/toastservice";
 import "primevue/resources/themes/aura-light-green/theme.css";
 import "primeicons/primeicons.css";
 
+// If theme changes, ensure to update corresponding styles in 'app.css'.
+import "highlight.js/styles/github-dark.min.css";
+
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
 createInertiaApp({

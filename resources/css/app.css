@@ -16,13 +16,13 @@
 
 #scroll-container {
     scrollbar-width: thin;
-    scrollbar-color: #00000000 #00000000;
+    scrollbar-color: transparent transparent;
 }
 
 @media (prefers-color-scheme: light) {
     #scroll-container:hover {
         scrollbar-width: thin;
-        scrollbar-color: var(--app-light) #00000000;
+        scrollbar-color: var(--app-light) transparent;
     }
 }
 @media (prefers-color-scheme: dark) {
@@ -30,4 +30,14 @@
         scrollbar-width: thin;
         scrollbar-color: #ffffff transparent;
     }
+}
+
+/*
+    When updating 'highlight.js' styling in 'app.js',
+    synchronize the background color here with the 'code'
+    tag's new background to maintain consistency with
+    tailwind's 'typography' plugin.
+*/
+pre {
+    background-color: #0D1117;
 }

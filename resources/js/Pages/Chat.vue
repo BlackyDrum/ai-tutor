@@ -5,6 +5,7 @@ import { useToast } from "primevue/usetoast";
 
 import showdown from "showdown";
 import DOMPurify from "dompurify";
+import hljs from "highlight.js";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";
@@ -32,9 +33,11 @@ const isSendingRequest = ref(false);
 const promptComponent = ref();
 
 onMounted(() => {
-    scroll();
+    hljs.highlightAll();
 
     promptComponent.value.focusInput();
+
+    scroll();
 });
 
 const handleCreateConversation = (userMessage) => {
@@ -87,6 +90,8 @@ const handleCreateConversation = (userMessage) => {
             isSendingRequest.value = false;
 
             promptComponent.value.focusInput();
+
+            hljs.highlightAll();
 
             scroll();
         });
