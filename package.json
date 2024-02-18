@@ -8,6 +8,7 @@
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
         "@tailwindcss/forms": "^0.5.3",
+        "@tailwindcss/typography": "^0.5.10",
         "@vitejs/plugin-vue": "^5.0.0",
         "autoprefixer": "^10.4.12",
         "axios": "^1.6.4",
@@ -20,6 +21,7 @@
     },
     "dependencies": {
         "primeicons": "^6.0.1",
-        "primevue": "^3.48.0"
+        "primevue": "^3.48.0",
+        "showdown": "^2.1.0"
     }
 }

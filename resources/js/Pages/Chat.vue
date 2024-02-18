@@ -3,6 +3,8 @@ import { Head, usePage } from "@inertiajs/vue3";
 import { onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
+import showdown from "showdown";
+
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Main from "@/Layouts/Main.vue";
 import Prompt from "@/Components/Prompt.vue";
@@ -21,6 +23,8 @@ const appName = import.meta.env.VITE_APP_NAME;
 
 const page = usePage();
 const toast = useToast();
+
+let converter = new showdown.Converter();
 
 const isSendingRequest = ref(false);
 const promptComponent = ref();
@@ -121,7 +125,7 @@ const scroll = () => {
                                 shape="circle"
                             />
                         </div>
-                        <div class="flex flex-col">
+                        <div class="flex flex-col w-full">
                             <div class="font-bold">
                                 {{ appName }}
                             </div>
@@ -133,9 +137,13 @@ const scroll = () => {
                             >
                                 <LoadingDots />
                             </div>
-                            <div v-if="typeof message.error === 'undefined'">
-                                {{ message.agent_message }}
-                            </div>
+                            <div
+                                class="prose dark:prose-invert"
+                                v-if="typeof message.error === 'undefined'"
+                                v-html="
+                                    converter.makeHtml(message.agent_message)
+                                "
+                            ></div>
                             <div v-else>
                                 <Message severity="error" :closable="false">{{
                                     message.error
