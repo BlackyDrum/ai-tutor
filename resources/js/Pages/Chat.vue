@@ -146,7 +146,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                         <div class="max-md:hidden">
                             <UserAvatar />
                         </div>
-                        <div class="flex flex-col min-w-0">
+                        <div class="flex flex-col min-w-0 w-full">
                             <div class="font-bold">You</div>
                             <div class="break-words">
                                 {{ message.user_message }}
@@ -160,7 +160,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                                 shape="circle"
                             />
                         </div>
-                        <div class="flex flex-col min-w-0">
+                        <div class="flex flex-col min-w-0 w-full">
                             <div class="font-bold">
                                 {{ appName }}
                             </div>
