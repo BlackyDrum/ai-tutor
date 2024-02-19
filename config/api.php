@@ -14,4 +14,8 @@ return [
     'client_id' => env('API_CLIENT_ID'),
 
     'client_secret' => env('API_CLIENT_SECRET'),
+
+    'max_tokens' => 1000, // max tokens per conversation
+
+    'temperature' => 0.5,
 ];

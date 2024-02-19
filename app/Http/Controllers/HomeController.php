@@ -32,10 +32,10 @@ class HomeController extends Controller
         $message = $request->input('message');
 
         $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
-            'agent_id' => 'da9bdacf-9a0f-4e77-bc48-5e6656b87674',
+            'agent_id' => 'da9bdacf-9a0f-4e77-bc48-5e6656b87674', // TODO: Make agent somehow changeable and dynamic
             'creating_user' => config('api.username'),
-            'max_tokens' => 1000,
-            'temperature' => 0.5,
+            'max_tokens' => config('api.max_tokens'),
+            'temperature' => config('api.temperature'),
         ]);
 
         if ($response1->failed()) {
@@ -51,8 +51,8 @@ class HomeController extends Controller
             'id' => $conversationID,
             'agent_id' => 'da9bdacf-9a0f-4e77-bc48-5e6656b87674',
             'creating_user' => config('api.username'),
-            'max_tokens' => 1000,
-            'temperature' => 0.5,
+            'max_tokens' => config('api.max_tokens'),
+            'temperature' => config('api.temperature'),
             'user_id' => Auth::id(),
         ]);
 
