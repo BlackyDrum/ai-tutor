@@ -146,9 +146,9 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                         <div class="max-md:hidden">
                             <UserAvatar />
                         </div>
-                        <div class="flex flex-col">
+                        <div class="flex flex-col min-w-0">
                             <div class="font-bold">You</div>
-                            <div>
+                            <div class="break-words">
                                 {{ message.user_message }}
                             </div>
                         </div>
@@ -160,7 +160,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                                 shape="circle"
                             />
                         </div>
-                        <div class="flex flex-col w-full">
+                        <div class="flex flex-col min-w-0">
                             <div class="font-bold">
                                 {{ appName }}
                             </div>
@@ -173,7 +173,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                                 <LoadingDots />
                             </div>
                             <div
-                                class="prose dark:prose-invert"
+                                class="prose break-words dark:prose-invert"
                                 v-if="typeof message.error === 'undefined'"
                                 v-html="
                                     decodeHtmlEntitiesInCodeBlocks(
