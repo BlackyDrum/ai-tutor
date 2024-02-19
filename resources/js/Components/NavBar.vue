@@ -1,5 +1,5 @@
 <script setup>
-import { router } from "@inertiajs/vue3";
+import { router, Link } from "@inertiajs/vue3";
 import { onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
@@ -45,9 +45,9 @@ const handleResize = () => {
     >
         <nav class="h-full w-full p-2">
             <div class="h-full w-full flex flex-col">
-                <div
-                    @click="router.get('/')"
-                    class="flex p-2 rounded-lg cursor-pointer hover:bg-app-light"
+                <Link
+                    href="/"
+                    class="block flex p-2 rounded-lg cursor-pointer hover:bg-app-light"
                 >
                     <div>
                         <ApplicationLogo class="w-8" />
@@ -58,10 +58,23 @@ const handleResize = () => {
                     <div class="self-center ml-auto">
                         <span class="pi pi-pencil"></span>
                     </div>
-                </div>
+                </Link>
                 <div class="h-[60%] flex-1">
                     <ScrollPanel class="w-full h-full p-2">
-                        <p v-for="i in 100">Chat #{{ i }}</p>
+                        <div
+                            v-for="(conversation, index) in $page.props.auth
+                                .history"
+                        >
+                            <Link
+                                :href="`/chat/${conversation.id}`"
+                                :class="{'bg-app-dark': conversation.id === $page.url.slice($page.url.lastIndexOf('/') + 1)}"
+                                class="block my-1 p-2 rounded-lg cursor-pointer hover:bg-app-dark"
+                            >
+                                Chat #{{
+                                    $page.props.auth.history.length - index
+                                }}
+                            </Link>
+                        </div>
                     </ScrollPanel>
                 </div>
                 <div class="w-full relative">

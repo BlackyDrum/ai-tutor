@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Conversations;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -29,10 +31,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $conversations = Auth::check() ?
+            Conversations::query()->where('user_id', '=', Auth::id())->orderBy('created_at', 'desc')->get() : [];
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'history' => $conversations,
             ],
         ];
     }

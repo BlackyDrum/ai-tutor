@@ -17,4 +17,18 @@ class Conversations extends Model
         'id',
         'user_id',
     ];
+
+    protected $hidden = [
+        'agent_id',
+        'creating_user',
+        'max_tokens',
+        'temperature',
+        'user_id',
+        'updated_at',
+        'created_at',
+    ];
+
+    protected $casts = [
+        'id' => 'string',
+    ];
 }
