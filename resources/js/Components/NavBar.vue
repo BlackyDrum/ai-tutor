@@ -14,7 +14,7 @@ const showResponsiveNavBar = ref(true);
 const scrollPanel = ref();
 
 onMounted(() => {
-    const scrollPosition = router.restore("scroll-position") || 0;
+    const scrollPosition = router.restore("scroll-position") ?? 0;
     scrollTo(scrollPosition);
 
     handleResize();

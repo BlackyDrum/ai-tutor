@@ -84,7 +84,7 @@ const handleCreateConversation = (userMessage) => {
         })
         .catch((error) => {
             page.props.messages[page.props.messages.length - 1].error =
-                error.response.data.message || error.response.data;
+                error.response.data.message ?? error.response.data;
         })
         .finally(() => {
             isSendingRequest.value = false;
