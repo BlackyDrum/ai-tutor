@@ -139,57 +139,63 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
         <Main>
             <div
                 id="scroll-container"
-                class="w-full flex-1 pb-8 px-4 overflow-y-auto max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"
+                class="w-full flex flex-1 justify-center mb-6 px-4 overflow-y-auto"
             >
-                <div v-for="(message, index) in messages" :key="message.id">
-                    <div class="flex gap-3 mt-6">
-                        <div class="max-md:hidden">
-                            <UserAvatar />
-                        </div>
-                        <div class="flex flex-col min-w-0 w-full">
-                            <div class="font-bold">You</div>
-                            <div class="break-words">
-                                {{ message.user_message }}
+                <div
+                    class="w-full max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"
+                >
+                    <div v-for="(message, index) in messages" :key="message.id">
+                        <div class="flex gap-3 mt-6">
+                            <div class="max-md:hidden">
+                                <UserAvatar />
+                            </div>
+                            <div class="flex flex-col min-w-0 w-full">
+                                <div class="font-bold">You</div>
+                                <div class="break-words">
+                                    {{ message.user_message }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="flex gap-3 mt-6">
-                        <div class="max-md:hidden">
-                            <Avatar
-                                image="/static/img/app-logo.png"
-                                shape="circle"
-                            />
-                        </div>
-                        <div class="flex flex-col min-w-0 w-full">
-                            <div class="font-bold">
-                                {{ appName }}
+                        <div class="flex gap-3 mt-6">
+                            <div class="max-md:hidden">
+                                <Avatar
+                                    image="/static/img/app-logo.png"
+                                    shape="circle"
+                                />
                             </div>
-                            <div
-                                v-if="
-                                    isSendingRequest &&
-                                    index === messages.length - 1
-                                "
-                            >
-                                <LoadingDots />
-                            </div>
-                            <div
-                                class="prose break-words dark:prose-invert"
-                                v-if="typeof message.error === 'undefined'"
-                                v-html="
-                                    decodeHtmlEntitiesInCodeBlocks(
-                                        DOMPurify.sanitize(
-                                            converter.makeHtml(
-                                                message.agent_message,
+                            <div class="flex flex-col min-w-0 w-full">
+                                <div class="font-bold">
+                                    {{ appName }}
+                                </div>
+                                <div
+                                    v-if="
+                                        isSendingRequest &&
+                                        index === messages.length - 1
+                                    "
+                                >
+                                    <LoadingDots />
+                                </div>
+                                <div
+                                    class="prose break-words dark:prose-invert"
+                                    v-if="typeof message.error === 'undefined'"
+                                    v-html="
+                                        decodeHtmlEntitiesInCodeBlocks(
+                                            DOMPurify.sanitize(
+                                                converter.makeHtml(
+                                                    message.agent_message,
+                                                ),
+                                                { FORBID_TAGS: forbidTags },
                                             ),
-                                            { FORBID_TAGS: forbidTags },
-                                        ),
-                                    )
-                                "
-                            ></div>
-                            <div v-else>
-                                <Message severity="error" :closable="false">{{
-                                    message.error
-                                }}</Message>
+                                        )
+                                    "
+                                ></div>
+                                <div v-else>
+                                    <Message
+                                        severity="error"
+                                        :closable="false"
+                                        >{{ message.error }}</Message
+                                    >
+                                </div>
                             </div>
                         </div>
                     </div>
