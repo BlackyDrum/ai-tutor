@@ -10,7 +10,7 @@ defineProps({
 
 const appName = import.meta.env.VITE_APP_NAME;
 
-const emit = defineEmits(["isSubmitting"]);
+const emit = defineEmits(["is-submitting"]);
 
 const page = usePage();
 
@@ -18,7 +18,7 @@ const userMessage = ref("");
 const input = ref();
 
 const handleSubmit = () => {
-    emit("isSubmitting", userMessage.value);
+    emit("is-submitting", userMessage.value);
 
     userMessage.value = "";
 };

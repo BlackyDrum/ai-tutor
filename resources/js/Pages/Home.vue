@@ -61,7 +61,7 @@ const handleCreateConversation = (userMessage) => {
             </div>
             <Prompt
                 :sending="isSendingRequest"
-                @isSubmitting="handleCreateConversation"
+                @is-submitting="handleCreateConversation"
                 ref="prompt"
             />
         </Main>

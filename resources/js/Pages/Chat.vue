@@ -203,7 +203,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
             </div>
             <Prompt
                 :sending="isSendingRequest"
-                @isSubmitting="handleCreateConversation"
+                @is-submitting="handleCreateConversation"
                 ref="promptComponent"
             />
         </Main>
