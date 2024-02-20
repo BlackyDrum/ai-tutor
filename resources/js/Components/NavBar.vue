@@ -11,18 +11,29 @@ const appName = import.meta.env.VITE_APP_NAME;
 
 const showProfileOP = ref(false);
 const showResponsiveNavBar = ref(true);
-
-onBeforeMount(() => {
-    handleResize();
-});
+const scrollPanel = ref();
 
 onMounted(() => {
+    const scrollPosition = router.restore("scroll-position") || 0;
+    scrollTo(scrollPosition);
+
+    handleResize();
+
     window.addEventListener("resize", handleResize);
 });
 
 onBeforeUnmount(() => {
+    router.remember(
+        scrollPanel.value.$el.children[0].children[0].scrollTop,
+        "scroll-position",
+    );
+
     window.removeEventListener("resize", handleResize);
 });
+
+const scrollTo = (pos) => {
+    scrollPanel.value.$el.children[0].children[0].scrollTo(0, pos);
+};
 
 const handleResize = () => {
     if (window.innerWidth <= 768) {
@@ -60,14 +71,20 @@ const handleResize = () => {
                     </div>
                 </Link>
                 <div class="min-h-0 flex-1">
-                    <ScrollPanel class="w-full h-full p-2">
+                    <ScrollPanel ref="scrollPanel" class="w-full h-full p-2">
                         <div
                             v-for="(conversation, index) in $page.props.auth
                                 .history"
                         >
                             <Link
                                 :href="`/chat/${conversation.id}`"
-                                :class="{'bg-app-dark': conversation.id === $page.url.slice($page.url.lastIndexOf('/') + 1)}"
+                                :class="{
+                                    'bg-app-dark':
+                                        conversation.id ===
+                                        $page.url.slice(
+                                            $page.url.lastIndexOf('/') + 1,
+                                        ),
+                                }"
                                 class="block my-1 p-2 rounded-lg cursor-pointer hover:bg-app-dark"
                             >
                                 Chat #{{
