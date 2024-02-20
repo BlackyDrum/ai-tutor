@@ -54,7 +54,7 @@ const handleCreateConversation = (userMessage) => {
                 <div v-if="!isSendingRequest" class="mb-4 border rounded-full">
                     <ApplicationLogo class="w-16" />
                 </div>
-                <div v-if="!isSendingRequest" class="text-2xl font-bold">
+                <div v-if="!isSendingRequest" class="text-2xl text-center font-bold">
                     How can I help you?
                 </div>
                 <LoadingDots v-if="isSendingRequest" />
