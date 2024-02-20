@@ -59,7 +59,7 @@ const handleResize = () => {
                         <span class="pi pi-pencil"></span>
                     </div>
                 </Link>
-                <div class="h-[60%] flex-1">
+                <div class="min-h-0 flex-1">
                     <ScrollPanel class="w-full h-full p-2">
                         <div
                             v-for="(conversation, index) in $page.props.auth
