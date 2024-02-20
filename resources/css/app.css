@@ -16,17 +16,17 @@
 
 #scroll-container {
     scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
+    scrollbar-color: var(--app-light) transparent;
 }
 
 @media (prefers-color-scheme: light) {
-    #scroll-container:hover {
+    #scroll-container {
         scrollbar-width: thin;
         scrollbar-color: var(--app-light) transparent;
     }
 }
 @media (prefers-color-scheme: dark) {
-    #scroll-container:hover {
+    #scroll-container {
         scrollbar-width: thin;
         scrollbar-color: #ffffff transparent;
     }
