@@ -31,6 +31,7 @@ const forbidTags = ["a", "img"];
 
 const isSendingRequest = ref(false);
 const promptComponent = ref();
+const scrollContainer = ref();
 
 onMounted(() => {
     hljs.highlightAll();
@@ -98,9 +99,7 @@ const handleCreateConversation = (userMessage) => {
 };
 
 const scroll = () => {
-    document
-        .getElementById("scroll-container")
-        .scrollTo(0, document.getElementById("scroll-container").scrollHeight);
+    scrollContainer.value.scrollTo(0, scrollContainer.value.scrollHeight);
 };
 
 // Decode all HTML entities inside a code tag
@@ -139,6 +138,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
         <Main>
             <div
                 id="scroll-container"
+                ref="scrollContainer"
                 class="w-full flex flex-1 justify-center mb-6 px-4 overflow-y-auto"
             >
                 <div
