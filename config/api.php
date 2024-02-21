@@ -17,6 +17,8 @@ return [
 
     'max_requests' => 100, // Maximum number of messages per day per user
 
+    'remaining_messages_alert_levels' => [10, 25, 50], // Show info when the user has n messages left for the day
+
     'max_tokens' => 1000, // Maximum number of tokens in the generated response
 
     'temperature' => 0.5,

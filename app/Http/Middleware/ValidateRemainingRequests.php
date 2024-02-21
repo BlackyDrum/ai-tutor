@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\ChatController;
 use App\Models\Messages;
 use Carbon\Carbon;
 use Closure;
@@ -18,21 +19,9 @@ class ValidateRemainingRequests
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $now = Carbon::now();
-
-        $oneDayAgo = $now->copy()->subDay();
-
         $maxRequests = config('api.max_requests');
 
-        $messages = Messages::query()
-            ->join('conversations', 'messages.conversation_id', '=', 'conversations.id')
-            ->where('conversations.user_id', '=', Auth::id())
-            ->whereBetween('messages.created_at', [$oneDayAgo, $now])
-            ->orderBy('messages.created_at', 'desc')
-            // It's important to limit the query by 'maxRequests' to avoid inconsistency
-            // in the error message if 'api.max_requests' is set to a lower value in production.
-            ->limit($maxRequests)
-            ->get(['messages.created_at']);
+        $messages = ChatController::getUserMessagesFromLastDay();
 
         if ($messages->count() >= $maxRequests) {
             $firstMessageTime = $messages->reverse()->first()->created_at;
