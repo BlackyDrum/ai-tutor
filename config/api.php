@@ -21,5 +21,7 @@ return [
 
     'max_tokens' => 1000, // Maximum number of tokens in the generated response
 
+    'max_message_length' => 2048,
+
     'temperature' => 0.5,
 ];
