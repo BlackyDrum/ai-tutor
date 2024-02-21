@@ -15,6 +15,8 @@ return [
 
     'client_secret' => env('API_CLIENT_SECRET'),
 
+    'max_requests' => 100, // Maximum number of messages per day per user
+
     'max_tokens' => 1000, // Maximum number of tokens in the generated response
 
     'temperature' => 0.5,
