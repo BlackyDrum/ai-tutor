@@ -79,6 +79,15 @@ const handleCreateConversation = (userMessage) => {
                 id,
                 updated_at,
             });
+
+            if (typeof result.data.info !== 'undefined') {
+                toast.add({
+                    severity: "info",
+                    summary: "Info",
+                    detail: result.data.info,
+                    life: 5000,
+                });
+            }
         })
         .then(() => {
             scroll();

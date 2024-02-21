@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomeController;
+use App\Http\Middleware\ValidateRemainingRequests;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,11 +19,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function() {
     Route::get('/', [HomeController::class, 'show'])->name('home');
 
-    Route::post('/create-conversation', [HomeController::class, 'createConversation'])->name('create-conversation');
-
     Route::get('/chat/{id}', [ChatController::class, 'show'])->name('chat');
 
-    Route::post('/chat/chat-agent', [ChatController::class, 'chat'])->name('chat-agent');
+    Route::middleware(ValidateRemainingRequests::class)->group(function() {
+        Route::post('/create-conversation', [HomeController::class, 'createConversation'])->name('create-conversation');
+
+        Route::post('/chat/chat-agent', [ChatController::class, 'chat'])->name('chat-agent');
+    });
 });
 
 require __DIR__.'/auth.php';
