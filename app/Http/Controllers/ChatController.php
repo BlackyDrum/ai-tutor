@@ -58,7 +58,7 @@ class ChatController extends Controller
         ]);
 
         $maxRequests = config('api.max_requests');
-        $remainingMessagesAlertLevels  = config('api.remaining_messages_alert_levels');
+        $remainingMessagesAlertLevels  = config('api.remaining_requests_alert_levels');
 
         $messages = self::getUserMessagesFromLastDay();
 
