@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function() {
 
         Route::get('/admin/agents', [AdminController::class, 'showAgents'])->name('agents');
         Route::delete('/admin/agents', [AdminController::class, 'deleteAgent'])->name('delete-agent');
+        Route::patch('/admin/agents/active', [AdminController::class, 'setActive'])->name('set-active');
         Route::get('/admin/create-agent', [AdminController::class, 'showCreateAgent'])->name('create-agent');
         Route::post('/admin/agent/create', [AdminController::class, 'createAgent'])->name('createAgent');
     });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Agents;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
@@ -18,11 +19,12 @@ class AdminController extends Controller
     public function showAgents()
     {
         $agents = Agents::query()
-            ->join('users', 'users.id', '=', 'agents.user_id')
+            ->leftJoin('users', 'users.id', '=', 'agents.user_id')
             ->select([
                 'agents.*',
                 'users.name AS creator'
             ])
+            ->orderBy('agents.created_at', 'desc')
             ->get();
 
         return Inertia::render('Agents', [
@@ -51,6 +53,27 @@ class AdminController extends Controller
 
         return response()->json(['id' => $request->input('id')]);
 
+    }
+
+    public function setActive(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|string|exists:agents,id'
+        ]);
+
+        DB::beginTransaction();
+
+        Agents::query()
+            ->where('active', '=', true)
+            ->update(['active' => false]);
+
+        Agents::query()
+            ->find($request->input('id'))
+            ->update(['active' => true]);
+
+        DB::commit();
+
+        return response()->json(['id' => $request->input('id')]);
     }
 
     public function createAgent(Request $request)
@@ -87,6 +110,7 @@ class AdminController extends Controller
             'instructions' => $request->input('instructions'),
             'creating_user' => config('api.username'),
             'user_id' => Auth::id(),
+            'active' => Agents::query()->count() == 0
         ]);
 
         return back();

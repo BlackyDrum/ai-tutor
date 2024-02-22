@@ -21,6 +21,7 @@ const page = usePage();
 const tableHeadBackground = ref("#DADADA");
 const selectedAgent = ref(null);
 const isDeleting = ref(false);
+const isSettingActive = ref(false);
 
 const confirmAgentDeletion = () => {
     if (!selectedAgent.value) {
@@ -72,6 +73,41 @@ const confirmAgentDeletion = () => {
         reject: () => {},
     });
 };
+
+const setAgentActive = () => {
+    if (!selectedAgent.value) {
+        toast.add({
+            severity: "info",
+            summary: "Info",
+            detail: "You need to select an agent",
+            life: 5000,
+        });
+        return;
+    }
+
+    window.axios.patch('/admin/agents/active', {
+        id: selectedAgent.value.id
+    })
+        .then(result => {
+            const oldActive = page.props.agents.find(agent => agent.active);
+            oldActive.active = false;
+
+            const newActive = page.props.agents.find(agent => agent.id === result.data.id);
+            newActive.active = true;
+        })
+        .catch(error => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail:
+                    error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
+        })
+        .finally(() => {
+            selectedAgent.value = null;
+        })
+}
 </script>
 
 <template>
@@ -84,6 +120,17 @@ const confirmAgentDeletion = () => {
             <div class="w-full">
                 <div class="flex">
                     <div class="flex gap-3 ml-auto mb-5">
+                        <Button
+                            class="text-black border-gray-300 font-medium"
+                            label="Set Active"
+                            severity="info"
+                            :icon="
+                                isSettingActive
+                                    ? 'pi pi-spin pi-spinner'
+                                    : 'pi pi-angle-double-up'
+                            "
+                            @click="setAgentActive"
+                        />
                         <Button
                             class="text-black border-gray-300 bg-white font-medium"
                             label="Delete"

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agents;
 use App\Models\Conversations;
 use App\Models\Messages;
 use Illuminate\Http\Request;
@@ -31,8 +32,10 @@ class HomeController extends Controller
 
         $message = $request->input('message');
 
+        $agent = Agents::query()->where('active', '=', true)->first();
+
         $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
-            'agent_id' => 'da9bdacf-9a0f-4e77-bc48-5e6656b87674', // TODO: Make agent somehow changeable and dynamic
+            'agent_id' => $agent->id,
             'creating_user' => config('api.username'),
             'max_tokens' => config('api.max_tokens'),
             'temperature' => config('api.temperature'),
@@ -49,7 +52,7 @@ class HomeController extends Controller
 
         Conversations::query()->create([
             'id' => $conversationID,
-            'agent_id' => 'da9bdacf-9a0f-4e77-bc48-5e6656b87674',
+            'agent_id' => $agent->id,
             'creating_user' => config('api.username'),
             'max_tokens' => config('api.max_tokens'),
             'temperature' => config('api.temperature'),

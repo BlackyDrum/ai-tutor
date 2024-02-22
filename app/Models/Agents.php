@@ -17,7 +17,8 @@ class Agents extends Model
         'response_shape',
         'instructions',
         'active',
-        'creating_user'
+        'creating_user',
+        'user_id'
     ];
 
     protected $casts = [
