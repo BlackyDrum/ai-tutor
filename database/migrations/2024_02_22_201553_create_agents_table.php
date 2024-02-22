@@ -20,7 +20,10 @@ return new class extends Migration
             $table->text('instructions');
             $table->string('creating_user');
             $table->boolean('active')->default(false);
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
