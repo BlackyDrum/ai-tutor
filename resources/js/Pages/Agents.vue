@@ -137,7 +137,7 @@ const setAgentActive = () => {
         >
             <div class="w-full">
                 <div class="flex">
-                    <div class="flex gap-3 max-md:mr-auto md:ml-auto mb-5">
+                    <div class="flex gap-3 mr-auto mb-5">
                         <Button
                             class="text-black border-gray-300 font-medium"
                             label="Set Active"
