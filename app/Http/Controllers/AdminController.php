@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agents;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
 class AdminController extends Controller
@@ -10,5 +12,48 @@ class AdminController extends Controller
     public function show()
     {
         return Inertia::render('AdminDashboard');
+    }
+
+    public function showCreateAgent()
+    {
+        return Inertia::render('CreateAgent');
+    }
+
+    public function createAgent(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|unique:agents,name',
+            'context' => 'required|string',
+            'first_message' => 'required|string',
+            'response_shape' => 'required|string',
+            'instructions' => 'required|string'
+        ]);
+
+        $token = HomeController::getBearerToken();
+
+        $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-agent', [
+            'name' => $request->input('name'),
+            'context' => $request->input('context'),
+            'first_message' => $request->input('first_message'),
+            'response_shape' => $request->input('response_shape'),
+            'instructions' => $request->input('instructions'),
+            'creating_user' => config('api.username')
+        ]);
+
+        if ($response->failed()) {
+            return back()->withErrors(['message' => $response->reason()]);
+        }
+
+        Agents::query()->create([
+            'id' => $response->json()['id'],
+            'name' => $request->input('name'),
+            'context' => $request->input('context'),
+            'first_message' => $request->input('first_message'),
+            'response_shape' => $request->input('response_shape'),
+            'instructions' => $request->input('instructions'),
+            'creating_user' => config('api.username')
+        ]);
+
+        return back();
     }
 }

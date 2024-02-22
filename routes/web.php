@@ -31,6 +31,9 @@ Route::middleware(['auth'])->group(function() {
 
     Route::middleware(EnsureIsAdmin::class)->group(function() {
         Route::get('/admin', [AdminController::class, 'show'])->name('admin');
+
+        Route::get('/admin/create-agent', [AdminController::class, 'showCreateAgent'])->name('create-agent');
+        Route::post('/admin/agent/create', [AdminController::class, 'createAgent'])->name('createAgent');
     });
 });
 

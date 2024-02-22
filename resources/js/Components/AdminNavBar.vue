@@ -1,6 +1,6 @@
 <script setup>
 import { router, Link } from "@inertiajs/vue3";
-import { ref } from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
@@ -9,22 +9,39 @@ const appName = import.meta.env.VITE_APP_NAME;
 const showResponsiveNavBar = ref(true);
 
 const menuItems = [
-    { groupName: "", items: [{ label: "Dashboard", url: "admin" }] },
+    { groupName: "", items: [{ label: "Dashboard", url: "/admin" }] },
     {
         groupName: "Agents",
         items: [
-            { label: "All agents", url: "admin/agents" },
-            { label: "Create agent", url: "admin/create-agent" },
+            { label: "All agents", url: "/admin/agents" },
+            { label: "Create agent", url: "/admin/create-agent" },
         ],
     },
     {
         groupName: "Embeddings",
         items: [
-            { label: "All embeddings", url: "admin/embeddings" },
-            { label: "Create embedding", url: "admin/create-embedding" },
+            { label: "All embeddings", url: "/admin/embeddings" },
+            { label: "Create embedding", url: "/admin/create-embedding" },
         ],
     },
 ];
+
+onMounted(() => {
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("resize", handleResize);
+});
+
+
+const handleResize = () => {
+    if (window.innerWidth <= 768) {
+        showResponsiveNavBar.value = false;
+    }
+};
 </script>
 
 <template>
@@ -36,7 +53,7 @@ const menuItems = [
     </div>
 
     <div
-        class="h-dvh w-[200px] lg:w-[260px] z-20 bg-admin-light flex-shrink-0 max-sm:fixed"
+        class="h-dvh w-[200px] lg:w-[260px] z-20 bg-admin-dark flex-shrink-0 max-sm:fixed"
         :class="{ hidden: !showResponsiveNavBar }"
     >
         <nav class="h-full w-full p-2">
@@ -59,7 +76,7 @@ const menuItems = [
                             class="w-full p-2 rounded-lg font-medium cursor-pointer"
                             :class="{
                                 'bg-[#EEF2FF] text-[#4338CC] font-bold':
-                                    $page.url.substring(1) === item.url,
+                                    $page.url === item.url,
                             }"
                         >
                             <div>
@@ -68,7 +85,7 @@ const menuItems = [
                         </li>
                     </ul>
                 </div>
-                <hr class="h-px bg-admin-dark border-0" />
+                <hr class="h-px bg-admin-light border-0" />
                 <ul class="p-1 mt-4">
                     <li
                         class="w-full p-2 rounded-lg font-medium cursor-pointer"
