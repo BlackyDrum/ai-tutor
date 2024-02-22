@@ -189,21 +189,3 @@ const setAgentActive = () => {
         </div>
     </AdminLayout>
 </template>
-
-<style>
-.p-highlight {
-    background-color: #d4dbff;
-    color: black;
-}
-
-.p-checkbox .p-highlight {
-    background-color: #007bff;
-}
-
-.p-overlaypanel .p-overlaypanel-content {
-    padding: 0.25rem;
-}
-.p-dialog-content {
-    height: 100%;
-}
-</style>
