@@ -167,7 +167,7 @@ const setAgentActive = () => {
                     selectionMode="single"
                     class="shadow-lg"
                     scrollable
-                    scrollHeight="40rem"
+                    scrollHeight="flex"
                 >
                     <template #empty> No agents created yet </template>
                     <Column
