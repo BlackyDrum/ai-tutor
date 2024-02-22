@@ -176,12 +176,14 @@ const setAgentActive = () => {
                         :headerStyle="{ background: tableHeadBackground }"
                         :field="item.field"
                         :header="item.header"
+                        sortable
                     ></Column>
 
                     <Column
                         :headerStyle="{ background: tableHeadBackground }"
                         field="active"
                         header="Active"
+                        sortable
                     >
                         <template #body="{ data, field }">
                             <div
