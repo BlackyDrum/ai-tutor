@@ -184,6 +184,7 @@ const setAgentActive = () => {
                         field="active"
                         header="Active"
                         sortable
+                        class="text-center"
                     >
                         <template #body="{ data, field }">
                             <div
