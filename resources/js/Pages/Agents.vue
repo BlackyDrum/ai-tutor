@@ -43,6 +43,8 @@ const confirmAgentDeletion = () => {
         rejectClass: "p-button-secondary p-button-outlined",
         acceptClass: "p-button-danger",
         accept: () => {
+            isDeleting.value = true;
+
             window.axios
                 .delete("/admin/agents", {
                     data: {
@@ -68,6 +70,8 @@ const confirmAgentDeletion = () => {
                 })
                 .finally(() => {
                     selectedAgent.value = null;
+
+                    isDeleting.value = false;
                 });
         },
         reject: () => {},
@@ -84,6 +88,8 @@ const setAgentActive = () => {
         });
         return;
     }
+
+    isSettingActive.value = true;
 
     window.axios.patch('/admin/agents/active', {
         id: selectedAgent.value.id
@@ -106,6 +112,8 @@ const setAgentActive = () => {
         })
         .finally(() => {
             selectedAgent.value = null;
+
+            isSettingActive.value = false;
         })
 }
 </script>
