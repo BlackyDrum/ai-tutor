@@ -57,7 +57,7 @@ const handleForm = () => {
         <Head title="Create Agent" />
 
         <div
-            class="h-dvh p-5 w-full flex flex-wrap items-center justify-center bg-admin-light overflow-y-auto"
+            class="h-dvh w-full p-5 flex flex-wrap items-center justify-center bg-admin-light overflow-y-auto"
         >
             <div
                 class="w-full flex flex-wrap gap-7 max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"

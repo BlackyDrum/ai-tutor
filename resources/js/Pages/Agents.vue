@@ -1,5 +1,5 @@
 <script setup>
-import { Head, useForm, usePage } from "@inertiajs/vue3";
+import { Head, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
@@ -23,6 +23,14 @@ const selectedAgent = ref(null);
 const isDeleting = ref(false);
 const isSettingActive = ref(false);
 
+const tableItems = [
+    { header: "ID", field: "id" },
+    { header: "Name", field: "name" },
+    { header: "Instructions", field: "instructions" },
+    { header: "Created At", field: "created_at" },
+    { header: "Created By", field: "creator" },
+];
+
 const confirmAgentDeletion = () => {
     if (!selectedAgent.value) {
         toast.add({
@@ -35,8 +43,8 @@ const confirmAgentDeletion = () => {
     }
 
     confirm.require({
-        message: "Do you want to delete this record?",
-        header: "Danger Zone",
+        message: "Do you want to delete this agent?",
+        header: "Deleting agent",
         icon: "pi pi-info-circle",
         rejectLabel: "Cancel",
         acceptLabel: "Delete",
@@ -91,22 +99,24 @@ const setAgentActive = () => {
 
     isSettingActive.value = true;
 
-    window.axios.patch('/admin/agents/active', {
-        id: selectedAgent.value.id
-    })
-        .then(result => {
-            const oldActive = page.props.agents.find(agent => agent.active);
+    window.axios
+        .patch("/admin/agents/active", {
+            id: selectedAgent.value.id,
+        })
+        .then((result) => {
+            const oldActive = page.props.agents.find((agent) => agent.active);
             oldActive.active = false;
 
-            const newActive = page.props.agents.find(agent => agent.id === result.data.id);
+            const newActive = page.props.agents.find(
+                (agent) => agent.id === result.data.id,
+            );
             newActive.active = true;
         })
-        .catch(error => {
+        .catch((error) => {
             toast.add({
                 severity: "error",
                 summary: "Error",
-                detail:
-                    error.response.data.message ?? error.response.data,
+                detail: error.response.data.message ?? error.response.data,
                 life: 5000,
             });
         })
@@ -114,8 +124,8 @@ const setAgentActive = () => {
             selectedAgent.value = null;
 
             isSettingActive.value = false;
-        })
-}
+        });
+};
 </script>
 
 <template>
@@ -123,7 +133,7 @@ const setAgentActive = () => {
         <Head title="Create Agent" />
 
         <div
-            class="h-dvh p-5 w-full flex flex-wrap items-center justify-center bg-admin-light overflow-y-auto"
+            class="h-dvh w-full p-5 flex flex-wrap items-center justify-center bg-admin-light overflow-y-auto"
         >
             <div class="w-full">
                 <div class="flex">
@@ -153,38 +163,21 @@ const setAgentActive = () => {
                 </div>
                 <DataTable
                     v-model:selection="selectedAgent"
-                    selectionMode="single"
                     :value="$page.props.agents"
+                    selectionMode="single"
                     class="shadow-lg"
                     scrollable
                     scrollHeight="40rem"
                 >
                     <template #empty> No agents created yet </template>
                     <Column
+                        v-for="item in tableItems"
+                        :key="item.id"
                         :headerStyle="{ background: tableHeadBackground }"
-                        field="id"
-                        header="ID"
+                        :field="item.field"
+                        :header="item.header"
                     ></Column>
-                    <Column
-                        :headerStyle="{ background: tableHeadBackground }"
-                        field="name"
-                        header="Name"
-                    ></Column>
-                    <Column
-                        :headerStyle="{ background: tableHeadBackground }"
-                        field="instructions"
-                        header="Instructions"
-                    ></Column>
-                    <Column
-                        :headerStyle="{ background: tableHeadBackground }"
-                        field="created_at"
-                        header="Created At"
-                    ></Column>
-                    <Column
-                        :headerStyle="{ background: tableHeadBackground }"
-                        field="creator"
-                        header="Created by"
-                    ></Column>
+
                     <Column
                         :headerStyle="{ background: tableHeadBackground }"
                         field="active"
