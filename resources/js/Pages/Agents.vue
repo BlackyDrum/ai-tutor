@@ -172,6 +172,11 @@ const setAgentActive = () => {
                     ></Column>
                     <Column
                         :headerStyle="{ background: tableHeadBackground }"
+                        field="instructions"
+                        header="Instructions"
+                    ></Column>
+                    <Column
+                        :headerStyle="{ background: tableHeadBackground }"
                         field="created_at"
                         header="Created At"
                     ></Column>
