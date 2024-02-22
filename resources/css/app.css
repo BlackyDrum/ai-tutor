@@ -12,6 +12,9 @@
 :root {
     --app-light: #343541;
     --app-dark: #202123;
+
+    --admin-light: #E6E7E8;
+    --admin-dark: #9a9a9a;
 }
 
 #scroll-container {
