@@ -20,10 +20,11 @@ const form = useForm({
 });
 
 const items = [
-    { label: "Name", attribute: "name" },
-    { label: "Context", attribute: "context" },
-    { label: "First Message", attribute: "first_message" },
-    { label: "Response Shape", attribute: "response_shape" },
+    { label: "Name", attribute: "name", textarea: false },
+    { label: "Context", attribute: "context", textarea: false },
+    { label: "First Message", attribute: "first_message", textarea: false },
+    { label: "Response Shape", attribute: "response_shape", textarea: false },
+    { label: "Instructions", attribute: "instructions", textarea: true },
 ];
 
 const handleForm = () => {
@@ -68,26 +69,19 @@ const handleForm = () => {
                             class="w-full"
                             :disabled="form.processing"
                             v-model="form[item.attribute]"
+                            v-if="!item.textarea"
+                        />
+                        <Textarea
+                            class="w-full resize-none"
+                            rows="15"
+                            :disabled="form.processing"
+                            v-model="form[item.attribute]"
+                            v-else
                         />
                         <label>{{ item.label }}</label>
                     </FloatLabel>
                     <small class="text-red-600">
                         {{ form.errors[item.attribute] }}
-                    </small>
-                </div>
-
-                <div class="w-full">
-                    <FloatLabel class="w-full">
-                        <Textarea
-                            class="w-full resize-none"
-                            rows="15"
-                            :disabled="form.processing"
-                            v-model="form.instructions"
-                        />
-                        <label for="username">Instructions</label>
-                    </FloatLabel>
-                    <small class="text-red-600">
-                        {{ form.errors.instructions }}
                     </small>
                 </div>
 
