@@ -97,7 +97,8 @@ const handleResize = () => {
                 <div class="w-full relative">
                     <div
                         v-if="showProfileOP"
-                        class="absolute w-full z-10 -top-[145px] p-1 mb-2 rounded-lg bg-app-dark"
+                        :class="$page.props.auth.user.admin ? '-top-[145px]' : '-top-[100px]'"
+                        class="absolute w-full z-10 p-1 mb-2 rounded-lg bg-app-dark"
                     >
                         <Link
                             v-if="$page.props.auth.user.admin"
