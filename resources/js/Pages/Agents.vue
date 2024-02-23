@@ -168,6 +168,7 @@ const setAgentActive = () => {
                     class="shadow-lg"
                     scrollable
                     scrollHeight="35rem"
+                    showGridlines
                 >
                     <template #empty> No agents created yet </template>
                     <Column
