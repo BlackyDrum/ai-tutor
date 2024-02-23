@@ -73,7 +73,7 @@ const handleResize = () => {
                         <li
                             v-for="item in menu.items"
                             @click="router.get(item.url)"
-                            class="w-full p-2 rounded-lg font-medium cursor-pointer"
+                            class="w-full p-2 rounded-lg font-medium cursor-pointer hover:bg-[#EEF2FF]"
                             :class="{
                                 'bg-[#EEF2FF] text-[#4338CC] font-bold':
                                     $page.url === item.url,
@@ -88,14 +88,14 @@ const handleResize = () => {
                 <hr class="h-px bg-admin-light border-0" />
                 <ul class="p-1 mt-4">
                     <li
-                        class="w-full p-2 rounded-lg font-medium cursor-pointer"
+                        class="w-full p-2 rounded-lg font-medium cursor-pointer hover:bg-[#EEF2FF]"
                     >
                         <div @click="router.get('/')">
                             Back to {{ appName }}
                         </div>
                     </li>
                     <li
-                        class="w-full p-2 rounded-lg font-medium cursor-pointer"
+                        class="w-full p-2 rounded-lg font-medium cursor-pointer hover:bg-[#EEF2FF]"
                     >
                         <div @click="router.post('/logout')">Logout</div>
                     </li>
