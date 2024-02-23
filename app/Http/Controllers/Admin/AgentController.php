@@ -19,7 +19,11 @@ class AgentController extends Controller
         $agents = Agents::query()
             ->leftJoin('users', 'users.id', '=', 'agents.user_id')
             ->select([
-                'agents.*',
+                'agents.id',
+                'agents.name',
+                'agents.instructions',
+                'agents.created_at',
+                'agents.active',
                 'users.name AS creator'
             ])
             ->orderBy('agents.created_at', 'desc')
