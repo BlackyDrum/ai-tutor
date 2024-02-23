@@ -139,9 +139,8 @@ const setAgentActive = () => {
                 <div class="flex">
                     <div class="flex flex-wrap gap-3 mr-auto mb-5">
                         <Button
-                            class="text-black border-gray-300 font-medium"
+                            class="text-white border-gray-300 font-medium"
                             label="Set Active"
-                            severity="info"
                             :icon="
                                 isSettingActive
                                     ? 'pi pi-spin pi-spinner'
