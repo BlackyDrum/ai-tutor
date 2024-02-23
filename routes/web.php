@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\EmbeddingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Middleware\EnsureIsAdmin;
 use App\Http\Middleware\ValidateRemainingRequests;
@@ -42,6 +43,12 @@ Route::middleware(['auth'])->group(function() {
             Route::patch('/active', [AgentController::class, 'setActive'])->name('active.update');
             Route::get('/create-agent', [AgentController::class, 'showCreate'])->name('create.show');
             Route::post('/create', [AgentController::class, 'create'])->name('create');
+        });
+
+        Route::prefix('embeddings')->name('embeddings.')->group(function() {
+            Route::get('/', [EmbeddingController::class, 'show'])->name('show');
+            Route::delete('/', [EmbeddingController::class, 'delete'])->name('destroy');
+            Route::post('/create', [EmbeddingController::class, 'create'])->name('create');
         });
     });
 });
