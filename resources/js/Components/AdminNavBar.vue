@@ -24,6 +24,13 @@ const menuItems = [
             { label: "Create embedding", url: "/admin/create-embedding" },
         ],
     },
+    {
+        groupName: "Users",
+        items: [
+            { label: "All users", url: "/admin/users" },
+            { label: "Create user", url: "/admin/create-users" },
+        ],
+    },
 ];
 
 onMounted(() => {
@@ -67,7 +74,7 @@ const handleResize = () => {
                     </div>
                     <div class="self-center ml-3 font-bold">Adminpanel</div>
                 </Link>
-                <div class="my-6">
+                <div class="mb-6">
                     <ul v-for="menu in menuItems" class="p-1 mt-4">
                         <div class="text-xs">{{ menu.groupName }}</div>
                         <li
