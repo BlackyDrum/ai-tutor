@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\AgentController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Middleware\EnsureIsAdmin;
@@ -33,14 +34,14 @@ Route::middleware(['auth'])->group(function() {
 
 
     Route::middleware(EnsureIsAdmin::class)->prefix('admin')->name('admin.')->group(function() {
-        Route::get('/', [AdminController::class, 'show'])->name('dashboard');
+        Route::get('/', [DashboardController::class, 'show'])->name('dashboard');
 
         Route::prefix('agents')->name('agents.')->group(function() {
-            Route::get('/', [AdminController::class, 'showAgents'])->name('show');
-            Route::delete('/', [AdminController::class, 'deleteAgent'])->name('destroy');
-            Route::patch('/active', [AdminController::class, 'setActive'])->name('active.update');
-            Route::get('/create-agent', [AdminController::class, 'showCreateAgent'])->name('create.show');
-            Route::post('/create', [AdminController::class, 'createAgent'])->name('create');
+            Route::get('/', [AgentController::class, 'show'])->name('show');
+            Route::delete('/', [AgentController::class, 'delete'])->name('destroy');
+            Route::patch('/active', [AgentController::class, 'setActive'])->name('active.update');
+            Route::get('/create-agent', [AgentController::class, 'showCreate'])->name('create.show');
+            Route::post('/create', [AgentController::class, 'create'])->name('create');
         });
     });
 });

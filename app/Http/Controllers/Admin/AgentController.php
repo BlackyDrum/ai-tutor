@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\HomeController;
 use App\Models\Agents;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,14 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
-class AdminController extends Controller
+class AgentController extends Controller
 {
-    public function show()
-    {
-        return Inertia::render('AdminDashboard');
-    }
 
-    public function showAgents()
+    public function show()
     {
         $agents = Agents::query()
             ->leftJoin('users', 'users.id', '=', 'agents.user_id')
@@ -27,17 +25,17 @@ class AdminController extends Controller
             ->orderBy('agents.created_at', 'desc')
             ->get();
 
-        return Inertia::render('Agents', [
+        return Inertia::render('Admin/Agents', [
             'agents' => $agents
         ]);
     }
 
-    public function showCreateAgent()
+    public function showCreate()
     {
-        return Inertia::render('CreateAgent');
+        return Inertia::render('Admin/CreateAgent');
     }
 
-    public function deleteAgent(Request $request)
+    public function delete(Request $request)
     {
         $request->validate([
             'id' => 'required|string|exists:agents,id'
@@ -76,7 +74,7 @@ class AdminController extends Controller
         return response()->json(['id' => $request->input('id')]);
     }
 
-    public function createAgent(Request $request)
+    public function create(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:agents,name',
