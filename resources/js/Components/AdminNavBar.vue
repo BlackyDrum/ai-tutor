@@ -65,8 +65,6 @@ onMounted(() => {
                 });
 
                 router.reload();
-
-                fileInput.value[0].value = null;
             })
             .catch((error) => {
                 toast.add({
@@ -75,6 +73,9 @@ onMounted(() => {
                     detail: error.response.data.message ?? error.response.data,
                     life: 5000,
                 });
+            })
+            .finally(() => {
+                fileInput.value[0].value = null;
             });
     };
 });

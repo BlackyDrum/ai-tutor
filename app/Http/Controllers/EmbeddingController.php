@@ -64,7 +64,9 @@ class EmbeddingController extends Controller
             } catch (\Exception $exception) {
                 DB::rollBack();
 
-                return response()->json(['message' => $exception->getMessage()], 422);
+                unlink($pathToFile);
+
+                return response()->json(['message' => 'Error parsing PDF'], 422);
             }
 
             $text = $pdf->getText();
@@ -73,9 +75,18 @@ class EmbeddingController extends Controller
             $text = file_get_contents($pathToFile);
         }
 
-        self::createEmbedding($createdFile, $text);
+        try {
+            self::createEmbedding($createdFile, $text);
 
-        DB::commit();
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+
+            unlink($pathToFile);
+
+            return response()->json(['message' => 'Error creating embedding'], 422);
+        }
+
     }
 
     private function deleteEmbedding($id)
