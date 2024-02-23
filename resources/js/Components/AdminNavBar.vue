@@ -47,7 +47,7 @@ const handleResize = () => {
 <template>
     <div
         @click="showResponsiveNavBar = !showResponsiveNavBar"
-        class="fixed right-0 mr-3 z-50 mt-3 p-2 rounded-full cursor-pointer hover:bg-gray-800/50"
+        class="fixed right-0 mr-3 z-50 mt-3 p-2 rounded-full cursor-pointer hover:bg-admin-dark"
     >
         <span class="pi pi-bars"></span>
     </div>
