@@ -84,7 +84,11 @@ class EmbeddingController extends Controller
 
         $collection->delete([$id]);
 
-        Files::query()->find($id)->delete();
+        $file = Files::query()->find($id);
+
+        unlink(storage_path() . '/app/' . $file->path);
+
+        $file->delete();
     }
 
     private function createEmbedding($file, $text)
