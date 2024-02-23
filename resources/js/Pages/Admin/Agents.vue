@@ -130,7 +130,7 @@ const setAgentActive = () => {
 
 <template>
     <AdminLayout>
-        <Head title="Create Agent" />
+        <Head title="Agents" />
 
         <div
             class="h-dvh w-full p-5 flex flex-wrap items-center justify-center bg-admin-light overflow-y-auto"
