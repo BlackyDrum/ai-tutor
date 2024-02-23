@@ -97,8 +97,18 @@ const handleResize = () => {
                 <div class="w-full relative">
                     <div
                         v-if="showProfileOP"
-                        class="absolute w-full z-10 -top-[100px] p-1 mb-2 rounded-lg bg-app-dark"
+                        class="absolute w-full z-10 -top-[145px] p-1 mb-2 rounded-lg bg-app-dark"
                     >
+                        <Link
+                            v-if="$page.props.auth.user.admin"
+                            href="/admin"
+                            class="block flex gap-4 p-2 mb-1 cursor-pointer rounded-lg hover:bg-app-light"
+                        >
+                            <div>
+                                <span class="pi pi-user"></span>
+                            </div>
+                            <div>Admin</div>
+                        </Link>
                         <div
                             class="flex gap-4 p-2 mb-1 cursor-not-allowed opacity-30 rounded-lg"
                         >
