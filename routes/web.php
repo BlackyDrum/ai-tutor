@@ -21,22 +21,27 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function() {
     Route::get('/', [HomeController::class, 'show'])->name('home');
 
-    Route::get('/chat/{id}', [ChatController::class, 'show'])->name('chat');
+    Route::prefix('chat')->name('chat.')->group(function() {
+        Route::get('/{id}', [ChatController::class, 'show'])->name('show');
 
-    Route::middleware(ValidateRemainingRequests::class)->group(function() {
-        Route::post('/create-conversation', [HomeController::class, 'createConversation'])->name('create-conversation');
+        Route::middleware(ValidateRemainingRequests::class)->group(function() {
+            Route::post('/create-conversation', [HomeController::class, 'createConversation'])->name('conversation.create');
 
-        Route::post('/chat/chat-agent', [ChatController::class, 'chat'])->name('chat-agent');
+            Route::post('/chat-agent', [ChatController::class, 'chat'])->name('agent.chat');
+        });
     });
 
-    Route::middleware(EnsureIsAdmin::class)->group(function() {
-        Route::get('/admin', [AdminController::class, 'show'])->name('admin');
 
-        Route::get('/admin/agents', [AdminController::class, 'showAgents'])->name('agents');
-        Route::delete('/admin/agents', [AdminController::class, 'deleteAgent'])->name('delete-agent');
-        Route::patch('/admin/agents/active', [AdminController::class, 'setActive'])->name('set-active');
-        Route::get('/admin/create-agent', [AdminController::class, 'showCreateAgent'])->name('create-agent');
-        Route::post('/admin/agent/create', [AdminController::class, 'createAgent'])->name('createAgent');
+    Route::middleware(EnsureIsAdmin::class)->prefix('admin')->name('admin.')->group(function() {
+        Route::get('/', [AdminController::class, 'show'])->name('dashboard');
+
+        Route::prefix('agents')->name('agents.')->group(function() {
+            Route::get('/', [AdminController::class, 'showAgents'])->name('show');
+            Route::delete('/', [AdminController::class, 'deleteAgent'])->name('destroy');
+            Route::patch('/active', [AdminController::class, 'setActive'])->name('active.update');
+            Route::get('/create-agent', [AdminController::class, 'showCreateAgent'])->name('create.show');
+            Route::post('/create', [AdminController::class, 'createAgent'])->name('create');
+        });
     });
 });
 

@@ -27,7 +27,7 @@ const items = [
 ];
 
 const handleForm = () => {
-    form.post("/admin/agent/create", {
+    form.post("/admin/agents/create", {
         onSuccess: () => {
             toast.add({
                 severity: "success",

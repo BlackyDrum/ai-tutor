@@ -14,7 +14,7 @@ const menuItems = [
         groupName: "Agents",
         items: [
             { label: "All agents", url: "/admin/agents" },
-            { label: "Create agent", url: "/admin/create-agent" },
+            { label: "Create agent", url: "/admin/agents/create-agent" },
         ],
     },
     {

@@ -24,7 +24,7 @@ const handleCreateConversation = (userMessage) => {
     isSendingRequest.value = true;
 
     window.axios
-        .post("/create-conversation", {
+        .post("/chat/create-conversation", {
             message: userMessage,
         })
         .then((result) => {
