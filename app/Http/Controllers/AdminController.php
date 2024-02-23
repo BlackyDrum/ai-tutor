@@ -88,6 +88,10 @@ class AdminController extends Controller
 
         $token = HomeController::getBearerToken();
 
+        if (is_array($token)) {
+            return back()->withErrors(['message' => $token['reason']]);
+        }
+
         $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-agent', [
             'name' => $request->input('name'),
             'context' => $request->input('context'),
