@@ -85,7 +85,7 @@ const handleResize = () => {
                         </li>
                     </ul>
                 </div>
-                <hr class="h-px bg-admin-light border-0" />
+                <hr class="h-px bg-admin-dark border-0" />
                 <ul class="p-1 mt-4">
                     <li
                         class="w-full p-2 rounded-lg font-medium cursor-pointer hover:bg-[#EEF2FF]"
