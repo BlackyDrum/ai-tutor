@@ -65,7 +65,7 @@ const handleResize = () => {
                     <div>
                         <ApplicationLogo class="w-8" />
                     </div>
-                    <div class="self-center ml-3">Adminpanel</div>
+                    <div class="self-center ml-3 font-bold">Adminpanel</div>
                 </Link>
                 <div class="my-6">
                     <ul v-for="menu in menuItems" class="p-1 mt-4">
