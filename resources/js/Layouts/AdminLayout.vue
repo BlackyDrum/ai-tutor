@@ -11,7 +11,7 @@ import ConfirmDialog from 'primevue/confirmdialog';
     <div class="flex bg-admin-light">
         <AdminNavBar />
 
-        <div class="w-full">
+        <div class="w-full min-w-0">
             <main>
                 <slot />
             </main>

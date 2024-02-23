@@ -177,6 +177,7 @@ const setAgentActive = () => {
                         :field="item.field"
                         :header="item.header"
                         sortable
+                        :class="{'min-w-[30rem]' : item.field === 'instructions'}"
                     ></Column>
 
                     <Column
