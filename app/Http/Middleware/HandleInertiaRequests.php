@@ -31,8 +31,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $conversations = Auth::check() ?
-            Conversations::query()->where('user_id', '=', Auth::id())->orderBy('created_at', 'desc')->get() : [];
+        $conversations = [];
+
+        if (!str_starts_with($request->path(), 'admin')) {
+            $conversations = Auth::check() ?
+                Conversations::query()->where('user_id', '=', Auth::id())->orderBy('created_at', 'desc')->get() : [];
+        }
 
         return [
             ...parent::share($request),
