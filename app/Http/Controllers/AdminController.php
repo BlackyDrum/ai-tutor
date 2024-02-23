@@ -79,10 +79,10 @@ class AdminController extends Controller
     public function createAgent(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:agents,name',
-            'context' => 'required|string',
-            'first_message' => 'required|string',
-            'response_shape' => 'required|string',
+            'name' => 'required|string|max:255|unique:agents,name',
+            'context' => 'required|string|max:255',
+            'first_message' => 'required|string|max:255',
+            'response_shape' => 'required|string|max:255',
             'instructions' => 'required|string'
         ]);
 
