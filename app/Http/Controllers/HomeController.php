@@ -34,6 +34,10 @@ class HomeController extends Controller
 
         $agent = Agents::query()->where('active', '=', true)->first();
 
+        if (empty($agent)) {
+            return response()->json('Internal Server Error',500);
+        }
+
         $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
             'agent_id' => $agent->id,
             'creating_user' => config('api.username'),
