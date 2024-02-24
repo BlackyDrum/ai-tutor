@@ -36,7 +36,9 @@ class EmbeddingController extends Controller
             'id' => 'required|string|exists:files,id'
         ]);
 
-        self::deleteEmbedding($request->input('id'));
+        $collection = Collections::query()->find($request->input('id'));
+
+        self::deleteEmbedding($request->input('id'), $collection->name);
 
         return response()->json(['id' => $request->input('id')]);
     }
@@ -118,9 +120,9 @@ class EmbeddingController extends Controller
         ]);
     }
 
-    private function deleteEmbedding($id)
+    private function deleteEmbedding($id, $collection)
     {
-        $collection = self::getCollection();
+        $collection = self::getCollection($collection);
 
         $collection->delete([$id]);
 
