@@ -54,6 +54,9 @@ class Embedding extends Resource
                 ->hideWhenCreating()
                 ->hideWhenUpdating(),
 
+            Text::make('Name')
+                ->onlyOnIndex(),
+
             File::make('File', 'path')
                 ->acceptedTypes('.pdf,.txt')
                 ->rules('mimes:pdf,txt', function ($attribute, $value, $fail) {
