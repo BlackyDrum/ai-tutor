@@ -12,11 +12,11 @@ import LoadingDots from "@/Components/LoadingDots.vue";
 const toast = useToast();
 
 const isSendingRequest = ref(false);
-const prompt = ref();
-const main = ref();
+const promptComponent = ref();
+const mainComponent = ref();
 
 onMounted(() => {
-    prompt.value.focusInput();
+    promptComponent.value.focusInput();
 });
 
 const handleCreateConversation = (userMessage) => {
@@ -27,7 +27,7 @@ const handleCreateConversation = (userMessage) => {
     window.axios
         .post("/chat/create-conversation", {
             message: userMessage,
-            collection: main.value.selectedCollection.id
+            collection: mainComponent.value.selectedCollection.id
         })
         .then((result) => {
             router.get(`/chat/${result.data.id}`);
@@ -49,7 +49,7 @@ const handleCreateConversation = (userMessage) => {
     <AuthenticatedLayout>
         <Head title="Home" />
 
-        <Main ref="main">
+        <Main ref="mainComponent">
             <div
                 class="w-full flex flex-col flex-1 items-center justify-center"
             >
@@ -64,7 +64,7 @@ const handleCreateConversation = (userMessage) => {
             <Prompt
                 :sending="isSendingRequest"
                 @is-submitting="handleCreateConversation"
-                ref="prompt"
+                ref="promptComponent"
             />
         </Main>
     </AuthenticatedLayout>
