@@ -72,8 +72,9 @@ class Embedding extends Resource
                 })
                 ->disk('local'),
 
-            Number::make('User ID', 'user_id')
+            BelongsTo::make('User')
                 ->default(Auth::id())
+                ->hideWhenUpdating()
                 ->withMeta(['extraAttributes' => [
                     'readonly' => true
                 ]]),
