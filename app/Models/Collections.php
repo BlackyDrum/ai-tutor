@@ -10,6 +10,7 @@ class Collections extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'name',
+        'active'
     ];
 }
