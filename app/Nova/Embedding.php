@@ -72,6 +72,10 @@ class Embedding extends Resource
                 })
                 ->disk('local'),
 
+            Number::make('Size')
+                ->hideWhenUpdating()
+                ->hideWhenCreating(),
+
             BelongsTo::make('User')
                 ->default(Auth::id())
                 ->hideWhenUpdating()
