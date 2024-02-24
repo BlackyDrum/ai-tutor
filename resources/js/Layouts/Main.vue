@@ -31,7 +31,7 @@ defineExpose({
     >
         <Dropdown
             id="collections"
-            class="mt-2 ml-2 min-w-[10rem] max-w-[15rem] mr-auto max-md:ml-auto dark:hover:bg-app-dark dark:bg-app-light dark:text-white"
+            class="mt-2 ml-2 text-center min-w-[10rem] max-w-[15rem] mr-auto max-md:ml-auto dark:hover:bg-app-dark dark:bg-app-light dark:text-white"
             v-model="selectedCollection"
             :options="$page.props.collections"
             optionLabel="name"
