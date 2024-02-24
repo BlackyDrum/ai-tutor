@@ -32,28 +32,6 @@ Route::middleware(['auth'])->group(function() {
             Route::post('/chat-agent', [ChatController::class, 'chat'])->name('agent.chat');
         });
     });
-
-
-    Route::middleware(EnsureIsAdmin::class)->prefix('admin')->name('admin.')->group(function() {
-        Route::get('/', [DashboardController::class, 'show'])->name('dashboard');
-
-        Route::prefix('agents')->name('agents.')->group(function() {
-            Route::get('/', [AgentController::class, 'show'])->name('show');
-            Route::delete('/', [AgentController::class, 'delete'])->name('destroy');
-            Route::patch('/active', [AgentController::class, 'setActive'])->name('active.update');
-            Route::get('/create-agent', [AgentController::class, 'showCreate'])->name('create.show');
-            Route::post('/create', [AgentController::class, 'create'])->name('create');
-        });
-
-        Route::prefix('embeddings')->name('embeddings.')->group(function() {
-            Route::get('/', [EmbeddingController::class, 'show'])->name('show');
-            Route::delete('/', [EmbeddingController::class, 'delete'])->name('destroy');
-            Route::post('/create', [EmbeddingController::class, 'create'])->name('create');
-            Route::get('/collections', [EmbeddingController::class, 'showCollections'])->name('collections.show');
-            Route::delete('/collections', [EmbeddingController::class, 'deleteCollection'])->name('collection.destroy');
-            Route::post('/collections/create', [EmbeddingController::class, 'createCollection'])->name('collection.create');
-        });
-    });
 });
 
 require __DIR__.'/auth.php';

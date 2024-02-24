@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\EmbeddingController;
-use App\Http\Controllers\ChromaController;
+use App\Http\Controllers\Admin\ChromaController;
 use App\Models\Collections;
 use App\Models\Files;
-use Codewithkyrian\ChromaDB\ChromaDB;
 use Illuminate\Console\Command;
 
 class DeleteCollections extends Command
@@ -30,15 +28,15 @@ class DeleteCollections extends Command
      */
     public function handle()
     {
-        $chromaDB = EmbeddingController::getClient();
+        $chromaDB = ChromaController::getClient();
 
         $chromaDB->deleteAllCollections();
 
         self::deleteDirectory(storage_path() . '/app/uploads');
 
-        Collections::query()->delete();
+        Collections::query()->forceDelete();
 
-        Files::query()->delete();
+        Files::query()->forceDelete();
     }
 
     private function deleteDirectory($dirPath) {

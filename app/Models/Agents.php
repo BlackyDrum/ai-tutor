@@ -11,17 +11,22 @@ class Agents extends Model
 
     protected $fillable = [
         'id',
+        'api_id',
         'name',
         'context',
         'first_message',
         'response_shape',
         'instructions',
         'active',
-        'creating_user',
         'user_id'
     ];
 
     protected $casts = [
-        'id' => 'string'
+        'api_id' => 'string'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

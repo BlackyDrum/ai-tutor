@@ -40,7 +40,7 @@ class HomeController extends Controller
         }
 
         $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
-            'agent_id' => $agent->id,
+            'agent_id' => $agent->api_id,
             'creating_user' => config('api.username'),
             'max_tokens' => config('api.max_tokens'),
             'temperature' => config('api.temperature'),
@@ -57,7 +57,7 @@ class HomeController extends Controller
 
         Conversations::query()->create([
             'id' => $conversationID,
-            'agent_id' => $agent->id,
+            'agent_id' => $agent->api_id,
             'creating_user' => config('api.username'),
             'max_tokens' => config('api.max_tokens'),
             'temperature' => config('api.temperature'),

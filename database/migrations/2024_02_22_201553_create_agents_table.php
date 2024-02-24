@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('agents', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
+            $table->string('api_id')->unique()->nullable();
             $table->string('name');
             $table->string('context');
             $table->string('first_message');
             $table->text('response_shape');
             $table->text('instructions');
-            $table->string('creating_user');
             $table->boolean('active')->default(false);
             $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();

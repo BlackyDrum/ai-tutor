@@ -16,8 +16,8 @@ class EnsureIsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::user()->admin) {
-            abort(404);
+        if (!Auth::check() || !$request->user()->admin) {
+            return redirect('/');
         }
 
         return $next($request);
