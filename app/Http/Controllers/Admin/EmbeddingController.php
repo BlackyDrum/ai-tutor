@@ -72,7 +72,9 @@ class EmbeddingController extends Controller
             } catch (\Exception $exception) {
                 DB::rollBack();
 
-                unlink($pathToFile);
+                if (file_exists($pathToFile)) {
+                    unlink($pathToFile);
+                }
 
                 return response()->json(['message' => $exception->getMessage()], 422);
             }
