@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\ChromaController;
 use App\Http\Controllers\Controller;
 use App\Models\Collections;
 use App\Models\Files;
