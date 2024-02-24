@@ -92,7 +92,9 @@ class EmbeddingController extends Controller
         } catch (\Exception $exception) {
             DB::rollBack();
 
-            unlink($pathToFile);
+            if (file_exists($pathToFile)) {
+                unlink($pathToFile);
+            }
 
             return response()->json(['message' => $exception->getMessage()], 500);
         }
@@ -148,7 +150,11 @@ class EmbeddingController extends Controller
 
         $file = Files::query()->find($id);
 
-        unlink(storage_path() . '/app/' . $file->path);
+        $pathToFile = storage_path() . '/app/' . $file->path;
+
+        if (file_exists($pathToFile)) {
+            unlink($pathToFile);
+        }
 
         $file->delete();
     }
@@ -193,7 +199,11 @@ class EmbeddingController extends Controller
         }
 
         foreach ($files as $file) {
-            unlink(storage_path() . '/app/' . $file->path);
+            $pathToFile = storage_path() . '/app/' . $file->path;
+
+            if (file_exists($pathToFile)) {
+                unlink($pathToFile);
+            }
         }
 
         $collection->delete();
