@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Collections;
 use App\Models\Conversations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,10 +33,14 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $conversations = [];
+        $collections = [];
 
         if (!str_starts_with($request->path(), 'admin')) {
             $conversations = Auth::check() ?
                 Conversations::query()->where('user_id', '=', Auth::id())->orderBy('created_at', 'desc')->get() : [];
+        }
+        else {
+            $collections = Collections::all();
         }
 
         return [
@@ -44,6 +49,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'history' => $conversations,
             ],
+            'collections' => $collections
         ];
     }
 }

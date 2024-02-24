@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EmbeddingController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Middleware\EnsureIsAdmin;
@@ -42,6 +43,15 @@ Route::middleware(['auth'])->group(function() {
             Route::patch('/active', [AgentController::class, 'setActive'])->name('active.update');
             Route::get('/create-agent', [AgentController::class, 'showCreate'])->name('create.show');
             Route::post('/create', [AgentController::class, 'create'])->name('create');
+        });
+
+        Route::prefix('embeddings')->name('embeddings.')->group(function() {
+            Route::get('/', [EmbeddingController::class, 'show'])->name('show');
+            Route::delete('/', [EmbeddingController::class, 'delete'])->name('destroy');
+            Route::post('/create', [EmbeddingController::class, 'create'])->name('create');
+            Route::get('/collections', [EmbeddingController::class, 'showCollections'])->name('collections.show');
+            Route::delete('/collections', [EmbeddingController::class, 'deleteCollection'])->name('collection.destroy');
+            Route::post('/collections/create', [EmbeddingController::class, 'createCollection'])->name('collection.create');
         });
     });
 });
