@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\ChromaController;
 use App\Http\Controllers\Controller;
 use App\Models\Collections;
 use App\Models\Files;
@@ -146,7 +147,7 @@ class EmbeddingController extends Controller
             'name' => 'required|string|unique:collections,name'
         ]);
 
-        $chromaDB = ChromaDB::client();
+        $chromaDB = self::getClient();
 
         $embeddingFunction = new JinaEmbeddingFunction(config('api.jina_api_key'));
 
@@ -159,10 +160,20 @@ class EmbeddingController extends Controller
 
     private function getCollection($collection)
     {
-        $chromaDB = ChromaDB::client();
+        $chromaDB = self::getClient();
 
         $embeddingFunction = new JinaEmbeddingFunction(config('api.jina_api_key'));
 
         return $chromaDB->getCollection($collection, embeddingFunction: $embeddingFunction);
+    }
+
+    static function getClient()
+    {
+        return ChromaDB::factory()
+            ->withHost(config('api.chroma_host'))
+            ->withPort(config('api.chroma_port'))
+            ->withDatabase(config('api.chroma_database'))
+            ->withTenant(config('api.chroma_tenant'))
+            ->connect();
     }
 }

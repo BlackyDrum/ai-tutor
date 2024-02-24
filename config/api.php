@@ -15,6 +15,14 @@ return [
 
     'client_secret' => env('API_CLIENT_SECRET'),
 
+    'chroma_host' => env('CHROMA_HOST', 'http://localhost'),
+
+    'chroma_port' => env('CHROMA_PORT', 8000),
+
+    'chroma_database' => env('CHROMA_DATABASE', 'new_database'),
+
+    'chroma_tenant' => env('CHROMA_TENANT', 'new_tenant'),
+
     'jina_api_key' => env('JINA_API_KEY'),
 
     'max_requests' => 100, // Maximum number of messages per day per user
