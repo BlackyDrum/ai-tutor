@@ -21,7 +21,8 @@ class HomeController extends Controller
     public function createConversation(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|min:1|max:' . config('api.max_message_length')
+            'message' => 'required|string|min:1|max:' . config('api.max_message_length'),
+            'collection' => 'required|integer|exists:collections,id'
         ]);
 
         $token = self::getBearerToken();

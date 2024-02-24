@@ -13,6 +13,7 @@ const toast = useToast();
 
 const isSendingRequest = ref(false);
 const prompt = ref();
+const main = ref();
 
 onMounted(() => {
     prompt.value.focusInput();
@@ -26,6 +27,7 @@ const handleCreateConversation = (userMessage) => {
     window.axios
         .post("/chat/create-conversation", {
             message: userMessage,
+            collection: main.value.selectedCollection.id
         })
         .then((result) => {
             router.get(`/chat/${result.data.id}`);
@@ -47,7 +49,7 @@ const handleCreateConversation = (userMessage) => {
     <AuthenticatedLayout>
         <Head title="Home" />
 
-        <Main>
+        <Main ref="main">
             <div
                 class="w-full flex flex-col flex-1 items-center justify-center"
             >

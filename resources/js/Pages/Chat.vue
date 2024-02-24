@@ -31,6 +31,7 @@ const forbidTags = ["a", "img"];
 
 const isSendingRequest = ref(false);
 const promptComponent = ref();
+const main = ref();
 const scrollContainer = ref();
 
 onMounted(() => {
@@ -66,6 +67,7 @@ const handleCreateConversation = (userMessage) => {
     window.axios
         .post("/chat/chat-agent", {
             message: userMessage,
+            collection: main.value.selectedCollection.id,
             conversation_id: page.props.conversation_id,
         })
         .then((result) => {
@@ -144,7 +146,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
     <AuthenticatedLayout>
         <Head title="Chat" />
 
-        <Main>
+        <Main ref="main">
             <div
                 id="scroll-container"
                 ref="scrollContainer"

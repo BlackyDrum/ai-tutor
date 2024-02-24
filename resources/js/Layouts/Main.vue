@@ -19,6 +19,10 @@ onMounted(() => {
 watch(selectedCollection, () => {
     window.localStorage.setItem("collection", selectedCollection.value.id);
 });
+
+defineExpose({
+    selectedCollection
+})
 </script>
 
 <template>
