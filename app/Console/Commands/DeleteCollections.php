@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Collections;
 use App\Models\Files;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Illuminate\Console\Command;
@@ -32,6 +33,8 @@ class DeleteCollections extends Command
         $chromaDB->deleteAllCollections();
 
         self::deleteDirectory(storage_path() . '/app/uploads');
+
+        Collections::query()->delete();
 
         Files::query()->delete();
     }

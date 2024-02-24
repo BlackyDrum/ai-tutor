@@ -28,6 +28,7 @@ const tableItems = [
     { header: "Size", field: "size" },
     { header: "Mime", field: "mime" },
     { header: "Created At", field: "created_at" },
+    { header: "Collection", field: "collection" },
 ];
 
 const confirmFileDeletion = () => {

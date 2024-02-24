@@ -17,8 +17,6 @@ return [
 
     'jina_api_key' => env('JINA_API_KEY'),
 
-    'collection_name' => 'dbwt',
-
     'max_requests' => 100, // Maximum number of messages per day per user
 
     'remaining_requests_alert_levels' => [10, 25, 50], // Show info when the user has n messages left for the day

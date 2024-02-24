@@ -5,6 +5,11 @@ import { useToast } from "primevue/usetoast";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
+import Dialog from 'primevue/dialog';
+import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
+import Dropdown from 'primevue/dropdown';
+
 const appName = import.meta.env.VITE_APP_NAME;
 
 const toast = useToast();
@@ -12,6 +17,12 @@ const toast = useToast();
 const showResponsiveNavBar = ref(true);
 const fileForm = ref();
 const fileInput = ref();
+const showCollectionOverlay = ref(false);
+const showCollectionSelectOverlay = ref(false);
+const isCreatingCollection = ref(false);
+const isUploadingFile = ref(false);
+const collectionInput = ref();
+const selectedCollection = ref();
 
 const menuItems = [
     { groupName: "", items: [{ label: "Dashboard", url: "/admin" }] },
@@ -28,8 +39,13 @@ const menuItems = [
             { label: "All embeddings", url: "/admin/embeddings" },
             {
                 label: "Create embedding",
-                url: "/admin/create-embedding",
-                other: true,
+                url: null,
+                upload: true,
+            },
+            {
+                label: "Create collection",
+                url: "/admin/embeddings/collections/create",
+                overlay: true,
             },
         ],
     },
@@ -48,35 +64,7 @@ onMounted(() => {
     window.addEventListener("resize", handleResize);
 
     fileInput.value[0].onchange = () => {
-        const formData = new FormData();
-        formData.append("file", fileInput.value[0].files[0]);
-        window.axios
-            .post("/admin/embeddings/create", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            })
-            .then((result) => {
-                toast.add({
-                    severity: "success",
-                    summary: "Success",
-                    detail: "New embedding created",
-                    life: 5000,
-                });
-
-                router.reload();
-            })
-            .catch((error) => {
-                toast.add({
-                    severity: "error",
-                    summary: "Error",
-                    detail: error.response.data.message ?? error.response.data,
-                    life: 5000,
-                });
-            })
-            .finally(() => {
-                fileInput.value[0].value = null;
-            });
+        showCollectionSelectOverlay.value = true;
     };
 });
 
@@ -84,11 +72,89 @@ onBeforeUnmount(() => {
     window.removeEventListener("resize", handleResize);
 });
 
+const handleUpload = () => {
+    if (!selectedCollection.value) return;
+
+    const formData = new FormData();
+    formData.append("file", fileInput.value[0].files[0]);
+    formData.append('collection', selectedCollection.value.id)
+
+    isUploadingFile.value = true;
+
+    window.axios
+        .post("/admin/embeddings/create", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
+        .then((result) => {
+            toast.add({
+                severity: "success",
+                summary: "Success",
+                detail: "New embedding created",
+                life: 5000,
+            });
+
+            showCollectionSelectOverlay.value = false;
+
+            selectedCollection.value = null;
+
+            fileInput.value[0].value = null;
+
+            router.reload();
+        })
+        .catch((error) => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
+        })
+        .finally(() => {
+            isUploadingFile.value = false;
+        });
+}
+
 const handleResize = () => {
     if (window.innerWidth <= 768) {
         showResponsiveNavBar.value = false;
     }
 };
+
+const handleCollectionCreation = () => {
+    if (!collectionInput.value) return;
+
+    isCreatingCollection.value = true;
+
+    window.axios.post('/admin/embeddings/collections/create', {
+        name: collectionInput.value
+    })
+        .then(result => {
+            toast.add({
+                severity: "success",
+                summary: "Success",
+                detail: "New collection created",
+                life: 5000,
+            });
+
+            collectionInput.value = null;
+            showCollectionOverlay.value = false;
+
+            router.reload();
+        })
+        .catch(error => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
+        })
+        .finally(() => {
+            isCreatingCollection.value = false;
+        })
+}
 </script>
 
 <template>
@@ -119,7 +185,7 @@ const handleResize = () => {
                         <div class="text-xs">{{ menu.groupName }}</div>
                         <template v-for="item in menu.items">
                             <li
-                                v-if="!item.other"
+                                v-if="!item.upload && !item.overlay"
                                 @click="router.get(item.url)"
                                 class="w-full p-2 rounded-lg font-medium cursor-pointer hover:bg-[#EEF2FF]"
                                 :class="{
@@ -133,7 +199,7 @@ const handleResize = () => {
                             </li>
                             <li
                                 class="w-full p-2 rounded-lg font-medium cursor-pointer hover:bg-[#EEF2FF]"
-                                v-else
+                                v-else-if="item.upload"
                             >
                                 <div class="w-full">
                                     <input
@@ -144,6 +210,15 @@ const handleResize = () => {
                                         class="hidden"
                                     />
                                     <label for="files">{{ item.label }}</label>
+                                </div>
+                            </li>
+                            <li
+                                class="w-full p-2 rounded-lg font-medium cursor-pointer hover:bg-[#EEF2FF]"
+                                v-else-if="item.overlay"
+                                @click="showCollectionOverlay = true"
+                            >
+                                <div>
+                                    {{item.label}}
                                 </div>
                             </li>
                         </template>
@@ -167,4 +242,26 @@ const handleResize = () => {
             </div>
         </nav>
     </div>
+
+    <Dialog v-model:visible="showCollectionOverlay" modal header="Create Collection">
+        <div class="flex flex-col gap-4">
+            <div>
+                <InputText v-model="collectionInput" placeholder="Collection Name" />
+            </div>
+            <div class="w-full">
+                <Button @click="handleCollectionCreation" :icon="isCreatingCollection ? 'pi pi-spin pi-spinner' : 'pi pi-save'" class="w-full"  label="Save"/>
+            </div>
+        </div>
+    </Dialog>
+
+    <Dialog v-model:visible="showCollectionSelectOverlay" modal header="Select Collection">
+        <div class="flex flex-col gap-4">
+            <div class="w-full">
+                <Dropdown v-model="selectedCollection" :options="$page.props.collections" optionLabel="name" placeholder="Select a collection" class="w-full" />
+            </div>
+            <div class="w-full">
+                <Button @click="handleUpload" :icon="isUploadingFile ? 'pi pi-spin pi-spinner' : 'pi pi-upload'" class="w-full"  label="Upload"/>
+            </div>
+        </div>
+    </Dialog>
 </template>

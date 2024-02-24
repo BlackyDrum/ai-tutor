@@ -15,7 +15,8 @@ class Files extends Model
         'path',
         'size',
         'mime',
-        'user_id'
+        'user_id',
+        'collection_id'
     ];
 
     protected $casts = [
