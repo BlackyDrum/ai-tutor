@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use App\Http\Controllers\Admin\ChromaController;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
@@ -79,6 +80,11 @@ class Collection extends Resource
         }
 
         $model->forceDelete();
+    }
+
+    public function authorizedToForceDelete(Request $request)
+    {
+        return false;
     }
 
     /**

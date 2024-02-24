@@ -116,6 +116,11 @@ class Embedding extends Resource
         $model->forceDelete();
     }
 
+    public function authorizedToForceDelete(\Illuminate\Http\Request $request)
+    {
+        return false;
+    }
+
     /**
      * Get the cards available for the request.
      *
