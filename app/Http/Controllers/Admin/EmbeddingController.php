@@ -30,6 +30,15 @@ class EmbeddingController extends Controller
         ]);
     }
 
+    public function showCollections()
+    {
+        $collections = Collections::all();
+
+        return Inertia::render('Admin/Collections', [
+            'collections' => $collections
+        ]);
+    }
+
     public function create(Request $request)
     {
         $request->validate([
@@ -155,6 +164,27 @@ class EmbeddingController extends Controller
         Collections::query()->create([
             'name' => $request->input('name')
         ]);
+    }
+
+    public function deleteCollection(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer|exists:collections,id'
+        ]);
+
+        $files = Files::query()->where('collection_id', '=', $request->input('id'))->get();
+
+        foreach ($files as $file) {
+            unlink(storage_path() . '/app/' . $file->path);
+        }
+
+        $collection = Collections::query()->find($request->input('id'));
+
+        $chromaDB = self::getClient();
+
+        $chromaDB->deleteCollection($collection->name);
+
+        $collection->delete();
     }
 
     private function getCollection($collection)

@@ -41,6 +41,7 @@ const menuItems = [
                 url: null,
                 upload: true,
             },
+            { label: "All collections", url: "/admin/embeddings/collections" },
             {
                 label: "Create collection",
                 url: null,

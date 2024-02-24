@@ -49,6 +49,8 @@ Route::middleware(['auth'])->group(function() {
             Route::get('/', [EmbeddingController::class, 'show'])->name('show');
             Route::delete('/', [EmbeddingController::class, 'delete'])->name('destroy');
             Route::post('/create', [EmbeddingController::class, 'create'])->name('create');
+            Route::get('/collections', [EmbeddingController::class, 'showCollections'])->name('collections.show');
+            Route::delete('/collections', [EmbeddingController::class, 'deleteCollection'])->name('collection.destroy');
             Route::post('/collections/create', [EmbeddingController::class, 'createCollection'])->name('collection.create');
         });
     });
