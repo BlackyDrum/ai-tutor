@@ -73,7 +73,7 @@ onBeforeUnmount(() => {
 });
 
 const handleUpload = () => {
-    if (!selectedCollection.value) return;
+    if (!selectedCollection.value || isUploadingFile.value) return;
 
     const formData = new FormData();
     formData.append("file", fileInput.value[0].files[0]);
@@ -117,7 +117,7 @@ const handleUpload = () => {
 };
 
 const handleCollectionCreation = () => {
-    if (!collectionInput.value) return;
+    if (!collectionInput.value || isCreatingCollection.value) return;
 
     isCreatingCollection.value = true;
 
@@ -260,6 +260,7 @@ const handleResize = () => {
             <div class="w-full">
                 <Button
                     @click="handleCollectionCreation"
+                    :disabled="isCreatingCollection"
                     :icon="
                         isCreatingCollection
                             ? 'pi pi-spin pi-spinner'
@@ -291,6 +292,7 @@ const handleResize = () => {
             <div class="w-full">
                 <Button
                     @click="handleUpload"
+                    :disabled="isUploadingFile"
                     :icon="
                         isUploadingFile
                             ? 'pi pi-spin pi-spinner'
