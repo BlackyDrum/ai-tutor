@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('files', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
+            $table->string('embedding_id')->unique()->nullable();
             $table->string('name');
             $table->string('path');
             $table->unsignedBigInteger('size');
-            $table->string('mime');
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');

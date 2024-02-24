@@ -43,7 +43,7 @@ return [
     |
     */
 
-    'max_requests' => 30,
+    'max_requests' => 100,
 
     /*
     |--------------------------------------------------------------------------
@@ -181,6 +181,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
+        App\Providers\NovaServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
     ])->toArray(),
 
