@@ -34,9 +34,9 @@ class DeleteCollections extends Command
 
         self::deleteDirectory(storage_path() . '/app/uploads');
 
-        Collections::query()->delete();
+        Collections::query()->forceDelete();
 
-        Files::query()->delete();
+        Files::query()->forceDelete();
     }
 
     private function deleteDirectory($dirPath) {
