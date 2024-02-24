@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EmbeddingController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\EmbeddingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Middleware\EnsureIsAdmin;
 use App\Http\Middleware\ValidateRemainingRequests;

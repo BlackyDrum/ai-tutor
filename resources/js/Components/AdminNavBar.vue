@@ -5,19 +5,18 @@ import { useToast } from "primevue/usetoast";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
-import Dialog from 'primevue/dialog';
-import InputText from 'primevue/inputtext';
-import Button from 'primevue/button';
-import Dropdown from 'primevue/dropdown';
+import Dialog from "primevue/dialog";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
 
 const appName = import.meta.env.VITE_APP_NAME;
 
 const toast = useToast();
 
 const showResponsiveNavBar = ref(true);
-const fileForm = ref();
 const fileInput = ref();
-const showCollectionOverlay = ref(false);
+const showCollectionCreateOverlay = ref(false);
 const showCollectionSelectOverlay = ref(false);
 const isCreatingCollection = ref(false);
 const isUploadingFile = ref(false);
@@ -44,7 +43,7 @@ const menuItems = [
             },
             {
                 label: "Create collection",
-                url: "/admin/embeddings/collections/create",
+                url: null,
                 overlay: true,
             },
         ],
@@ -77,7 +76,7 @@ const handleUpload = () => {
 
     const formData = new FormData();
     formData.append("file", fileInput.value[0].files[0]);
-    formData.append('collection', selectedCollection.value.id)
+    formData.append("collection", selectedCollection.value.id);
 
     isUploadingFile.value = true;
 
@@ -114,12 +113,6 @@ const handleUpload = () => {
         .finally(() => {
             isUploadingFile.value = false;
         });
-}
-
-const handleResize = () => {
-    if (window.innerWidth <= 768) {
-        showResponsiveNavBar.value = false;
-    }
 };
 
 const handleCollectionCreation = () => {
@@ -127,10 +120,11 @@ const handleCollectionCreation = () => {
 
     isCreatingCollection.value = true;
 
-    window.axios.post('/admin/embeddings/collections/create', {
-        name: collectionInput.value
-    })
-        .then(result => {
+    window.axios
+        .post("/admin/embeddings/collections/create", {
+            name: collectionInput.value,
+        })
+        .then((result) => {
             toast.add({
                 severity: "success",
                 summary: "Success",
@@ -139,11 +133,11 @@ const handleCollectionCreation = () => {
             });
 
             collectionInput.value = null;
-            showCollectionOverlay.value = false;
+            showCollectionCreateOverlay.value = false;
 
             router.reload();
         })
-        .catch(error => {
+        .catch((error) => {
             toast.add({
                 severity: "error",
                 summary: "Error",
@@ -153,8 +147,14 @@ const handleCollectionCreation = () => {
         })
         .finally(() => {
             isCreatingCollection.value = false;
-        })
-}
+        });
+};
+
+const handleResize = () => {
+    if (window.innerWidth <= 768) {
+        showResponsiveNavBar.value = false;
+    }
+};
 </script>
 
 <template>
@@ -215,10 +215,10 @@ const handleCollectionCreation = () => {
                             <li
                                 class="w-full p-2 rounded-lg font-medium cursor-pointer hover:bg-[#EEF2FF]"
                                 v-else-if="item.overlay"
-                                @click="showCollectionOverlay = true"
+                                @click="showCollectionCreateOverlay = true"
                             >
                                 <div>
-                                    {{item.label}}
+                                    {{ item.label }}
                                 </div>
                             </li>
                         </template>
@@ -243,24 +243,61 @@ const handleCollectionCreation = () => {
         </nav>
     </div>
 
-    <Dialog v-model:visible="showCollectionOverlay" modal header="Create Collection">
+    <!-- Dialog to create a new Collection -->
+    <Dialog
+        v-model:visible="showCollectionCreateOverlay"
+        modal
+        header="Create Collection"
+    >
         <div class="flex flex-col gap-4">
             <div>
-                <InputText v-model="collectionInput" placeholder="Collection Name" />
+                <InputText
+                    v-model="collectionInput"
+                    placeholder="Collection Name"
+                />
             </div>
             <div class="w-full">
-                <Button @click="handleCollectionCreation" :icon="isCreatingCollection ? 'pi pi-spin pi-spinner' : 'pi pi-save'" class="w-full"  label="Save"/>
+                <Button
+                    @click="handleCollectionCreation"
+                    :icon="
+                        isCreatingCollection
+                            ? 'pi pi-spin pi-spinner'
+                            : 'pi pi-save'
+                    "
+                    class="w-full"
+                    label="Save"
+                />
             </div>
         </div>
     </Dialog>
 
-    <Dialog v-model:visible="showCollectionSelectOverlay" modal header="Select Collection">
+    <!-- Dialog to select a collection when uploading a file -->
+    <Dialog
+        v-model:visible="showCollectionSelectOverlay"
+        modal
+        header="Select Collection"
+    >
         <div class="flex flex-col gap-4">
             <div class="w-full">
-                <Dropdown v-model="selectedCollection" :options="$page.props.collections" optionLabel="name" placeholder="Select a collection" class="w-full" />
+                <Dropdown
+                    v-model="selectedCollection"
+                    :options="$page.props.collections"
+                    optionLabel="name"
+                    placeholder="Select a collection"
+                    class="w-full"
+                />
             </div>
             <div class="w-full">
-                <Button @click="handleUpload" :icon="isUploadingFile ? 'pi pi-spin pi-spinner' : 'pi pi-upload'" class="w-full"  label="Upload"/>
+                <Button
+                    @click="handleUpload"
+                    :icon="
+                        isUploadingFile
+                            ? 'pi pi-spin pi-spinner'
+                            : 'pi pi-upload'
+                    "
+                    class="w-full"
+                    label="Upload"
+                />
             </div>
         </div>
     </Dialog>

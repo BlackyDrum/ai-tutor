@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Collections;
 use App\Models\Files;
+use Codewithkyrian\ChromaDB\ChromaDB;
+use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Smalot\PdfParser\Parser;
-use Codewithkyrian\ChromaDB\ChromaDB;
-use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 
 class EmbeddingController extends Controller
 {
@@ -28,21 +28,6 @@ class EmbeddingController extends Controller
         return Inertia::render('Admin/Embeddings', [
             'files' => $files
         ]);
-    }
-
-    public function delete(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|string|exists:files,id'
-        ]);
-
-        $collectionID = Files::query()->find($request->input('id'))->collection_id;
-        $collectionName = Collections::query()->find($collectionID)->name;
-
-
-        self::deleteEmbedding($request->input('id'),$collectionName);
-
-        return response()->json(['id' => $request->input('id')]);
     }
 
     public function create(Request $request)
@@ -102,37 +87,6 @@ class EmbeddingController extends Controller
 
             return response()->json(['message' => 'Error creating embedding'], 422);
         }
-
-    }
-
-    public function createCollection(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|unique:collections,name'
-        ]);
-
-        $chromaDB = ChromaDB::client();
-
-        $embeddingFunction = new JinaEmbeddingFunction(config('api.jina_api_key'));
-
-        $chromaDB->createCollection($request->input('name'), embeddingFunction: $embeddingFunction);
-
-        Collections::query()->create([
-            'name' => $request->input('name')
-        ]);
-    }
-
-    private function deleteEmbedding($id, $collection)
-    {
-        $collection = self::getCollection($collection);
-
-        $collection->delete([$id]);
-
-        $file = Files::query()->find($id);
-
-        unlink(storage_path() . '/app/' . $file->path);
-
-        $file->delete();
     }
 
     private function createEmbedding($file, $text, $collection)
@@ -154,6 +108,53 @@ class EmbeddingController extends Controller
             metadatas: $metadata,
             documents: $document
         );
+    }
+
+    public function delete(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|string|exists:files,id'
+        ]);
+
+        $collection = Files::query()
+            ->where('files.id', '=', $request->input('id'))
+            ->join('collections', 'collections.id', '=', 'files.collection_id')
+            ->select(['collections.name'])
+            ->get()[0]->name;
+
+        self::deleteEmbedding($request->input('id'), $collection);
+
+        return response()->json(['id' => $request->input('id')]);
+    }
+
+    private function deleteEmbedding($id, $collection)
+    {
+        $collection = self::getCollection($collection);
+
+        $collection->delete([$id]);
+
+        $file = Files::query()->find($id);
+
+        unlink(storage_path() . '/app/' . $file->path);
+
+        $file->delete();
+    }
+
+    public function createCollection(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|unique:collections,name'
+        ]);
+
+        $chromaDB = ChromaDB::client();
+
+        $embeddingFunction = new JinaEmbeddingFunction(config('api.jina_api_key'));
+
+        $chromaDB->createCollection($request->input('name'), embeddingFunction: $embeddingFunction);
+
+        Collections::query()->create([
+            'name' => $request->input('name')
+        ]);
     }
 
     private function getCollection($collection)
