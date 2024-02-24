@@ -14,3 +14,9 @@ import NavBar from "@/Components/NavBar.vue";
         </div>
     </div>
 </template>
+
+<style>
+.p-message-error {
+    word-break: break-word;
+}
+</style>
