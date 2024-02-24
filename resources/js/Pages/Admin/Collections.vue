@@ -21,7 +21,6 @@ const page = usePage();
 const tableHeadBackground = ref("#DADADA");
 const selectedCollection = ref(null);
 const isDeleting = ref(false);
-const isSettingActive = ref(false);
 
 const tableItems = [
     { header: "ID", field: "id" },
@@ -83,47 +82,6 @@ const confirmCollectionDeletion = () => {
         reject: () => {},
     });
 };
-
-const setCollectionActive = () => {
-    if (!selectedCollection.value) {
-        toast.add({
-            severity: "info",
-            summary: "Info",
-            detail: "You need to select a collection",
-            life: 5000,
-        });
-        return;
-    }
-
-    isSettingActive.value = true;
-
-    window.axios
-        .patch("/admin/embeddings/collections/active", {
-            id: selectedCollection.value.id,
-        })
-        .then((result) => {
-            const oldActive = page.props.collections.find((collection) => collection.active);
-            oldActive.active = false;
-
-            const newActive = page.props.collections.find(
-                (collection) => collection.id === result.data.id,
-            );
-            newActive.active = true;
-        })
-        .catch((error) => {
-            toast.add({
-                severity: "error",
-                summary: "Error",
-                detail: error.response.data.message ?? error.response.data,
-                life: 5000,
-            });
-        })
-        .finally(() => {
-            selectedCollection.value = null;
-
-            isSettingActive.value = false;
-        });
-};
 </script>
 
 <template>
@@ -136,16 +94,6 @@ const setCollectionActive = () => {
             <div class="w-full">
                 <div class="flex">
                     <div class="flex flex-wrap gap-3 mr-auto mb-5">
-                        <Button
-                            class="text-white border-gray-300 font-medium"
-                            label="Set Active"
-                            :icon="
-                                isSettingActive
-                                    ? 'pi pi-spin pi-spinner'
-                                    : 'pi pi-angle-double-up'
-                            "
-                            @click="setCollectionActive"
-                        />
                         <Button
                             class="text-black border-gray-300 bg-white font-medium"
                             label="Delete"
@@ -179,20 +127,6 @@ const setCollectionActive = () => {
                             'min-w-[30rem]': item.field === 'instructions',
                         }"
                     ></Column>
-
-                    <Column
-                        :headerStyle="{ background: tableHeadBackground }"
-                        field="active"
-                        header="Active"
-                        sortable
-                    >
-                        <template #body="{ data, field }">
-                            <div
-                                class="pi pi-circle-fill text-green-600"
-                                :class="{ 'text-red-600': !data[field] }"
-                            ></div>
-                        </template>
-                    </Column>
                 </DataTable>
             </div>
         </div>

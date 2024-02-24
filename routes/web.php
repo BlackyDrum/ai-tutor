@@ -52,7 +52,6 @@ Route::middleware(['auth'])->group(function() {
             Route::get('/collections', [EmbeddingController::class, 'showCollections'])->name('collections.show');
             Route::delete('/collections', [EmbeddingController::class, 'deleteCollection'])->name('collection.destroy');
             Route::post('/collections/create', [EmbeddingController::class, 'createCollection'])->name('collection.create');
-            Route::patch('/collections/active', [EmbeddingController::class, 'setCollectionActive'])->name('collection.update');
         });
     });
 });
