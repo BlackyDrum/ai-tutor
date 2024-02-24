@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
@@ -33,7 +34,7 @@ class Agent extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -42,6 +43,8 @@ class Agent extends Resource
      */
     public static $search = [
         'id',
+        'api_id',
+        'name'
     ];
 
     /**
@@ -86,7 +89,7 @@ class Agent extends Resource
                     return (bool)$this->resource->id;
                 }),
 
-            Number::make('Creator', 'user_id')
+            BelongsTo::make('User')
                 ->default(Auth::id())
                 ->hideWhenUpdating()
                 ->withMeta(['extraAttributes' => [

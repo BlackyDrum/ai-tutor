@@ -2,14 +2,12 @@
 
 namespace App\Nova;
 
-use App\Http\Controllers\ChromaController;
-use App\Models\Collections;
+use App\Http\Controllers\Admin\ChromaController;
+use http\Env\Request;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\File;
-use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -57,6 +55,12 @@ class Embedding extends Resource
                 ->hideWhenUpdating(),
 
             File::make('File', 'path')
+                ->acceptedTypes('.pdf,.txt')
+                ->rules('mimes:pdf,txt', function ($attribute, $value, $fail) {
+                    if (str_contains($value->getClientOriginalName(), '/') || str_contains($value->getClientOriginalName(), '\\')) {
+                        $fail('The filename cannot contain the "/" character.');
+                    }
+                })
                 ->storeOriginalName('name')
                 ->storeSize('size')
                 ->path('/uploads')

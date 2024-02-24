@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Collections;
 use App\Models\Files;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Smalot\PdfParser\Parser;
 
 class ChromaController extends Controller
 {
@@ -18,7 +16,7 @@ class ChromaController extends Controller
 
         $pathToFile = storage_path() . '/app/' . $model->path;
 
-        $text = file_get_contents($pathToFile);
+        $text = file_get_contents($pathToFile); // TODO: Parse PDF
 
         try {
             $collection = Collections::query()->find($model->collection_id)->name;

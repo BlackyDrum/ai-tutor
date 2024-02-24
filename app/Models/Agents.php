@@ -24,4 +24,9 @@ class Agents extends Model
     protected $casts = [
         'api_id' => 'string'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
