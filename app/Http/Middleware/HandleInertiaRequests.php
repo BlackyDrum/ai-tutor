@@ -33,14 +33,11 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $conversations = [];
-        $collections = [];
+        $collections = Collections::all();
 
         if (!str_starts_with($request->path(), 'admin')) {
             $conversations = Auth::check() ?
                 Conversations::query()->where('user_id', '=', Auth::id())->orderBy('created_at', 'desc')->get() : [];
-        }
-        else {
-            $collections = Collections::all();
         }
 
         return [

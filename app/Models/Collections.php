@@ -11,6 +11,5 @@ class Collections extends Model
 
     protected $fillable = [
         'name',
-        'active'
     ];
 }

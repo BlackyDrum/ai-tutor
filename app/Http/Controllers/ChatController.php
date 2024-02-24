@@ -33,6 +33,7 @@ class ChatController extends Controller
     {
         $request->validate([
             'message' => 'required|string|min:1|max:' . config('api.max_message_length'),
+            'collection' => 'required|integer|exists:collections,id',
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,id', new ValidateConversationOwner()],
         ]);
 

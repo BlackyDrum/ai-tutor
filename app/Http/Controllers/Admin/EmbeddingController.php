@@ -162,7 +162,7 @@ class EmbeddingController extends Controller
     public function createCollection(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:collections,name'
+            'name' => 'required|string|max:10|unique:collections,name'
         ]);
 
         try {
@@ -179,27 +179,6 @@ class EmbeddingController extends Controller
             'name' => $request->input('name'),
             'active' => Collections::query()->count() == 0
         ]);
-    }
-
-    public function setCollectionActive(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|integer|exists:collections,id'
-        ]);
-
-        DB::beginTransaction();
-
-        Collections::query()
-            ->where('active', '=', true)
-            ->update(['active' => false]);
-
-        Collections::query()
-            ->find($request->input('id'))
-            ->update(['active' => true]);
-
-        DB::commit();
-
-        return response()->json(['id' => $request->input('id')]);
     }
 
     public function deleteCollection(Request $request)
