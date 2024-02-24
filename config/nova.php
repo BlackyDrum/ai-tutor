@@ -162,6 +162,10 @@ return [
     |
     */
 
+    'brand' => [
+        'logo' => 'Adminpanel'
+    ],
+
     // 'brand' => [
     //     'logo' => resource_path('/img/example-logo.svg'),
 
