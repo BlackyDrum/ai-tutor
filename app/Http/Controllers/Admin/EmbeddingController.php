@@ -74,7 +74,7 @@ class EmbeddingController extends Controller
 
                 unlink($pathToFile);
 
-                return response()->json(['message' => 'Error parsing PDF'], 422);
+                return response()->json(['message' => $exception->getMessage()], 422);
             }
 
             $text = $pdf->getText();
@@ -94,7 +94,7 @@ class EmbeddingController extends Controller
 
             unlink($pathToFile);
 
-            return response()->json(['message' => 'Error creating embedding'], 422);
+            return response()->json(['message' => $exception->getMessage()], 500);
         }
     }
 
@@ -131,7 +131,11 @@ class EmbeddingController extends Controller
             ->select(['collections.name'])
             ->get()[0]->name;
 
-        self::deleteEmbedding($request->input('id'), $collection);
+        try {
+            self::deleteEmbedding($request->input('id'), $collection);
+        } catch (\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
 
         return response()->json(['id' => $request->input('id')]);
     }
@@ -155,11 +159,15 @@ class EmbeddingController extends Controller
             'name' => 'required|string|unique:collections,name'
         ]);
 
-        $chromaDB = self::getClient();
+        try {
+            $chromaDB = self::getClient();
 
-        $embeddingFunction = self::getEmbeddingFunction();
+            $embeddingFunction = self::getEmbeddingFunction();
 
-        $chromaDB->createCollection($request->input('name'), embeddingFunction: $embeddingFunction);
+            $chromaDB->createCollection($request->input('name'), embeddingFunction: $embeddingFunction);
+        } catch (\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
 
         Collections::query()->create([
             'name' => $request->input('name')
@@ -174,15 +182,19 @@ class EmbeddingController extends Controller
 
         $files = Files::query()->where('collection_id', '=', $request->input('id'))->get();
 
+        $collection = Collections::query()->find($request->input('id'));
+
+        try {
+            $chromaDB = self::getClient();
+
+            $chromaDB->deleteCollection($collection->name);
+        } catch (\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
+
         foreach ($files as $file) {
             unlink(storage_path() . '/app/' . $file->path);
         }
-
-        $collection = Collections::query()->find($request->input('id'));
-
-        $chromaDB = self::getClient();
-
-        $chromaDB->deleteCollection($collection->name);
 
         $collection->delete();
     }
