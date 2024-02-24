@@ -162,7 +162,7 @@ class EmbeddingController extends Controller
     public function createCollection(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:collections,name'
+            'name' => 'required|string|max:10|unique:collections,name'
         ]);
 
         try {
