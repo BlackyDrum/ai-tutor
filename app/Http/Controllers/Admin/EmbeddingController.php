@@ -149,7 +149,7 @@ class EmbeddingController extends Controller
 
         $chromaDB = self::getClient();
 
-        $embeddingFunction = new JinaEmbeddingFunction(config('api.jina_api_key'));
+        $embeddingFunction = self::getEmbeddingFunction();
 
         $chromaDB->createCollection($request->input('name'), embeddingFunction: $embeddingFunction);
 
@@ -162,9 +162,14 @@ class EmbeddingController extends Controller
     {
         $chromaDB = self::getClient();
 
-        $embeddingFunction = new JinaEmbeddingFunction(config('api.jina_api_key'));
+        $embeddingFunction = self::getEmbeddingFunction();
 
         return $chromaDB->getCollection($collection, embeddingFunction: $embeddingFunction);
+    }
+
+    private function getEmbeddingFunction()
+    {
+        return new JinaEmbeddingFunction(config('api.jina_api_key'));
     }
 
     static function getClient()
