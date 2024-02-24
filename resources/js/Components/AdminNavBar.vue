@@ -97,8 +97,6 @@ const handleUpload = () => {
 
             showCollectionSelectOverlay.value = false;
 
-            selectedCollection.value = null;
-
             fileInput.value[0].value = null;
 
             router.reload();
@@ -150,6 +148,12 @@ const handleCollectionCreation = () => {
             isCreatingCollection.value = false;
         });
 };
+
+const cancelUpload = () => {
+    collectionInput.value = null;
+
+    showCollectionSelectOverlay.value = false;
+}
 
 const handleResize = () => {
     if (window.innerWidth <= 768) {
@@ -276,6 +280,7 @@ const handleResize = () => {
     <!-- Dialog to select a collection when uploading a file -->
     <Dialog
         v-model:visible="showCollectionSelectOverlay"
+        :closable="false"
         modal
         header="Select Collection"
     >
@@ -289,7 +294,7 @@ const handleResize = () => {
                     class="w-full"
                 />
             </div>
-            <div class="w-full">
+            <div class="flex gap-3">
                 <Button
                     @click="handleUpload"
                     :disabled="isUploadingFile"
@@ -298,8 +303,14 @@ const handleResize = () => {
                             ? 'pi pi-spin pi-spinner'
                             : 'pi pi-upload'
                     "
-                    class="w-full"
                     label="Upload"
+                />
+                <Button
+                    :disabled="isUploadingFile"
+                    @click="cancelUpload"
+                    severity="danger"
+                    icon="pi pi-times"
+                    label="Cancel"
                 />
             </div>
         </div>
