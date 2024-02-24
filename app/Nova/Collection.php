@@ -49,6 +49,7 @@ class Collection extends Resource
 
             Text::make('Name')
                 ->rules('required', 'string', 'max:10', 'unique:collections,name')
+                ->sortable()
                 ->readonly(function() {
                     return (bool)$this->resource->id;
                 }),
@@ -57,7 +58,8 @@ class Collection extends Resource
 
             DateTime::make('Created At')
                 ->hideWhenCreating()
-                ->hideWhenUpdating(),
+                ->hideWhenUpdating()
+                ->sortable(),
         ];
     }
 

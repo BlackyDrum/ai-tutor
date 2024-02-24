@@ -7,6 +7,7 @@ use http\Env\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
@@ -55,7 +56,8 @@ class Embedding extends Resource
                 ->hideWhenUpdating(),
 
             Text::make('Name')
-                ->onlyOnIndex(),
+                ->onlyOnIndex()
+                ->sortable(),
 
             File::make('File', 'path')
                 ->acceptedTypes('.pdf,.txt')
@@ -74,19 +76,27 @@ class Embedding extends Resource
 
             Number::make('Size')
                 ->hideWhenUpdating()
-                ->hideWhenCreating(),
+                ->hideWhenCreating()
+                ->sortable(),
 
             BelongsTo::make('User')
                 ->default(Auth::id())
                 ->hideWhenUpdating()
+                ->sortable()
                 ->withMeta(['extraAttributes' => [
                     'readonly' => true
                 ]]),
 
             BelongsTo::make('Collection')
+                ->sortable()
                 ->readonly(function() {
                     return (bool)$this->resource->id;
                 }),
+
+            DateTime::make('Created At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->sortable(),
         ];
     }
 

@@ -63,7 +63,8 @@ class Agent extends Resource
                 ->hideWhenUpdating(),
 
             Text::make('Name')
-                ->rules('required','string','max:255', Rule::unique('agents', 'name')->ignore($this->resource->id)),
+                ->rules('required','string','max:255', Rule::unique('agents', 'name')->ignore($this->resource->id))
+                ->sortable(),
 
             Text::make('Context')
                 ->rules('required','string','max:255')
@@ -92,6 +93,7 @@ class Agent extends Resource
             BelongsTo::make('User')
                 ->default(Auth::id())
                 ->hideWhenUpdating()
+                ->sortable()
                 ->withMeta(['extraAttributes' => [
                     'readonly' => true
                 ]]),
@@ -110,6 +112,7 @@ class Agent extends Resource
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
+                ->sortable(),
         ];
     }
 

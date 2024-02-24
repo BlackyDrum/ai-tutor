@@ -68,6 +68,7 @@ class User extends Resource
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
+                ->sortable()
         ];
     }
 
