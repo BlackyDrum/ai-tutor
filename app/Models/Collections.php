@@ -13,4 +13,9 @@ class Collections extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function embedding()
+    {
+        return $this->hasMany(Files::class, 'collection_id');
+    }
 }

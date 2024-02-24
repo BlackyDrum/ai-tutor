@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Http\Controllers\Admin\ChromaController;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -51,6 +52,8 @@ class Collection extends Resource
                 ->readonly(function() {
                     return (bool)$this->resource->id;
                 }),
+
+            HasMany::make('Embedding'),
 
             DateTime::make('Created At')
                 ->hideWhenCreating()
