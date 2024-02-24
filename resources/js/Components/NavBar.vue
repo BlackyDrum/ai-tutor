@@ -102,7 +102,7 @@ const handleResize = () => {
                     >
                         <Link
                             v-if="$page.props.auth.user.admin"
-                            href="/admin"
+                            href="/admin/agents"
                             class="block flex gap-4 p-2 mb-1 cursor-pointer rounded-lg hover:bg-app-light"
                         >
                             <div>
