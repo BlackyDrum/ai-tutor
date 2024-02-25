@@ -21,7 +21,7 @@ class DeleteCollections extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Remove all stored data related to ChromaDB';
 
     /**
      * Execute the console command.
