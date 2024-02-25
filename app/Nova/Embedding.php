@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
@@ -122,12 +123,17 @@ class Embedding extends Resource
         $model->forceDelete();
     }
 
-    public function authorizedToUpdate(\Illuminate\Http\Request $request)
+    public function authorizedToUpdate(Request $request)
     {
         return false;
     }
 
-    public function authorizedToForceDelete(\Illuminate\Http\Request $request)
+    public function authorizedToForceDelete(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToReplicate(Request $request)
     {
         return false;
     }

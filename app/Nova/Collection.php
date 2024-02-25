@@ -98,6 +98,11 @@ class Collection extends Resource
         return false;
     }
 
+    public function authorizedToReplicate(Request $request)
+    {
+        return false;
+    }
+
     public static $group = 'ChromaDB';
 
     /**

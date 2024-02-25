@@ -62,6 +62,11 @@ class Message extends Resource
         return false;
     }
 
+    public function authorizedToReplicate(Request $request)
+    {
+        return false;
+    }
+
     public static $group = 'Chat';
 
     /**
