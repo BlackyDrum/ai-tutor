@@ -18,10 +18,12 @@ return new class extends Migration
             $table->string('path');
             $table->unsignedBigInteger('size');
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('collection_id')->after('user_id');
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('collection_id')->references('id')->on('collections')->onDelete('cascade');
         });
     }
 
