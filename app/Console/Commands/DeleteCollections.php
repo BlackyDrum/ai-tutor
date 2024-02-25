@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\ChromaController;
+use App\Http\Controllers\ChromaController;
 use App\Models\Collections;
 use App\Models\Files;
 use Illuminate\Console\Command;

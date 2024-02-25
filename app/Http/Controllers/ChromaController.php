@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Collections;
 use App\Models\Files;
-use Smalot\PdfParser\Parser;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
+use Smalot\PdfParser\Parser;
 
 class ChromaController extends Controller
 {

@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Http\Controllers\Admin\ChromaController;
+use App\Http\Controllers\ChromaController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\DateTime;

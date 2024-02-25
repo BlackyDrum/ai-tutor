@@ -2,8 +2,7 @@
 
 namespace App\Nova;
 
-use App\Http\Controllers\Admin\ChromaController;
-use http\Env\Request;
+use App\Http\Controllers\ChromaController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Nova\Fields\BelongsTo;
