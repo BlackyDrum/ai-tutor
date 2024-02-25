@@ -29,7 +29,10 @@ class ChromaController extends Controller
                     unlink($pathToFile);
                 }
 
-                return false;
+                return [
+                    'status' => false,
+                    'message' => $exception->getMessage(),
+                ];
             }
 
             $text = $pdf->getText();
@@ -64,12 +67,17 @@ class ChromaController extends Controller
                 unlink($pathToFile);
             }
 
-            return false;
+            return [
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ];
         }
 
         $model->save();
 
-        return true;
+        return [
+            'status' => true,
+        ];
     }
 
     public static function deleteEmbedding($model)
@@ -87,10 +95,15 @@ class ChromaController extends Controller
                 unlink($pathToFile);
             }
         } catch (\Exception $exception) {
-            return false;
+            return [
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ];
         }
 
-        return true;
+        return [
+            'status' => true,
+        ];
     }
 
     public static function createCollection($name)
@@ -102,10 +115,15 @@ class ChromaController extends Controller
 
             $chromaDB->createCollection($name, embeddingFunction: $embeddingFunction);
         } catch (\Exception $exception) {
-            return false;
+            return [
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ];
         }
 
-        return true;
+        return [
+            'status' => true,
+        ];
     }
 
     public static function deleteCollection($model)
@@ -117,7 +135,10 @@ class ChromaController extends Controller
 
             $chromaDB->deleteCollection($model->name);
         } catch (\Exception $exception) {
-            return false;
+            return [
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ];
         }
 
         foreach ($files as $file) {
@@ -128,7 +149,9 @@ class ChromaController extends Controller
             }
         }
 
-        return true;
+        return [
+            'status' => true,
+        ];
     }
 
     public static function getCollection($collection)

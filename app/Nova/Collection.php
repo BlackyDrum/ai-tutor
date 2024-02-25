@@ -68,17 +68,21 @@ class Collection extends Resource
 
     public static function afterCreate(NovaRequest $request, Model $model)
     {
-        if (!ChromaController::createCollection($model->name)) {
+        $result = ChromaController::createCollection($model->name);
+
+        if (!$result['status']) {
             $model->forceDelete();
-            abort(500, 'Error creating collection');
+            abort(500, $result['message']);
         }
     }
 
     public static function afterDelete(NovaRequest $request, Model $model)
     {
-        if (!ChromaController::deleteCollection($model)) {
+        $result = ChromaController::deleteCollection($model);
+
+        if (!$result['status']) {
             $model->restore();
-            abort(500, 'Error deleting collection');
+            abort(500, $result['message']);
         }
 
         $model->forceDelete();

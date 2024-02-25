@@ -102,17 +102,21 @@ class Embedding extends Resource
 
     public static function afterCreate(NovaRequest $request, Model $model)
     {
-        if (!ChromaController::createEmbedding($model)) {
+        $result = ChromaController::createEmbedding($model);
+
+        if (!$result['status']) {
             $model->forceDelete();
-            abort(500, 'Error creating embedding');
+            abort(500, $result['message']);
         }
     }
 
     public static function afterDelete(NovaRequest $request, Model $model)
     {
-        if (!ChromaController::deleteEmbedding($model)) {
+        $result = ChromaController::deleteEmbedding($model);
+
+        if (!$result['status']) {
             $model->restore();
-            abort(500, 'Error deleting embedding');
+            abort(500, $result['message']);
         }
 
         $model->forceDelete();
