@@ -14,6 +14,10 @@ class Collections extends Model
         'name',
     ];
 
+    protected $hidden = [
+        'deleted_at',
+    ];
+
     public function embedding()
     {
         return $this->hasMany(Files::class, 'collection_id');

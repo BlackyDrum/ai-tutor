@@ -19,6 +19,7 @@ class Conversations extends Model
     ];
 
     protected $hidden = [
+        'id',
         'agent_id',
         'creating_user',
         'max_tokens',

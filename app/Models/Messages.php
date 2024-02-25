@@ -15,6 +15,11 @@ class Messages extends Model
         'conversation_id',
     ];
 
+    protected $hidden = [
+        'id',
+        'conversation_id',
+    ];
+
     public function conversation()
     {
         return $this->belongsTo(Conversations::class, 'conversation_id');
