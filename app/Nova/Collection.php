@@ -68,7 +68,7 @@ class Collection extends Resource
     public static function afterCreate(NovaRequest $request, Model $model)
     {
         if (!ChromaController::createCollection($model->name)) {
-            $model->delete();
+            $model->forceDelete();
             abort(500, 'Error creating collection');
         }
     }
@@ -76,6 +76,7 @@ class Collection extends Resource
     public static function afterDelete(NovaRequest $request, Model $model)
     {
         if (!ChromaController::deleteCollection($model)) {
+            $model->restore();
             abort(500, 'Error deleting collection');
         }
 

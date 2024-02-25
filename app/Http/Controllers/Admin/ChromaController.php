@@ -88,7 +88,6 @@ class ChromaController extends Controller
                 unlink($pathToFile);
             }
         } catch (\Exception $exception) {
-            $model->restore();
             return false;
         }
 
@@ -119,7 +118,6 @@ class ChromaController extends Controller
 
             $chromaDB->deleteCollection($model->name);
         } catch (\Exception $exception) {
-            $model->restore();
             return false;
         }
 
