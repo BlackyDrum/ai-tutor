@@ -12,7 +12,7 @@ $ git clone https://github.com/BlackyDrum/chatbot.git
 ```
 $ cd chatbot
 ```
-3. **Install the dependencies. You will be asked to provide a valid Nova username and License Key:**
+3. **Install the dependencies. You will be asked to provide a valid Nova Username and License Key. More information [here](https://nova.laravel.com/docs/installation.html):**
 ```
 $ composer install
 ```
@@ -53,3 +53,16 @@ $ docker-compose up -d
 $ php artisan serve
 ```
 13. **Visit http://localhost:8000 in your web browser to access the application.**
+
+## Dashboard Access
+In order to have full access to the Admin's Dasboard, you need to manually set the ``admin`` flag to true. You can use the following command:
+```sql
+UPDATE users SET admin=true WHERE id={USER_ID};
+```
+
+## Clearing ChromaDB Data
+To completely remove all stored data related to ``ChromaDB``, including ``files``, ``embeddings``, and ``collections``, you can use the following command. Ensure that ``ChromaDB`` is running:
+```
+$ php artisan app:delete-collections
+```
+
