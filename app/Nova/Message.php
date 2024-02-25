@@ -32,6 +32,8 @@ class Message extends Resource
      */
     public static $search = [
         'id',
+        'user_message',
+        'agent_message'
     ];
 
     /**

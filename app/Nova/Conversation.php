@@ -34,6 +34,7 @@ class Conversation extends Resource
      */
     public static $search = [
         'id',
+        'api_id'
     ];
 
     /**
