@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('conversations', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->string('agent_id');
+            $table->id();
+            $table->string('api_id')->unique();
             $table->string('creating_user');
             $table->unsignedBigInteger('max_tokens')->default(1000);
             $table->float('temperature')->default(0.5);

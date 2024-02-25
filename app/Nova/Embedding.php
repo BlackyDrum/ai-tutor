@@ -116,10 +116,17 @@ class Embedding extends Resource
         $model->forceDelete();
     }
 
+    public function authorizedToUpdate(\Illuminate\Http\Request $request)
+    {
+        return false;
+    }
+
     public function authorizedToForceDelete(\Illuminate\Http\Request $request)
     {
         return false;
     }
+
+    public static $group = 'ChromaDB';
 
     /**
      * Get the cards available for the request.

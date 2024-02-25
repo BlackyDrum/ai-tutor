@@ -14,7 +14,7 @@ class Conversations extends Model
         'creating_user',
         'max_tokens',
         'temperature',
-        'id',
+        'api_id',
         'user_id',
     ];
 
@@ -29,6 +29,21 @@ class Conversations extends Model
     ];
 
     protected $casts = [
-        'id' => 'string',
+        'api_id' => 'string',
     ];
+
+    public function agent()
+    {
+        return $this->belongsTo(Agents::class, 'agent_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Messages::class, 'conversation_id');
+    }
 }

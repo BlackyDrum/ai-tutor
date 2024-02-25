@@ -7,6 +7,7 @@ use Illuminate\Validation\Rules;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Gravatar;
+use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
@@ -68,7 +69,9 @@ class User extends Resource
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
-                ->sortable()
+                ->sortable(),
+
+            HasManyThrough::make('Messages'),
         ];
     }
 

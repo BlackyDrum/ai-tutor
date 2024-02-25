@@ -14,4 +14,9 @@ class Messages extends Model
         'agent_message',
         'conversation_id',
     ];
+
+    public function conversation()
+    {
+        return $this->belongsTo(Conversations::class, 'conversation_id');
+    }
 }

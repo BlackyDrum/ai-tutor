@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('user_message');
             $table->text('agent_message');
-            $table->string('conversation_id');
+            $table->unsignedBigInteger('conversation_id');
             $table->timestamps();
 
             $table->foreign('conversation_id')->references('id')->on('conversations')->onDelete('cascade');

@@ -16,7 +16,9 @@ class ValidateConversationOwner implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $conversation = Conversations::query()->find($value);
+        $conversation = Conversations::query()
+            ->where('api_id', $value)
+            ->first();
 
         if ($conversation->user_id !== Auth::id()) {
             $fail('The selected conversation id is invalid.');

@@ -77,7 +77,7 @@ const handleResize = () => {
                                 .history"
                         >
                             <Link
-                                :href="`/chat/${conversation.id}`"
+                                :href="`/chat/${conversation.api_id}`"
                                 :class="{
                                     'bg-app-dark':
                                         conversation.id ===

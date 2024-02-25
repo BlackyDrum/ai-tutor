@@ -55,9 +55,9 @@ class HomeController extends Controller
         // We use a transaction here, allowing rollback in case the following API request fails.
         DB::beginTransaction();
 
-        Conversations::query()->create([
-            'id' => $conversationID,
-            'agent_id' => $agent->api_id,
+        $conversation = Conversations::query()->create([
+            'api_id' => $conversationID,
+            'agent_id' => $agent->id,
             'creating_user' => config('api.username'),
             'max_tokens' => config('api.max_tokens'),
             'temperature' => config('api.temperature'),
@@ -78,7 +78,7 @@ class HomeController extends Controller
         Messages::query()->create([
             'user_message' => $message,
             'agent_message' => htmlspecialchars($response2->json()['response']),
-            'conversation_id' => $conversationID
+            'conversation_id' => $conversation->id
         ]);
 
         DB::commit();

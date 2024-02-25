@@ -2,30 +2,30 @@
 
 namespace App\Nova;
 
-use App\Http\Controllers\Admin\ChromaController;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Collection extends Resource
+class Conversation extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Collections>
+     * @var class-string<\App\Models\Conversations>
      */
-    public static $model = \App\Models\Collections::class;
+    public static $model = \App\Models\Conversations::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'api_id';
 
     /**
      * The columns that should be searched.
@@ -34,7 +34,6 @@ class Collection extends Resource
      */
     public static $search = [
         'id',
-        'name'
     ];
 
     /**
@@ -48,38 +47,18 @@ class Collection extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('Name')
-                ->rules('required', 'string', 'max:10', 'unique:collections,name')
-                ->sortable()
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
-                }),
+            Text::make('api_id'),
 
-            HasMany::make('Embedding'),
+            Number::make('Max Tokens'),
 
-            DateTime::make('Created At')
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->sortable(),
+            Number::make('Temperature'),
+
+            BelongsTo::make('Agent'),
+
+            BelongsTo::make('User'),
+
+            HasMany::make('Messages'),
         ];
-    }
-
-
-    public static function afterCreate(NovaRequest $request, Model $model)
-    {
-        if (!ChromaController::createCollection($model->name)) {
-            $model->delete();
-            abort(500, 'Error creating collection');
-        }
-    }
-
-    public static function afterDelete(NovaRequest $request, Model $model)
-    {
-        if (!ChromaController::deleteCollection($model)) {
-            abort(500, 'Error deleting collection');
-        }
-
-        $model->forceDelete();
     }
 
     public function authorizedToUpdate(Request $request)
@@ -87,12 +66,12 @@ class Collection extends Resource
         return false;
     }
 
-    public function authorizedToForceDelete(Request $request)
+    public static function authorizedToCreate(Request $request)
     {
         return false;
     }
 
-    public static $group = 'ChromaDB';
+    public static $group = 'Chat';
 
     /**
      * Get the cards available for the request.

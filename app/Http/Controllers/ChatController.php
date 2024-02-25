@@ -15,13 +15,18 @@ class ChatController extends Controller
 {
     public function show(string $id)
     {
-        $conversation = Conversations::query()->find($id);
+        $conversation = Conversations::query()
+            ->where('api_id', $id)
+            ->first();
 
         if (empty($conversation) || $conversation->user_id !== Auth::id()) {
             return redirect('/');
         }
 
-        $messages = Messages::query()->where('conversation_id', '=', $id)->orderBy('created_at')->get();
+        $messages = Messages::query()
+            ->where('conversation_id', '=', $conversation->id)
+            ->orderBy('created_at')
+            ->get();
 
         return Inertia::render('Chat', [
             'messages' => $messages,
@@ -34,7 +39,7 @@ class ChatController extends Controller
         $request->validate([
             'message' => 'required|string|min:1|max:' . config('api.max_message_length'),
             'collection' => 'required|integer|exists:collections,id',
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,id', new ValidateConversationOwner()],
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()],
         ]);
 
         $token = HomeController::getBearerToken();
@@ -52,10 +57,14 @@ class ChatController extends Controller
             return response()->json($response->reason(), $response->status());
         }
 
+        $conversation = Conversations::query()
+            ->where('api_id', $request->input('conversation_id'))
+            ->first();
+
         $message = Messages::query()->create([
             'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars($response->json()['response']),
-            'conversation_id' => $request->input('conversation_id'),
+            'conversation_id' => $conversation->id,
         ]);
 
         $maxRequests = config('api.max_requests');

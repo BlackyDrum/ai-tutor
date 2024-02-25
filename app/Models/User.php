@@ -42,4 +42,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function messages()
+    {
+        return $this->hasManyThrough(Messages::class, Conversations::class, '', 'conversation_id');
+    }
 }
