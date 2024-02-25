@@ -24,20 +24,24 @@ $ cp .env.example .env
 ```
 $ php artisan key:generate
 ```
-6. **Run the database migrations:**
+6. **Install Nova:**
+```
+$ php artisan nova:install
+```
+7. **Run the database migrations:**
 ```
 $ php artisan migrate
 ```
-7. **Install JavaScript dependencies:**
+8. **Install JavaScript dependencies:**
 ```
 $ npm install
 ```
-8. **Build the assets:**
+9. **Build the assets:**
 ```
 $ npm run dev
 ```
-9. **Start the development server:**
+10. **Start the development server:**
 ```
 $ php artisan serve
 ```
-10. **Visit http://localhost:8000 in your web browser to access the application.**
+11. **Visit http://localhost:8000 in your web browser to access the application.**
