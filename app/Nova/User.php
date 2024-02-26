@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Metrics\Users;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use Laravel\Nova\Actions\ExportAsCsv;
@@ -84,7 +85,9 @@ class User extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            new Users()
+        ];
     }
 
     /**

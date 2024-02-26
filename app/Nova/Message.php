@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Metrics\MessagesPerDay;
 use Illuminate\Http\Request;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
@@ -77,7 +78,9 @@ class Message extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            new MessagesPerDay()
+        ];
     }
 
     /**

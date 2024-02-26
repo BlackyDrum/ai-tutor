@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
+use App\Nova\Metrics\Collections;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Actions\ExportAsCsv;
@@ -113,7 +114,9 @@ class Collection extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            new Collections()
+        ];
     }
 
     /**

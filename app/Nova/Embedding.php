@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
+use App\Nova\Metrics\Embeddings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -148,7 +149,9 @@ class Embedding extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            new Embeddings()
+        ];
     }
 
     /**

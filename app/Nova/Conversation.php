@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Metrics\ConversationsPerDay;
 use Illuminate\Http\Request;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
@@ -88,7 +89,9 @@ class Conversation extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            new ConversationsPerDay()
+        ];
     }
 
     /**
