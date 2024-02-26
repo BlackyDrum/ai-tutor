@@ -7,6 +7,8 @@ services:
             - '8080:8000'
         volumes:
             - chroma-data:/chroma/chroma
+        env_file:
+            - .env
 
 volumes:
     chroma-data:

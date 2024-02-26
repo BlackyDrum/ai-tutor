@@ -6,6 +6,7 @@ use App\Models\Collections;
 use App\Models\Files;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
+use GuzzleHttp\Client;
 use Smalot\PdfParser\Parser;
 
 class ChromaController extends Controller
@@ -165,16 +166,24 @@ class ChromaController extends Controller
 
     public static function getEmbeddingFunction()
     {
-        return new JinaEmbeddingFunction(config('api.jina_api_key'));
+        return new JinaEmbeddingFunction(config('chromadb.jina_api_key'));
     }
 
     public static function getClient()
     {
         return ChromaDB::factory()
-            ->withHost(config('api.chroma_host'))
-            ->withPort(config('api.chroma_port'))
-            ->withDatabase(config('api.chroma_database'))
-            ->withTenant(config('api.chroma_tenant'))
+            ->withHost(config('chromadb.chroma_host'))
+            ->withPort(config('chromadb.chroma_port'))
+            ->withDatabase(config('chromadb.chroma_database'))
+            ->withTenant(config('chromadb.chroma_tenant'))
+            ->withHttpClient(new Client([
+                'base_uri' => config('chromadb.chroma_host') . ':' . config('chromadb.chroma_port'),
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . config('chromadb.chroma_server_auth_credentials')
+                ],
+            ]))
             ->connect();
     }
 }
