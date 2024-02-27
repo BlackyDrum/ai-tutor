@@ -80,7 +80,7 @@ const handleResize = () => {
                                 :href="`/chat/${conversation.api_id}`"
                                 :class="{
                                     'bg-app-dark':
-                                        conversation.id ===
+                                        conversation.api_id ===
                                         $page.url.slice(
                                             $page.url.lastIndexOf('/') + 1,
                                         ),
