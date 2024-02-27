@@ -101,7 +101,7 @@ class Agent extends Resource
                 ]]),
 
             Textarea::make('Instructions')
-                ->rules('required','string','max:255')
+                ->rules('required','string')
                 ->hideWhenUpdating()
                 ->readonly(function() {
                     return (bool)$this->resource->id;

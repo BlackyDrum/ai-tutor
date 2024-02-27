@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agents;
+use App\Models\Collections;
 use App\Models\Conversations;
 use App\Models\Messages;
 use Illuminate\Http\Request;
@@ -21,9 +22,17 @@ class HomeController extends Controller
     public function createConversation(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|min:1|max:' . config('api.max_message_length'),
+            'message' => 'required|string|max:' . config('api.max_message_length'),
             'collection' => 'required|integer|exists:collections,id'
         ]);
+
+        $collection = Collections::query()->find($request->input('collection'))->name;
+
+        try {
+            $promptWithContext = ChromaController::createPromptWithContext($collection, $request->input('message'));
+        } catch (\Exception $exception) {
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
 
         $token = self::getBearerToken();
 
@@ -66,7 +75,7 @@ class HomeController extends Controller
 
         $response2 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
             'conversation_id' => $conversationID,
-            'message' => $message
+            'message' => $promptWithContext
         ]);
 
         if ($response2->failed()) {

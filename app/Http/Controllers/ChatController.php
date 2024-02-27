@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Collections;
 use App\Models\Conversations;
 use App\Models\Messages;
 use App\Rules\ValidateConversationOwner;
@@ -37,10 +38,18 @@ class ChatController extends Controller
     public function chat(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|min:1|max:' . config('api.max_message_length'),
+            'message' => 'required|string|max:' . config('api.max_message_length'),
             'collection' => 'required|integer|exists:collections,id',
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()],
         ]);
+
+        $collection = Collections::query()->find($request->input('collection'))->name;
+
+        try {
+            $promptWithContext = ChromaController::createPromptWithContext($collection, $request->input('message'));
+        } catch (\Exception $exception) {
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
 
         $token = HomeController::getBearerToken();
 
@@ -50,7 +59,7 @@ class ChatController extends Controller
 
         $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
             'conversation_id' => $request->input('conversation_id'),
-            'message' => $request->input('message'),
+            'message' => $promptWithContext,
         ]);
 
         if ($response->failed()) {

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('embedding_id')->unique()->nullable();
             $table->string('name');
             $table->string('path');
+            $table->text('content')->nullable();
             $table->unsignedBigInteger('size');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('collection_id')->after('user_id');

@@ -11,6 +11,34 @@ use Smalot\PdfParser\Parser;
 
 class ChromaController extends Controller
 {
+    public static function createPromptWithContext($collectionName, $message)
+    {
+        $collection = self::getCollection($collectionName);
+
+        $queryResponse = $collection->query(
+            queryTexts: [
+                $message
+            ],
+            nResults: config('chromadb.max_document_results')
+        );
+
+        $enhancedMessage = "Try to answer the following user question.\n" .
+                           "Below you will find some context that may help. Ignore it if it seems irrelevant.\n\n" .
+                           "Context:\n";
+
+        foreach ($queryResponse->ids[0] as $id) {
+            $file = Files::query()
+                ->where('embedding_id', '=', $id)
+                ->first();
+
+            $enhancedMessage .= $file->content . "\n";
+        }
+
+        $enhancedMessage .= "\nUser Question:\n" . $message;
+
+        return $enhancedMessage;
+    }
+
     public static function createEmbedding($model)
     {
         $model->embedding_id = substr($model->path, strrpos($model->path, '/') + 1);
@@ -42,6 +70,7 @@ class ChromaController extends Controller
             $text = file_get_contents($pathToFile);
         }
 
+        $model->content = $text;
 
         try {
             $collection = Collections::query()->find($model->collection_id)->name;
