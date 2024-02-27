@@ -23,5 +23,5 @@ return [
 
     'max_message_length' => 2048,
 
-    'temperature' => 0.5,
+    'temperature' => 0.7,
 ];
