@@ -45,8 +45,15 @@ class ChatController extends Controller
 
         $collection = Collections::query()->find($request->input('collection'))->name;
 
+        $pastMessages = Messages::query()
+            ->join('conversations', 'conversations.id', '=', 'messages.conversation_id')
+            ->where('conversations.api_id', '=', $request->input('conversation_id'))
+            ->select(['messages.user_message'])
+            ->orderBy('messages.created_at')
+            ->get();
+
         try {
-            $promptWithContext = ChromaController::createPromptWithContext($collection, $request->input('message'));
+            $promptWithContext = ChromaController::createPromptWithContext($collection, $request->input('message'), $pastMessages);
         } catch (\Exception $exception) {
             return response()->json(['message' => 'Internal Server Error'], 500);
         }

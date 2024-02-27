@@ -11,7 +11,7 @@ use Smalot\PdfParser\Parser;
 
 class ChromaController extends Controller
 {
-    public static function createPromptWithContext($collectionName, $message)
+    public static function createPromptWithContext($collectionName, $message, $pastMessages = null)
     {
         $collection = self::getCollection($collectionName);
 
@@ -23,7 +23,8 @@ class ChromaController extends Controller
         );
 
         $enhancedMessage = "Try to answer the following user question. Always try to answer in German.\n" .
-                           "Below you will find some context that may help. Ignore it if it seems irrelevant.\n\n" .
+                           "Below you will find some context that may help. Ignore it if it seems irrelevant.\n" .
+                           "Below you will also find the user messages from the past. Always take that into account too.\n\n" .
                            "Context:\n";
 
         foreach ($queryResponse->ids[0] as $id) {
@@ -32,6 +33,14 @@ class ChromaController extends Controller
                 ->first();
 
             $enhancedMessage .= $file->content . "\n";
+        }
+
+        if ($pastMessages) {
+            $enhancedMessage .= "\nPast User Messages: \n";
+
+            foreach ($pastMessages as $pastMessage) {
+                $enhancedMessage .= $pastMessage->user_message . "\n";
+            }
         }
 
         $enhancedMessage .= "\nUser Question:\n" . $message;
