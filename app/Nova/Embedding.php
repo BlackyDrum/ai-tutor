@@ -63,7 +63,7 @@ class Embedding extends Resource
 
             File::make('File', 'path')
                 ->acceptedTypes('.pdf,.txt')
-                ->rules('mimes:pdf,txt', function ($attribute, $value, $fail) {
+                ->rules('extensions:pdf,txt', function ($attribute, $value, $fail) {
                     if (str_contains($value->getClientOriginalName(), '/') || str_contains($value->getClientOriginalName(), '\\')) {
                         $fail('The filename cannot contain the "/" character.');
                     }
