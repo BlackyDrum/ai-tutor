@@ -16,13 +16,13 @@ $ cd chatbot
 ```
 $ composer install
 ```
-4. **Verify your Nova License Key:**
-```
-$ php artisan nova:check-license
-```
-5. **Create a copy of the .env.example file and rename it to .env. Update the necessary configuration values such as the Database- and API Credentials:**
+4. **Create a copy of the .env.example file and rename it to .env. Update the necessary configuration values such as the Database- and API Credentials:**
 ```
 $ cp .env.example .env
+```
+5. **Verify your Nova License Key:**
+```
+$ php artisan nova:check-license
 ```
 6. **Generate an application key:**
 ```
