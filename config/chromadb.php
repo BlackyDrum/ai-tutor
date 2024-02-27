@@ -17,5 +17,5 @@ return [
 
     'jina_api_key' => env('JINA_API_KEY'),
 
-    'max_document_results' => 1, // Maximum number of documents that should be returned after querying
+    'max_document_results' => 5, // Maximum number of documents that should be returned after querying
 ];
