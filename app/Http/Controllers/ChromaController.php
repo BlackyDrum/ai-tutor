@@ -195,7 +195,7 @@ class ChromaController extends Controller
 
     public static function getEmbeddingFunction()
     {
-        return new JinaEmbeddingFunction(config('chromadb.jina_api_key'));
+        return new JinaEmbeddingFunction(config('chromadb.jina_api_key'), 'jina-embeddings-v2-base-de');
     }
 
     public static function getClient()
