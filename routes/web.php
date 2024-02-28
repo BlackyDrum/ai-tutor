@@ -26,6 +26,8 @@ Route::middleware(['auth'])->group(function() {
     Route::prefix('chat')->name('chat.')->group(function() {
         Route::get('/{id}', [ChatController::class, 'show'])->name('show');
 
+        Route::delete('/conversation', [HomeController::class, 'deleteConversation'])->name('conversation.delete');
+
         Route::middleware(ValidateRemainingRequests::class)->group(function() {
             Route::post('/create-conversation', [HomeController::class, 'createConversation'])->name('conversation.create');
 

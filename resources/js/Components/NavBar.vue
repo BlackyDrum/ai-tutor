@@ -1,15 +1,22 @@
 <script setup>
-import { router, Link } from "@inertiajs/vue3";
+import { router, Link, usePage } from "@inertiajs/vue3";
 import { onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
+import { useToast } from "primevue/usetoast";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import UserAvatar from "@/Components/UserAvatar.vue";
 
 import ScrollPanel from "primevue/scrollpanel";
+import OverlayPanel from "primevue/overlaypanel";
 
 const appName = import.meta.env.VITE_APP_NAME;
 
+const page = usePage();
+const toast = useToast();
+
 const showProfileOP = ref(false);
+const historyOP = ref();
+const selectedConversation = ref(null);
 const showResponsiveNavBar = ref(true);
 const scrollPanel = ref();
 
@@ -39,6 +46,49 @@ const handleResize = () => {
     if (window.innerWidth <= 768) {
         showResponsiveNavBar.value = false;
     }
+};
+
+const toggleHistoryOverlayPanel = (event, conversation) => {
+    historyOP.value.toggle(event);
+
+    selectedConversation.value = historyOP.value.visible ? conversation : null;
+};
+
+const deleteConversation = () => {
+    window.axios
+        .delete("/chat/conversation", {
+            data: {
+                conversation_id: selectedConversation.value,
+            },
+        })
+        .then((result) => {
+            page.props.auth.history.splice(
+                page.props.auth.history.findIndex(
+                    (conversation) => conversation.api_id === result.data.id,
+                ),
+                1,
+            );
+
+            if (
+                typeof page.props.conversation_id !== "undefined" &&
+                result.data.id === page.props.conversation_id
+            ) {
+                router.get("/");
+            }
+        })
+        .catch((error) => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
+        })
+        .finally(() => {
+            selectedConversation.value = null;
+
+            historyOP.value.visible = false;
+        });
 };
 </script>
 
@@ -75,29 +125,47 @@ const handleResize = () => {
                         <div
                             v-for="(conversation, index) in $page.props.auth
                                 .history"
+                            :key="conversation.api_id"
                         >
-                            <Link
-                                :href="`/chat/${conversation.api_id}`"
-                                :class="{
-                                    'bg-app-dark':
-                                        conversation.api_id ===
-                                        $page.url.slice(
-                                            $page.url.lastIndexOf('/') + 1,
-                                        ),
-                                }"
-                                class="block my-1 p-2 rounded-lg cursor-pointer hover:bg-app-dark"
-                            >
-                                Chat #{{
-                                    $page.props.auth.history.length - index
-                                }}
-                            </Link>
+                            <div class="relative flex group">
+                                <Link
+                                    :href="`/chat/${conversation.api_id}`"
+                                    :class="{
+                                        'bg-app-dark':
+                                            conversation.api_id ===
+                                            $page.url.slice(
+                                                $page.url.lastIndexOf('/') + 1,
+                                            ),
+                                    }"
+                                    class="block flex-1 my-1 p-2 rounded-lg cursor-pointer hover:bg-app-dark"
+                                >
+                                    Chat #{{
+                                        $page.props.auth.history.length - index
+                                    }}
+                                </Link>
+                                <button
+                                    @click="
+                                        toggleHistoryOverlayPanel(
+                                            $event,
+                                            conversation.api_id,
+                                        )
+                                    "
+                                    class="block absolute right-2 top-2 p-1 rounded-lg hidden group-hover:block"
+                                >
+                                    <span class="pi pi-ellipsis-h"></span>
+                                </button>
+                            </div>
                         </div>
                     </ScrollPanel>
                 </div>
                 <div class="w-full relative">
                     <div
                         v-if="showProfileOP"
-                        :class="$page.props.auth.user.admin ? '-top-[145px]' : '-top-[100px]'"
+                        :class="
+                            $page.props.auth.user.admin
+                                ? '-top-[145px]'
+                                : '-top-[100px]'
+                        "
                         class="absolute w-full z-10 p-1 mb-2 rounded-lg bg-app-dark"
                     >
                         <Link
@@ -143,10 +211,27 @@ const handleResize = () => {
             </div>
         </nav>
     </div>
+
+    <!-- Chat History Overlay Panel -->
+    <OverlayPanel ref="historyOP" class="bg-app-dark border-none z-50">
+        <div
+            @click="deleteConversation"
+            class="flex gap-4 p-2 text-sm text-red-600 cursor-pointer rounded-lg hover:bg-gray-700/20"
+        >
+            <div>
+                <span class="pi pi-trash"></span>
+            </div>
+            <div class="block">Delete chat</div>
+        </div>
+    </OverlayPanel>
 </template>
 
 <style>
 .p-scrollpanel-bar-x {
+    display: none;
+}
+.p-overlaypanel:after,
+.p-overlaypanel:before {
     display: none;
 }
 </style>

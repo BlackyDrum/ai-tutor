@@ -6,6 +6,7 @@ use App\Models\Agents;
 use App\Models\Collections;
 use App\Models\Conversations;
 use App\Models\Messages;
+use App\Rules\ValidateConversationOwner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -93,6 +94,19 @@ class HomeController extends Controller
         DB::commit();
 
         return response()->json(['id' => $conversationID]);
+    }
+
+    public function deleteConversation(Request $request)
+    {
+        $request->validate([
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+        ]);
+
+        Conversations::query()
+            ->where('api_id', '=', $request->input('conversation_id'))
+            ->delete();
+
+        return response()->json(['id' => $request->input('conversation_id')]);
     }
 
     public static function getBearerToken()
