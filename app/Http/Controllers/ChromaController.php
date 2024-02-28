@@ -24,26 +24,31 @@ class ChromaController extends Controller
 
         $enhancedMessage = "Try to answer the following user question. Always try to answer in the language from the user's question.\n" .
                            "Below you will find some context that may help. Ignore it if it seems irrelevant.\n" .
-                           "Below you will also find the user messages from the past. Always take that into account too.\n\n" .
-                           "Context:\n";
+                           "Below you will also find the user messages from the past. Always take that into account too.\n\n";
 
+        $index = 1;
         foreach ($queryResponse->ids[0] as $id) {
             $file = Files::query()
                 ->where('embedding_id', '=', $id)
                 ->first();
 
-            $enhancedMessage .= $file->content . "\n";
+            $enhancedMessage .= "----------\n";
+            $enhancedMessage .= "Context Document $index:\n" . $file->content . "\n";
+            $enhancedMessage .= "----------\n";
+            $index++;
         }
 
+        $index = 1;
         if ($pastMessages) {
-            $enhancedMessage .= "\nPast User Messages: \n";
-
             foreach ($pastMessages as $pastMessage) {
-                $enhancedMessage .= $pastMessage->user_message . "\n";
+                $enhancedMessage .= "----------\n";
+                $enhancedMessage .= "Recent User Message $index:\n" . $pastMessage->user_message . "\n";
+                $enhancedMessage .= "----------\n";
+                $index++;
             }
         }
 
-        $enhancedMessage .= "\nUser Question:\n" . $message;
+        $enhancedMessage .= "\nCurrent User Message:\n" . $message;
 
         return $enhancedMessage;
     }
