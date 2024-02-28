@@ -22,7 +22,7 @@ class ChromaController extends Controller
             nResults: config('chromadb.max_document_results')
         );
 
-        $enhancedMessage = "Try to answer the following user question. Always try to answer in German.\n" .
+        $enhancedMessage = "Try to answer the following user question. Always try to answer in the language from the user's question.\n" .
                            "Below you will find some context that may help. Ignore it if it seems irrelevant.\n" .
                            "Below you will also find the user messages from the past. Always take that into account too.\n\n" .
                            "Context:\n";
