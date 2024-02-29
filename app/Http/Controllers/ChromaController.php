@@ -227,13 +227,13 @@ class ChromaController extends Controller
             foreach ($artifacts as $artifact) {
                 $collection->delete([$artifact->embedding_id]);
 
-                $artifact->forceDelete();
-
                 $pathToFile = storage_path() . '/app/' . $artifact->path;
 
                 if (file_exists($pathToFile)) {
                     unlink($pathToFile);
                 }
+
+                $artifact->forceDelete();
             }
 
             $collection->delete([$model->embedding_id]);
