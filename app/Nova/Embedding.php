@@ -62,8 +62,8 @@ class Embedding extends Resource
                 ->sortable(),
 
             File::make('File', 'path')
-                ->acceptedTypes('.pdf,.txt')
-                ->rules('extensions:pdf,txt', function ($attribute, $value, $fail) {
+                ->acceptedTypes('.txt,.pptx')
+                ->rules('extensions:txt,pptx', function ($attribute, $value, $fail) {
                     if (str_contains($value->getClientOriginalName(), '/') || str_contains($value->getClientOriginalName(), '\\')) {
                         $fail('The filename cannot contain the "/" character.');
                     }

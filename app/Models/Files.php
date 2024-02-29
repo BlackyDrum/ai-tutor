@@ -17,7 +17,10 @@ class Files extends Model
         'size',
         'mime',
         'user_id',
-        'collection_id'
+        'collection_id',
+        'parent_id',
+        'embedding_id',
+        'content'
     ];
 
     protected $casts = [

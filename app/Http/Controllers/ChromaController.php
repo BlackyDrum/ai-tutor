@@ -9,7 +9,9 @@ use App\Models\Files;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 use GuzzleHttp\Client;
-use Smalot\PdfParser\Parser;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class ChromaController extends Controller
 {
@@ -87,49 +89,110 @@ class ChromaController extends Controller
 
         $filename = $model->name;
 
-        if (str_ends_with($filename, 'pdf')) {
-            $parser = new Parser();
+        // We need to manually create the files here, because the API endpoint
+        // returns small artifacts of the pptx file. We do not want to store
+        // the whole pptx file, but rather these small artifacts. Each artifact
+        // represents an embedding.
+        if (str_ends_with($filename, 'pptx')) {
+            $token = HomeController::getBearerToken();
 
-            try {
-                $pdf = $parser->parseFile($pathToFile);
-            } catch (\Exception $exception) {
-
+            if (is_array($token)) {
                 if (file_exists($pathToFile)) {
                     unlink($pathToFile);
                 }
 
                 return [
                     'status' => false,
-                    'message' => $exception->getMessage(),
+                    'message' => $token['reason'],
                 ];
             }
 
-            $text = $pdf->getText();
+            $response = Http::withToken($token)
+                ->withoutVerifying()
+                ->asMultipart()
+                ->post(config('api.url') . '/data/pptx-to-md', [
+                    [
+                        'name' => 'pptxfile',
+                        'contents' => fopen($pathToFile, 'r'),
+                        'headers' => [
+                            'Content-Type' => 'application/octet-stream',
+                        ],
+                    ],
+                ]);
+
+            if ($response->failed()) {
+                if (file_exists($pathToFile)) {
+                    unlink($pathToFile);
+                }
+
+                return [
+                    'status' => false,
+                    'message' => $response->reason(),
+                ];
+            }
+
+            $ids = [];
+            $documents = [];
+            $metadata = [];
+            $index = 1;
+            foreach ($response->json(['content']) as $content) {
+                $embedding_id = Str::random(40) . '.txt';
+                $path = storage_path() . '/app/uploads/' . $embedding_id;
+
+                $contentOnSlide = "";
+                foreach ($content['content'] as $item) {
+                    $contentOnSlide .= "$item\n";
+                }
+
+                $f = fopen($path, 'w');
+                fwrite($f, $contentOnSlide);
+                fclose($f);
+
+                $ids[] = $embedding_id;
+                $documents[] = $contentOnSlide;
+                $metadata[] = [
+                    'filename' => $model->name . "_Artifact_$index",
+                    'size' => filesize($path)
+                ];
+
+                Files::query()->create([
+                    'embedding_id' => $embedding_id,
+                    'name' => $model->name . "_Artifact_$index",
+                    'path' => "uploads/$embedding_id",
+                    'content' => $contentOnSlide,
+                    'size' => filesize($path),
+                    'user_id' => Auth::id(),
+                    'collection_id' => $model->collection_id,
+                    'parent_id' => $model->id
+                ]);
+
+                $index++;
+            }
         }
         else {
             $text = file_get_contents($pathToFile);
-        }
 
-        $model->content = $text;
+            $model->content = $text;
 
-        try {
-            $collection = Collections::query()->find($model->collection_id)->name;
-
-            $collection = self::getCollection($collection);
-
-            $id = [$model->embedding_id];
-            $document = [$text];
+            $ids = [$model->embedding_id];
+            $documents = [$text];
             $metadata = [
                 [
                     'filename' => $model->name,
                     'size' => $model->size,
                 ]
             ];
+        }
+
+        try {
+            $collection = Collections::query()->find($model->collection_id)->name;
+
+            $collection = self::getCollection($collection);
 
             $collection->add(
-                ids: $id,
+                ids: $ids,
                 metadatas: $metadata,
-                documents: $document
+                documents: $documents
             );
 
         } catch (\Exception $exception) {
@@ -156,6 +219,20 @@ class ChromaController extends Controller
 
         try {
             $collection = self::getCollection($collection);
+
+            $artifacts = Files::query()
+                ->where('parent_id', '=', $model->id)
+                ->get();
+
+            foreach ($artifacts as $artifact) {
+                $collection->delete([$artifact->embedding_id]);
+
+                $pathToFile = storage_path() . '/app/' . $artifact->path;
+
+                if (file_exists($pathToFile)) {
+                    unlink($pathToFile);
+                }
+            }
 
             $collection->delete([$model->embedding_id]);
 
