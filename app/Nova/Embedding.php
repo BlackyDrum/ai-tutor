@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
+use App\Models\Files;
 use App\Nova\Metrics\Embeddings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -111,7 +112,10 @@ class Embedding extends Resource
             HasMany::make('Artifacts', 'EmbeddingMany', Embedding::class)
                 ->sortable()
                 ->showOnDetail(function(NovaRequest $request, $resource) {
-                    return !$resource->parent_id; // Only show related embeddings if current embedding has no parent
+                    $count = Files::query()
+                        ->where('parent_id', '=', $resource->id)
+                        ->count();
+                    return $count != 0; // Only show relations when file has artifacts
                 }),
 
             DateTime::make('Created At')
