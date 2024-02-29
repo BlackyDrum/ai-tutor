@@ -32,7 +32,7 @@ class DeleteCollections extends Command
 
         $chromaDB->deleteAllCollections();
 
-        self::deleteDirectory(storage_path() . '/app/uploads');
+        //self::deleteDirectory(storage_path() . '/app/uploads');
 
         Collections::query()->forceDelete();
 

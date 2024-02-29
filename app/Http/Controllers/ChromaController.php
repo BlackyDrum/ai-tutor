@@ -11,6 +11,7 @@ use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ChromaController extends Controller
@@ -83,11 +84,11 @@ class ChromaController extends Controller
 
     public static function createEmbedding($model)
     {
-        $model->embedding_id = substr($model->path, strrpos($model->path, '/') + 1);
-
-        $pathToFile = storage_path() . '/app/' . $model->path;
+        $pathToFile = storage_path() . '/app/' . $model->embedding_id;
 
         $filename = $model->name;
+
+        $model->parent_id = null;
 
         // We need to manually create the files here, because the API endpoint
         // returns small artifacts of the pptx file. We do not want to store
@@ -120,11 +121,11 @@ class ChromaController extends Controller
                     ],
                 ]);
 
-            if ($response->failed()) {
-                if (file_exists($pathToFile)) {
-                    unlink($pathToFile);
-                }
+            if (file_exists($pathToFile)) {
+                unlink($pathToFile);
+            }
 
+            if ($response->failed()) {
                 return [
                     'status' => false,
                     'message' => $response->reason(),
@@ -139,30 +140,24 @@ class ChromaController extends Controller
             // Creating and storing artifacts/slides
             foreach ($response->json(['content']) as $content) {
                 $embedding_id = Str::random(40) . '.txt';
-                $path = storage_path() . '/app/uploads/' . $embedding_id;
 
                 $contentOnSlide = "";
                 foreach ($content['content'] as $item) {
                     $contentOnSlide .= "$item\n";
                 }
 
-                $f = fopen($path, 'w');
-                fwrite($f, $contentOnSlide);
-                fclose($f);
-
                 $ids[] = $embedding_id;
                 $documents[] = $contentOnSlide;
                 $metadata[] = [
                     'filename' => $model->name . "_Artifact_$index",
-                    'size' => filesize($path)
+                    'size' => strlen($contentOnSlide)
                 ];
 
                 Files::query()->create([
                     'embedding_id' => $embedding_id,
                     'name' => $model->name . "_Artifact_$index",
-                    'path' => "uploads/$embedding_id",
                     'content' => $contentOnSlide,
-                    'size' => filesize($path),
+                    'size' => strlen($contentOnSlide),
                     'user_id' => Auth::id(),
                     'collection_id' => $model->collection_id,
                     'parent_id' => $model->id
@@ -186,6 +181,10 @@ class ChromaController extends Controller
             ];
         }
 
+        if (file_exists($pathToFile)) {
+            unlink($pathToFile);
+        }
+
         try {
             $collection = Collections::query()->find($model->collection_id)->name;
 
@@ -198,22 +197,6 @@ class ChromaController extends Controller
             );
 
         } catch (\Exception $exception) {
-            if (file_exists($pathToFile)) {
-                unlink($pathToFile);
-            }
-
-            foreach ($ids as $id) {
-                $file = Files::query()
-                    ->where('embedding_id', '=', $id)
-                    ->first();
-
-                $pathToFile = storage_path() . '/app/' . $file->path;
-
-                if (file_exists($pathToFile)) {
-                    unlink($pathToFile);
-                }
-            }
-
             return [
                 'status' => false,
                 'message' => $exception->getMessage(),
@@ -241,22 +224,10 @@ class ChromaController extends Controller
             foreach ($artifacts as $artifact) {
                 $collection->delete([$artifact->embedding_id]);
 
-                $pathToFile = storage_path() . '/app/' . $artifact->path;
-
-                if (file_exists($pathToFile)) {
-                    unlink($pathToFile);
-                }
-
                 $artifact->forceDelete();
             }
 
             $collection->delete([$model->embedding_id]);
-
-            $pathToFile = storage_path() . '/app/' . $model->path;
-
-            if (file_exists($pathToFile)) {
-                unlink($pathToFile);
-            }
         } catch (\Exception $exception) {
             return [
                 'status' => false,
@@ -291,8 +262,6 @@ class ChromaController extends Controller
 
     public static function deleteCollection($model)
     {
-        $files = Files::query()->where('collection_id', '=', $model->id)->get();
-
         try {
             $chromaDB = self::getClient();
 
@@ -302,14 +271,6 @@ class ChromaController extends Controller
                 'status' => false,
                 'message' => $exception->getMessage(),
             ];
-        }
-
-        foreach ($files as $file) {
-            $pathToFile = storage_path() . '/app/' . $file->path;
-
-            if (file_exists($pathToFile)) {
-                unlink($pathToFile);
-            }
         }
 
         return [

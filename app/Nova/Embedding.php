@@ -63,12 +63,14 @@ class Embedding extends Resource
                 ->onlyOnIndex()
                 ->sortable(),
 
-            Textarea::make('content')
+            Textarea::make('Content')
                 ->hideWhenCreating()
                 ->hideWhenUpdating(),
 
-            File::make('File', 'path')
+            File::make('File', 'embedding_id')
                 ->acceptedTypes('.txt,.pptx')
+                ->disableDownload()
+                ->hideFromDetail()
                 ->rules('extensions:txt,pptx', function ($attribute, $value, $fail) {
                     if (str_contains($value->getClientOriginalName(), '/') || str_contains($value->getClientOriginalName(), '\\')) {
                         $fail('The filename cannot contain the "/" character.');
@@ -76,7 +78,6 @@ class Embedding extends Resource
                 })
                 ->storeOriginalName('name')
                 ->storeSize('size')
-                ->path('/uploads')
                 ->readonly(function() {
                     return (bool)$this->resource->id;
                 })
