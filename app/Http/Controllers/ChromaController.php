@@ -92,7 +92,7 @@ class ChromaController extends Controller
         // We need to manually create the files here, because the API endpoint
         // returns small artifacts of the pptx file. We do not want to store
         // the whole pptx file, but rather these small artifacts. Each artifact
-        // represents an embedding.
+        // represents a slide, and each slide represents an embedding.
         if (str_ends_with($filename, 'pptx')) {
             $token = HomeController::getBearerToken();
 
