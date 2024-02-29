@@ -15,6 +15,7 @@ use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Embedding extends Resource
@@ -61,6 +62,10 @@ class Embedding extends Resource
             Text::make('Name')
                 ->onlyOnIndex()
                 ->sortable(),
+
+            Textarea::make('content')
+                ->hideWhenCreating()
+                ->hideWhenUpdating(),
 
             File::make('File', 'path')
                 ->acceptedTypes('.txt,.pptx')
