@@ -27,14 +27,6 @@ class HomeController extends Controller
             'collection' => 'required|integer|exists:collections,id'
         ]);
 
-        $collection = Collections::query()->find($request->input('collection'))->name;
-
-        try {
-            $promptWithContext = ChromaController::createPromptWithContext($collection, $request->input('message'));
-        } catch (\Exception $exception) {
-            return response()->json(['message' => 'Internal Server Error'], 500);
-        }
-
         $token = self::getBearerToken();
 
         if (is_array($token)) {
@@ -62,9 +54,6 @@ class HomeController extends Controller
 
         $conversationID = $response1->json()['id'];
 
-        // We use a transaction here, allowing rollback in case the following API request fails.
-        DB::beginTransaction();
-
         $conversation = Conversations::query()->create([
             'api_id' => $conversationID,
             'agent_id' => $agent->id,
@@ -74,14 +63,22 @@ class HomeController extends Controller
             'user_id' => Auth::id(),
         ]);
 
+        $collection = Collections::query()->find($request->input('collection'))->name;
+
+        try {
+            $promptWithContext = ChromaController::createPromptWithContext($collection, $request->input('message'), $conversationID);
+        } catch (\Exception $exception) {
+            $conversation->delete();
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+
         $response2 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
             'conversation_id' => $conversationID,
             'message' => $promptWithContext
         ]);
 
         if ($response2->failed()) {
-            DB::rollBack();
-
+            $conversation->delete();
             return response()->json($response2->reason(), $response2->status());
         }
 
@@ -90,8 +87,6 @@ class HomeController extends Controller
             'agent_message' => htmlspecialchars($response2->json()['response']),
             'conversation_id' => $conversation->id
         ]);
-
-        DB::commit();
 
         return response()->json(['id' => $conversationID]);
     }

@@ -9,6 +9,7 @@ use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
@@ -52,15 +53,22 @@ class ChatController extends Controller
             ->orderBy('messages.created_at')
             ->get();
 
+        // We use a transaction here allowing rollback of the rows created
+        // in 'createPromptWithContext' if something fails
+        DB::beginTransaction();
+
         try {
-            $promptWithContext = ChromaController::createPromptWithContext($collection, $request->input('message'), $pastMessages);
+            $promptWithContext =
+                ChromaController::createPromptWithContext($collection, $request->input('message'), $request->input('conversation_id'), $pastMessages);
         } catch (\Exception $exception) {
+            DB::rollBack();
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
         $token = HomeController::getBearerToken();
 
         if (is_array($token)) {
+            DB::rollBack();
             return response()->json($token['reason'], intval($token['status']));
         }
 
@@ -70,6 +78,7 @@ class ChatController extends Controller
         ]);
 
         if ($response->failed()) {
+            DB::rollBack();
             return response()->json($response->reason(), $response->status());
         }
 
@@ -82,6 +91,8 @@ class ChatController extends Controller
             'agent_message' => htmlspecialchars($response->json()['response']),
             'conversation_id' => $conversation->id,
         ]);
+
+        DB::commit();
 
         $maxRequests = config('api.max_requests');
         $remainingMessagesAlertLevels  = config('api.remaining_requests_alert_levels');

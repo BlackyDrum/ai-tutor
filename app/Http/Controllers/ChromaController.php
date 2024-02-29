@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Collections;
+use App\Models\ConversationHasDocument;
+use App\Models\Conversations;
 use App\Models\Files;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
@@ -11,7 +13,7 @@ use Smalot\PdfParser\Parser;
 
 class ChromaController extends Controller
 {
-    public static function createPromptWithContext($collectionName, $message, $pastMessages = null)
+    public static function createPromptWithContext($collectionName, $message, $conversation_id, $pastMessages = null)
     {
         $collection = self::getCollection($collectionName);
 
@@ -22,21 +24,43 @@ class ChromaController extends Controller
             nResults: config('chromadb.max_document_results')
         );
 
-        $enhancedMessage = "Try to answer the following user question. Always try to answer in the language from the user's question.\n" .
-                           "Below you will find some context that may help. Ignore it if it seems irrelevant.\n" .
-                           "Below you will also find the user messages from the past. Always take that into account too.\n\n";
+        $enhancedMessage = "Try to answer the following user message. Always try to answer in the language from the user's message.\n" .
+                           "You will also find the user messages from the past. If the current message doesn't make sense" .
+                           "always address the previous user messages\n" .
+                           "Below you will find some context documents (delimited by Hashtags) that may help. Ignore it if it seems irrelevant.\n\n";
+                           //"Below you will also find the user messages from the past. Always take that into account too.\n\n";
 
-        $index = 1;
+        $conversation = Conversations::query()
+            ->where('api_id', '=', $conversation_id)
+            ->first();
+
         foreach ($queryResponse->ids[0] as $id) {
             $file = Files::query()
                 ->where('embedding_id', '=', $id)
                 ->first();
 
-            $enhancedMessage .= "----------\n";
-            $enhancedMessage .= "Context Document $index:\n" . $file->content . "\n";
-            $enhancedMessage .= "----------\n";
-            $index++;
+            $count = ConversationHasDocument::query()
+                ->where('conversation_id', '=', $conversation->id)
+                ->where('file_id', '=', $file->id)
+                ->count();
+
+            // If document is already embedded in context
+            if ($count > 0) {
+                continue;
+            }
+
+            ConversationHasDocument::query()
+                ->create([
+                    'conversation_id' => $conversation->id,
+                    'file_id' => $file->id
+                ]);
+
+            $enhancedMessage .= "###################\n";
+            $enhancedMessage .= "Context Document:\n" . $file->content . "\n";
+            $enhancedMessage .= "###################\n";
         }
+
+        /*
 
         $index = 1;
         if ($pastMessages) {
@@ -47,6 +71,8 @@ class ChromaController extends Controller
                 $index++;
             }
         }
+
+        */
 
         $enhancedMessage .= "\nCurrent User Message:\n" . $message;
 
