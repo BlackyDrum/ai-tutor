@@ -11,6 +11,7 @@ use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\File;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -91,8 +92,20 @@ class Embedding extends Resource
 
             BelongsTo::make('Collection')
                 ->sortable()
+                ->withoutTrashed()
                 ->readonly(function() {
                     return (bool)$this->resource->id;
+                }),
+
+            BelongsTo::make('Parent', 'EmbeddingBelongs', Embedding::class)
+                ->sortable()
+                ->hideWhenCreating()
+                ->hideWhenUpdating(),
+
+            HasMany::make('Artifacts', 'EmbeddingMany', Embedding::class)
+                ->sortable()
+                ->showOnDetail(function(NovaRequest $request, $resource) {
+                    return !$resource->parent_id; // Only show related embeddings if current embedding has no parent
                 }),
 
             DateTime::make('Created At')

@@ -36,4 +36,15 @@ class Files extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function embeddingBelongs()
+    {
+        return $this->belongsTo(Files::class, 'parent_id', 'id');
+    }
+
+    public function embeddingMany()
+    {
+        return $this->hasMany(Files::class, 'parent_id', 'id');
+    }
+
 }
