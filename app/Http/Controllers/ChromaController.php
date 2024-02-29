@@ -135,6 +135,8 @@ class ChromaController extends Controller
             $documents = [];
             $metadata = [];
             $index = 1;
+
+            // Creating and storing artifacts/slides
             foreach ($response->json(['content']) as $content) {
                 $embedding_id = Str::random(40) . '.txt';
                 $path = storage_path() . '/app/uploads/' . $embedding_id;
@@ -198,6 +200,18 @@ class ChromaController extends Controller
         } catch (\Exception $exception) {
             if (file_exists($pathToFile)) {
                 unlink($pathToFile);
+            }
+
+            foreach ($ids as $id) {
+                $file = Files::query()
+                    ->where('embedding_id', '=', $id)
+                    ->first();
+
+                $pathToFile = storage_path() . '/app/' . $file->path;
+
+                if (file_exists($pathToFile)) {
+                    unlink($pathToFile);
+                }
             }
 
             return [
