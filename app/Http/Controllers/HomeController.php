@@ -97,6 +97,20 @@ class HomeController extends Controller
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
         ]);
 
+        $token = self::getBearerToken();
+
+        if (is_array($token)) {
+            return response()->json($token['reason'], intval($token['status']));
+        }
+
+        $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/delete-conversation', [
+            'conversation' => $request->input('conversation_id'),
+        ]);
+
+        if ($response->failed()) {
+            return response()->json($response->reason(), $response->status());
+        }
+
         Conversations::query()
             ->where('api_id', '=', $request->input('conversation_id'))
             ->delete();
