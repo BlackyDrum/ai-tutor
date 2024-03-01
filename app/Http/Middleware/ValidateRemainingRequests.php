@@ -19,7 +19,7 @@ class ValidateRemainingRequests
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $maxRequests = config('api.max_requests');
+        $maxRequests = Auth::user()->max_requests;
 
         $messages = ChatController::getUserMessagesFromLastDay();
 

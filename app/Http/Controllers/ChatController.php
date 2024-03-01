@@ -94,7 +94,7 @@ class ChatController extends Controller
 
         DB::commit();
 
-        $maxRequests = config('api.max_requests');
+        $maxRequests = Auth::user()->max_requests;
         $remainingMessagesAlertLevels  = config('api.remaining_requests_alert_levels');
 
         $messages = self::getUserMessagesFromLastDay();
@@ -114,7 +114,7 @@ class ChatController extends Controller
 
         $oneDayAgo = $now->copy()->subDay();
 
-        $maxRequests = config('api.max_requests');
+        $maxRequests = Auth::user()->max_requests;
 
         return Messages::query()
             ->join('conversations', 'messages.conversation_id', '=', 'conversations.id')
@@ -122,7 +122,8 @@ class ChatController extends Controller
             ->whereBetween('messages.created_at', [$oneDayAgo, $now])
             ->orderBy('messages.created_at', 'desc')
             // It's important to limit the query by 'maxRequests' to avoid inconsistency
-            // in the error message if 'api.max_requests' is set to a lower value in production.
+            // in the error message if the user's 'max_requests' value is set to a lower
+            // value in production.
             ->limit($maxRequests)
             ->get(['messages.created_at']);
     }

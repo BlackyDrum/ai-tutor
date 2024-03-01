@@ -109,6 +109,7 @@ class AuthenticatedSessionController extends Controller
         ], [
             'password' => Hash::make(Str::random(40)),
             'admin' => false,
+            'max_requests' => config('api.max_requests'),
         ]);
 
         $authToken->delete();
