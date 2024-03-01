@@ -62,6 +62,9 @@ class User extends Resource
 
             Boolean::make('Admin'),
 
+            Boolean::make('Terms Accepted')
+                ->hideWhenCreating(),
+
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()

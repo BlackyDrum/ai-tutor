@@ -1,10 +1,12 @@
 <script setup>
 import Toast from "primevue/toast";
 import NavBar from "@/Components/NavBar.vue";
+import Terms from "@/Components/Terms.vue";
 </script>
 
 <template>
     <Toast />
+    <Terms />
     <div class="flex">
         <NavBar />
         <div class="w-full">

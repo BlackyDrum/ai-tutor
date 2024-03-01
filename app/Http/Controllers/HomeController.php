@@ -6,6 +6,7 @@ use App\Models\Agents;
 use App\Models\Collections;
 use App\Models\Conversations;
 use App\Models\Messages;
+use App\Models\User;
 use App\Rules\ValidateConversationOwner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -137,5 +138,18 @@ class HomeController extends Controller
         }
 
         return $response->json()['access_token'];
+    }
+
+    public function acceptTerms(Request $request)
+    {
+        $request->validate([
+            'terms_accepted' => 'required|accepted'
+        ]);
+
+        User::query()->find(Auth::id())->update([
+            'terms_accepted' => true,
+        ]);
+
+        return response()->json(['accepted' => true]);
     }
 }

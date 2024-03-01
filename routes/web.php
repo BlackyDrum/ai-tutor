@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomeController;
+use App\Http\Middleware\CheckAcceptedTerms;
 use App\Http\Middleware\EnsureIsAdmin;
 use App\Http\Middleware\ValidateRemainingRequests;
 use Illuminate\Support\Facades\Route;
@@ -21,12 +22,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function() {
     Route::get('/', [HomeController::class, 'show'])->name('home');
 
+    Route::patch('/accept-terms', [HomeController::class, 'acceptTerms'])->name('terms');
+
     Route::prefix('chat')->name('chat.')->group(function() {
         Route::get('/{id}', [ChatController::class, 'show'])->name('show');
 
         Route::delete('/conversation', [HomeController::class, 'deleteConversation'])->name('conversation.delete');
 
-        Route::middleware(ValidateRemainingRequests::class)->group(function() {
+        Route::middleware([ValidateRemainingRequests::class, CheckAcceptedTerms::class])->group(function() {
             Route::post('/create-conversation', [HomeController::class, 'createConversation'])->name('conversation.create');
 
             Route::post('/chat-agent', [ChatController::class, 'chat'])->name('agent.chat');
