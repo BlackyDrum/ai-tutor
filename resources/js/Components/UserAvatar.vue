@@ -4,7 +4,7 @@ import Avatar from "primevue/avatar";
 
 <template>
     <Avatar
-        :label="$page.props.auth.user.name[0]"
+        :label="$page.props.auth.user.name[0].toUpperCase()"
         class="bg-[#E67E22]"
         shape="circle"
     />
