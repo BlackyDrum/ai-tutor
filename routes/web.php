@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\AgentController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\EmbeddingController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Middleware\EnsureIsAdmin;
@@ -19,6 +17,12 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::prefix('auth')->name('auth.')->group(function() {
+    Route::get('/prepare-launch', [AuthenticatedSessionController::class, 'prepareLaunch'])->name('prepare');
+
+    Route::get('/launch', [AuthenticatedSessionController::class, 'launch'])->name('launch');
+});
 
 Route::middleware(['auth'])->group(function() {
     Route::get('/', [HomeController::class, 'show'])->name('home');
