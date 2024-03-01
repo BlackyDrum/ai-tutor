@@ -53,13 +53,7 @@ class User extends Resource
 
             Text::make('Name')
                 ->sortable()
-                ->rules('required', 'max:255'),
-
-            Text::make('Email')
-                ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
+                ->rules('required', 'max:255', 'unique:users,name'),
 
             Password::make('Password')
                 ->onlyOnForms()
@@ -75,6 +69,11 @@ class User extends Resource
 
             HasManyThrough::make('Messages'),
         ];
+    }
+
+    public function authorizedToReplicate(Request $request)
+    {
+        return false;
     }
 
     /**
