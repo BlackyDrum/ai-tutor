@@ -50,7 +50,8 @@ class Message extends Resource
             ID::make()->sortable(),
 
             BelongsTo::make('Conversation')
-                ->readonly(),
+                ->readonly()
+                ->hideWhenUpdating(),
 
             Textarea::make('User Message'),
 
