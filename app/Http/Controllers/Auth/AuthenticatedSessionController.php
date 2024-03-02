@@ -79,6 +79,14 @@ class AuthenticatedSessionController extends Controller
 
     public function launch(Request $request)
     {
+        if (Auth::check()) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+        }
+
         $key = $request->input('token');
         $name = $request->input('user');
 
@@ -112,6 +120,8 @@ class AuthenticatedSessionController extends Controller
         $authToken->delete();
 
         Auth::login($user);
+
+        $request->session()->regenerate();
 
         return redirect('/');
     }
