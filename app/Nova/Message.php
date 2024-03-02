@@ -70,6 +70,8 @@ class Message extends Resource
 
     public static $group = 'Chat';
 
+    public static $globallySearchable = false;
+
     /**
      * Get the cards available for the request.
      *
