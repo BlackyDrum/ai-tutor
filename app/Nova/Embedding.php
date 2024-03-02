@@ -63,7 +63,7 @@ class Embedding extends Resource
                 ->hideWhenUpdating(),
 
             Text::make('Name')
-                ->onlyOnIndex()
+                ->hideWhenCreating()
                 ->sortable(),
 
             Textarea::make('Content')
