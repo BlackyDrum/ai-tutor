@@ -74,7 +74,7 @@ class Embedding extends Resource
                 ->acceptedTypes('.txt,.pptx')
                 ->disableDownload()
                 ->hideFromDetail()
-                ->rules('extensions:txt,pptx', function ($attribute, $value, $fail) {
+                ->rules('required', 'extensions:txt,pptx', function ($attribute, $value, $fail) {
                     if (str_contains($value->getClientOriginalName(), '/') || str_contains($value->getClientOriginalName(), '\\')) {
                         $fail('The filename cannot contain the "/" character.');
                     }

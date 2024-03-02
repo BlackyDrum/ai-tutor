@@ -64,6 +64,7 @@ class User extends Resource
                 ->updateRules('nullable', Rules\Password::defaults()),
 
             Number::make('Max Requests')
+                ->rules('required', 'min:0')
                 ->min(0)
                 ->default(function() {
                     return config('api.max_requests');
