@@ -135,6 +135,10 @@ class Embedding extends Resource
             $model->forceDelete();
             abort(500, $result['message']);
         }
+
+        $model->user_id = Auth::id();
+
+        $model->save();
     }
 
     public static function afterDelete(NovaRequest $request, Model $model)

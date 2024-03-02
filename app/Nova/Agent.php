@@ -160,6 +160,8 @@ class Agent extends Resource
 
         $model->api_id = $response->json()['id'];
 
+        $model->user_id = Auth::id();
+
         $model->save();
 
         self::changeActiveStatus($model);
