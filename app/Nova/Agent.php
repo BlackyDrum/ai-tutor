@@ -116,6 +116,11 @@ class Agent extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
+            DateTime::make('Updated At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->sortable(),
+
             HasMany::make('Conversations'),
         ];
     }

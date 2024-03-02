@@ -80,6 +80,11 @@ class User extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
+            DateTime::make('Updated At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->sortable(),
+
             HasManyThrough::make('Messages'),
         ];
     }

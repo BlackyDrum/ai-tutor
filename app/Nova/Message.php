@@ -6,6 +6,7 @@ use App\Nova\Metrics\MessagesPerDay;
 use Illuminate\Http\Request;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOneThrough;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Textarea;
@@ -56,6 +57,16 @@ class Message extends Resource
             Textarea::make('User Message'),
 
             Textarea::make('Agent Message'),
+
+            DateTime::make('Created At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->sortable(),
+
+            DateTime::make('Updated At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->sortable(),
         ];
     }
 

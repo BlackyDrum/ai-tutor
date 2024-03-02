@@ -6,6 +6,7 @@ use App\Nova\Metrics\ConversationsPerDay;
 use Illuminate\Http\Request;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
@@ -61,6 +62,11 @@ class Conversation extends Resource
             BelongsTo::make('Owner', 'user', User::class),
 
             HasMany::make('Messages'),
+
+            DateTime::make('Created At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->sortable(),
         ];
     }
 
