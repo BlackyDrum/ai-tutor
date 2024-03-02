@@ -141,7 +141,7 @@ class ChromaController extends Controller
             foreach ($response->json(['content']) as $content) {
                 $embedding_id = Str::random(40) . '.txt';
 
-                $contentOnSlide = "";
+                $contentOnSlide = "Title: {$content['title']}\n";
                 foreach ($content['content'] as $item) {
                     $contentOnSlide .= "$item\n";
                 }
