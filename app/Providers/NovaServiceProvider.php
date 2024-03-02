@@ -34,7 +34,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         parent::boot();
 
         Nova::footer(function($request) {
-            return Blade::render('FH Aachen - University of Applied Sciences');
+            return Blade::render('<div class="text-center">FH Aachen - University of Applied Sciences</div>');
         });
 
         Nova::mainMenu(function(Request $request) {
