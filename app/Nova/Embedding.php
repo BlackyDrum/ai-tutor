@@ -42,7 +42,9 @@ class Embedding extends Resource
      */
     public static $search = [
         'id',
-        'name'
+        'name',
+        'embedding_id',
+        'content'
     ];
 
     /**
