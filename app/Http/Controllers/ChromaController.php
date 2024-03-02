@@ -149,13 +149,13 @@ class ChromaController extends Controller
                 $ids[] = $embedding_id;
                 $documents[] = $contentOnSlide;
                 $metadata[] = [
-                    'filename' => $model->name . "_Artifact_$index",
+                    'filename' => $model->name . "_Slide_$index",
                     'size' => strlen($contentOnSlide)
                 ];
 
                 Files::query()->create([
                     'embedding_id' => $embedding_id,
-                    'name' => $model->name . "_Artifact_$index",
+                    'name' => $model->name . "_Slide_$index",
                     'content' => $contentOnSlide,
                     'size' => strlen($contentOnSlide),
                     'user_id' => Auth::id(),
@@ -217,14 +217,14 @@ class ChromaController extends Controller
         try {
             $collection = self::getCollection($collection);
 
-            $artifacts = Files::query()
+            $slides = Files::query()
                 ->where('parent_id', '=', $model->id)
                 ->get();
 
-            foreach ($artifacts as $artifact) {
-                $collection->delete([$artifact->embedding_id]);
+            foreach ($slides as $slide) {
+                $collection->delete([$slide->embedding_id]);
 
-                $artifact->forceDelete();
+                $slide->forceDelete();
             }
 
             $collection->delete([$model->embedding_id]);
