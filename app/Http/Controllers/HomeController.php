@@ -121,14 +121,24 @@ class HomeController extends Controller
 
     public static function getBearerToken()
     {
-        $response = Http::withoutVerifying()->asForm()->post(config('api.url') . '/token', [
-            'username' => config('api.username'),
-            'password' => config('api.password'),
-            'grant_type' => config('api.grant_type'),
-            'scope' => config('api.scope'),
-            'client_id' => config('api.client_id'),
-            'client_secret' => config('api.client_secret'),
-        ]);
+        // We need to use a try-catch block here because we want to catch
+        // 'cURL error 6: Could not resolve host'. Client- and Server errors
+        // are handled by Laravel HTTP Client, e.g with $response->failed().
+        try {
+            $response = Http::withoutVerifying()->asForm()->post(config('api.url') . '/token', [
+                'username' => config('api.username'),
+                'password' => config('api.password'),
+                'grant_type' => config('api.grant_type'),
+                'scope' => config('api.scope'),
+                'client_id' => config('api.client_id'),
+                'client_secret' => config('api.client_secret'),
+            ]);
+        } catch (\Exception $exception) {
+            return [
+                'reason' => 'Internal Server Error',
+                'status' => 500,
+            ];
+        }
 
         if ($response->failed()) {
             return [
