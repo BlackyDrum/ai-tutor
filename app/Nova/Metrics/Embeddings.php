@@ -17,7 +17,11 @@ class Embeddings extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->count($request, Files::class);
+        return $this->result(
+            Files::query()
+            ->whereNotNull('content')
+            ->count()
+        );
     }
 
     public $width = '1/2';
