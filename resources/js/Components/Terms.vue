@@ -41,14 +41,14 @@ const acceptTerms = () => {
 
 <template>
     <Dialog
-        class="lg:w-1/2 break-words"
+        class="w-[90%] lg:w-1/2 break-words"
         :visible="!$page.props.auth.user.terms_accepted"
         :closable="false"
         :draggable="false"
         modal
         header="Terms of Use / Nutzungsbedingungen"
     >
-        <h1 class="text-3xl font-semibold">Einleitung</h1>
+        <h1 class="text-2xl font-semibold">Einleitung</h1>
         <p>
             Willkommen bei <em class="font-medium">{{ appName }}</em
             >, einem interaktiven Chatbot-Dienst für Studierende der
@@ -60,7 +60,7 @@ const acceptTerms = () => {
 
         <br />
 
-        <h1 class="text-3xl font-semibold">
+        <h1 class="text-2xl font-semibold">
             Datenschutz und Verarbeitung personenbezogener Daten
         </h1>
         <p>
@@ -90,7 +90,7 @@ const acceptTerms = () => {
 
         <br />
 
-        <h1 class="text-3xl font-semibold">Zustimmung</h1>
+        <h1 class="text-2xl font-semibold">Zustimmung</h1>
         <p>
             Mit der Nutzung von
             <em class="font-medium">{{ appName }}</em> stimmen Sie der
@@ -105,7 +105,7 @@ const acceptTerms = () => {
 
         <br />
 
-        <h1 class="text-3xl font-semibold">
+        <h1 class="text-2xl font-semibold">
             Änderungen der Nutzungsbedingungen
         </h1>
         <p>
@@ -118,7 +118,7 @@ const acceptTerms = () => {
 
         <br />
 
-        <h1 class="text-3xl font-semibold">Kontakt</h1>
+        <h1 class="text-2xl font-semibold">Kontakt</h1>
         <p>
             Bei Fragen kontaktieren Sie bitte
             <em class="font-medium underline"
@@ -134,7 +134,7 @@ const acceptTerms = () => {
 
         <br />
 
-        <div class="flex gap-3 justify-center">
+        <div class="flex flex-wrap gap-3 justify-center">
             <div>
                 <Button
                     @click="router.post('/logout')"
