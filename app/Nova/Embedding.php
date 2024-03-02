@@ -91,7 +91,7 @@ class Embedding extends Resource
                 ->hideWhenCreating()
                 ->sortable(),
 
-            BelongsTo::make('User')
+            BelongsTo::make('Creator', 'user', User::class)
                 ->default(Auth::id())
                 ->hideWhenUpdating()
                 ->sortable()

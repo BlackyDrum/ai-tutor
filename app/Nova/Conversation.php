@@ -58,7 +58,7 @@ class Conversation extends Resource
 
             BelongsTo::make('Agent'),
 
-            BelongsTo::make('User'),
+            BelongsTo::make('Owner', 'user', User::class),
 
             HasMany::make('Messages'),
         ];

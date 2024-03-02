@@ -92,7 +92,7 @@ class Agent extends Resource
                     return (bool)$this->resource->id;
                 }),
 
-            BelongsTo::make('User')
+            BelongsTo::make('Creator', 'user', User::class)
                 ->default(Auth::id())
                 ->hideWhenUpdating()
                 ->sortable()
