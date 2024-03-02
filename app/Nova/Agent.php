@@ -92,14 +92,6 @@ class Agent extends Resource
                     return (bool)$this->resource->id;
                 }),
 
-            BelongsTo::make('Creator', 'user', User::class)
-                ->default(Auth::id())
-                ->hideWhenUpdating()
-                ->sortable()
-                ->withMeta(['extraAttributes' => [
-                    'readonly' => true
-                ]]),
-
             Textarea::make('Instructions')
                 ->rules('required','string')
                 ->hideWhenUpdating()
@@ -110,6 +102,15 @@ class Agent extends Resource
             Boolean::make('Active')
                 ->default(Agents::query()->count() == 0)
                 ->readonly($this->resource->active),
+
+            BelongsTo::make('Creator', 'user', User::class)
+                ->default(Auth::id())
+                ->hideWhenUpdating()
+                ->hideWhenCreating()
+                ->sortable()
+                ->withMeta(['extraAttributes' => [
+                    'readonly' => true
+                ]]),
 
             DateTime::make('Created At')
                 ->hideWhenCreating()

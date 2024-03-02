@@ -91,14 +91,6 @@ class Embedding extends Resource
                 ->hideWhenCreating()
                 ->sortable(),
 
-            BelongsTo::make('Creator', 'user', User::class)
-                ->default(Auth::id())
-                ->hideWhenUpdating()
-                ->sortable()
-                ->withMeta(['extraAttributes' => [
-                    'readonly' => true
-                ]]),
-
             BelongsTo::make('Collection')
                 ->sortable()
                 ->withoutTrashed()
@@ -119,6 +111,15 @@ class Embedding extends Resource
                         ->count();
                     return $count != 0; // Only show relations when file has artifacts
                 }),
+
+            BelongsTo::make('Creator', 'user', User::class)
+                ->default(Auth::id())
+                ->hideWhenUpdating()
+                ->hideWhenCreating()
+                ->sortable()
+                ->withMeta(['extraAttributes' => [
+                    'readonly' => true
+                ]]),
 
             DateTime::make('Created At')
                 ->hideWhenCreating()
