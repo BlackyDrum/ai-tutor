@@ -27,4 +27,6 @@ class Main extends Dashboard
             new Embeddings()
         ];
     }
+
+    public $showRefreshButton = true;
 }
