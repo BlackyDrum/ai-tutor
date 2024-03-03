@@ -103,6 +103,10 @@ class Collection extends Resource
     {
         return false;
     }
+    public function authorizedToRestore(Request $request)
+    {
+        return false;
+    }
 
     public static $group = 'ChromaDB';
 
