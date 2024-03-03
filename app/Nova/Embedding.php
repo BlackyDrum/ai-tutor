@@ -68,12 +68,13 @@ class Embedding extends Resource
 
             Textarea::make('Content')
                 ->hideWhenCreating()
-                ->hideWhenUpdating(),
+                ->updateRules('required'),
 
             File::make('File', 'embedding_id')
                 ->acceptedTypes('.txt,.pptx,.json')
                 ->disableDownload()
                 ->hideFromDetail()
+                ->hideWhenUpdating()
                 ->rules('required', 'extensions:txt,pptx,json', function ($attribute, $value, $fail) {
                     if (str_contains($value->getClientOriginalName(), '/') || str_contains($value->getClientOriginalName(), '\\')) {
                         $fail('The filename cannot contain the "/" character.');
@@ -94,6 +95,7 @@ class Embedding extends Resource
             BelongsTo::make('Collection')
                 ->sortable()
                 ->withoutTrashed()
+                ->hideWhenUpdating()
                 ->readonly(function() {
                     return (bool)$this->resource->id;
                 }),
@@ -142,6 +144,17 @@ class Embedding extends Resource
         $model->save();
     }
 
+    public static function afterUpdate(NovaRequest $request, Model $model)
+    {
+        $result = ChromaController::updateEmbedding($model);
+
+        if (!$result['status']) {
+            abort(500, $result['message']);
+        }
+
+        $model->save();
+    }
+
     public static function afterDelete(NovaRequest $request, Model $model)
     {
         $result = ChromaController::deleteEmbedding($model);
@@ -156,7 +169,11 @@ class Embedding extends Resource
 
     public function authorizedToUpdate(Request $request)
     {
-        return false;
+        $count = Files::query()
+            ->where('parent_id', '=', $this->resource->id)
+            ->count();
+
+        return $count == 0;
     }
 
     public function authorizedToForceDelete(Request $request)

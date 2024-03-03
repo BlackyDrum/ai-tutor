@@ -199,7 +199,7 @@ class ChromaController extends Controller
 
         // Creating and storing artifacts/slides
         foreach ($json['content'] as $content) {
-            $embedding_id = Str::random(40) . '.txt';
+            $embedding_id = Str::random(40);
 
             $contentOnSlide = "Title: {$content['title']}\n";
             foreach ($content['content'] as $item) {
@@ -230,6 +230,37 @@ class ChromaController extends Controller
             'ids' => $ids,
             'documents' => $documents,
             'metadata' => $metadata
+        ];
+    }
+
+    public static function updateEmbedding($model)
+    {
+        $collection = Collections::query()->find($model->collection_id)->name;
+
+        try {
+            $collection = self::getCollection($collection);
+
+            $collection->update(
+                ids: [$model->embedding_id],
+                metadatas: [
+                    [
+                        'filename' => $model->name,
+                        'size' => strlen($model->content)
+                    ]
+                ],
+                documents: [$model->content]
+            );
+
+            $model->size = strlen($model->content);
+        } catch (\Exception $exception) {
+            return [
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ];
+        }
+
+        return [
+            'status' => true,
         ];
     }
 
