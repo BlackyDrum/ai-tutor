@@ -28,6 +28,13 @@ class Embeddings extends Value
 
     public $icon = 'document-text';
 
+    public function ranges()
+    {
+        return [
+            'ALL' => 'All Time'
+        ];
+    }
+
     /**
      * Determine the amount of time the results of the metric should be cached.
      *
