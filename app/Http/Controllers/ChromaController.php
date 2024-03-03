@@ -145,7 +145,7 @@ class ChromaController extends Controller
                 unlink($pathToFile);
             }
 
-            $model->content = $text;
+            $model->content = $text ?? '';
 
             $ids = [$model->embedding_id];
             $documents = [$text];
