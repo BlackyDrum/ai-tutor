@@ -71,10 +71,10 @@ class Embedding extends Resource
                 ->hideWhenUpdating(),
 
             File::make('File', 'embedding_id')
-                ->acceptedTypes('.txt,.pptx')
+                ->acceptedTypes('.txt,.pptx,.json')
                 ->disableDownload()
                 ->hideFromDetail()
-                ->rules('required', 'extensions:txt,pptx', function ($attribute, $value, $fail) {
+                ->rules('required', 'extensions:txt,pptx,json', function ($attribute, $value, $fail) {
                     if (str_contains($value->getClientOriginalName(), '/') || str_contains($value->getClientOriginalName(), '\\')) {
                         $fail('The filename cannot contain the "/" character.');
                     }

@@ -118,42 +118,32 @@ class ChromaController extends Controller
                 ];
             }
 
-            $ids = [];
-            $documents = [];
-            $metadata = [];
-            $index = 1;
+            $result = self::createEmbeddingFromJson($response->json(), $model);
 
-            // Creating and storing artifacts/slides
-            foreach ($response->json(['content']) as $content) {
-                $embedding_id = Str::random(40) . '.txt';
+            $ids = $result['ids'];
+            $documents = $result['documents'];
+            $metadata = $result['metadata'];
 
-                $contentOnSlide = "Title: {$content['title']}\n";
-                foreach ($content['content'] as $item) {
-                    $contentOnSlide .= "$item\n";
-                }
-
-                $ids[] = $embedding_id;
-                $documents[] = $contentOnSlide;
-                $metadata[] = [
-                    'filename' => $model->name . "_Slide_$index",
-                    'size' => strlen($contentOnSlide)
-                ];
-
-                Files::query()->create([
-                    'embedding_id' => $embedding_id,
-                    'name' => $model->name . "_Slide_$index",
-                    'content' => $contentOnSlide,
-                    'size' => strlen($contentOnSlide),
-                    'user_id' => Auth::id(),
-                    'collection_id' => $model->collection_id,
-                    'parent_id' => $model->id
-                ]);
-
-                $index++;
-            }
         }
-        else {
+        elseif (str_ends_with($filename, 'json')) {
+            $json = json_decode(file_get_contents($pathToFile), true);
+
+            if (file_exists($pathToFile)) {
+                unlink($pathToFile);
+            }
+
+            $result = self::createEmbeddingFromJson($json, $model);
+
+            $ids = $result['ids'];
+            $documents = $result['documents'];
+            $metadata = $result['metadata'];
+        }
+        elseif (str_ends_with($filename, 'txt')) {
             $text = file_get_contents($pathToFile);
+
+            if (file_exists($pathToFile)) {
+                unlink($pathToFile);
+            }
 
             $model->content = $text;
 
@@ -166,9 +156,15 @@ class ChromaController extends Controller
                 ]
             ];
         }
+        else {
+            if (file_exists($pathToFile)) {
+                unlink($pathToFile);
+            }
 
-        if (file_exists($pathToFile)) {
-            unlink($pathToFile);
+            return [
+                'status' => false,
+                'message' => 'Wrong file format',
+            ];
         }
 
         try {
@@ -191,6 +187,49 @@ class ChromaController extends Controller
 
         return [
             'status' => true,
+        ];
+    }
+
+    private static function createEmbeddingFromJson($json, $model)
+    {
+        $ids = [];
+        $documents = [];
+        $metadata = [];
+        $index = 1;
+
+        // Creating and storing artifacts/slides
+        foreach ($json['content'] as $content) {
+            $embedding_id = Str::random(40) . '.txt';
+
+            $contentOnSlide = "Title: {$content['title']}\n";
+            foreach ($content['content'] as $item) {
+                $contentOnSlide .= "$item\n";
+            }
+
+            $ids[] = $embedding_id;
+            $documents[] = $contentOnSlide;
+            $metadata[] = [
+                'filename' => $model->name . "_Slide_$index",
+                'size' => strlen($contentOnSlide)
+            ];
+
+            Files::query()->create([
+                'embedding_id' => $embedding_id,
+                'name' => $model->name . "_Slide_$index",
+                'content' => $contentOnSlide,
+                'size' => strlen($contentOnSlide),
+                'user_id' => Auth::id(),
+                'collection_id' => $model->collection_id,
+                'parent_id' => $model->id
+            ]);
+
+            $index++;
+        }
+
+        return [
+            'ids' => $ids,
+            'documents' => $documents,
+            'metadata' => $metadata
         ];
     }
 
