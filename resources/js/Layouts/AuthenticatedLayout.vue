@@ -21,4 +21,8 @@ import Terms from "@/Components/Terms.vue";
 .p-message-error {
     word-break: break-word;
 }
+.p-toast {
+    max-width: calc(100vw - 40px);
+    word-break: break-word;
+}
 </style>
