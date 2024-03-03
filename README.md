@@ -60,9 +60,15 @@ In order to have full access to the Admin's Dasboard, you need to manually set t
 UPDATE users SET admin=true WHERE id={USER_ID};
 ```
 
-## Clearing ChromaDB Data
-To completely remove all stored data related to ``ChromaDB``, including ``files``, ``embeddings``, and ``collections``, you can use the following command. Ensure that ``ChromaDB`` is running:
+## Validate ChromaDB Sync
+To validate if ChromaDB is in sync with the relational database, you can use the following command:
 ```
-$ php artisan app:delete-collections
+$ php artisan app:chroma-validate
+```
+
+## Clearing ChromaDB Data
+To completely remove all stored data related to ``ChromaDB``, including ``embeddings`` and ``collections``, you can use the following command:
+```
+$ php artisan app:chroma-destroy
 ```
 
