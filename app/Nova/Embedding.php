@@ -174,7 +174,7 @@ class Embedding extends Resource
             ->where('parent_id', '=', $this->resource->id)
             ->count();
 
-        return $count == 0;
+        return $count == 0 && ($this->resource->content != null || $this->resource->size == 0);
     }
 
     public function authorizedToForceDelete(Request $request)
