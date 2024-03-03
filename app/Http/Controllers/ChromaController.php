@@ -28,9 +28,10 @@ class ChromaController extends Controller
         );
 
         $enhancedMessage = "Try to answer the following user message. Always try to answer in the language from the user's message.\n" .
-                           "You will also find the user messages from the past. If the current message doesn't make sense" .
+                           "You will also find the user messages from the past. If the current message doesn't make sense " .
                            "always address the previous user messages\n" .
-                           "Below you will find some context documents (delimited by Hashtags) that may help. Ignore it if it seems irrelevant.\n\n";
+                           "Below you will find some context documents (delimited by Hashtags) that may help. Ignore it " .
+                           "and use your own knowledge if the context seems irrelevant.\n\n";
                            //"Below you will also find the user messages from the past. Always take that into account too.\n\n";
 
         $conversation = Conversations::query()
