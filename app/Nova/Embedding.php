@@ -64,6 +64,7 @@ class Embedding extends Resource
 
             Text::make('Name')
                 ->hideWhenCreating()
+                ->updateRules('required')
                 ->sortable(),
 
             Textarea::make('Content')
