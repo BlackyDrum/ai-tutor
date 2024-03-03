@@ -189,8 +189,6 @@ class ChromaController extends Controller
             ];
         }
 
-        $model->save();
-
         return [
             'status' => true,
         ];
