@@ -281,9 +281,7 @@ class ChromaController extends Controller
                 $slide->forceDelete();
             }
 
-            if ($slides->count() == 0) {
-                $collection->delete([$model->embedding_id]);
-            }
+            $collection->delete([$model->embedding_id]);
         } catch (\Exception $exception) {
             return [
                 'status' => false,
