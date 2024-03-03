@@ -199,7 +199,7 @@ class ChromaController extends Controller
 
         // Creating and storing artifacts/slides
         foreach ($json['content'] as $content) {
-            $embedding_id = Str::random(40);
+            $embedding_id = Str::random(40) . '.slide';
 
             $contentOnSlide = "Title: {$content['title']}\n";
             foreach ($content['content'] as $item) {
