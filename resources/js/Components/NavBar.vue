@@ -19,6 +19,7 @@ const historyOP = ref();
 const selectedConversation = ref(null);
 const showResponsiveNavBar = ref(true);
 const scrollPanel = ref();
+const isCheckingStatus = ref(false);
 
 onMounted(() => {
     const scrollPosition = router.restore("scroll-position") ?? 0;
@@ -90,6 +91,32 @@ const deleteConversation = () => {
             historyOP.value.visible = false;
         });
 };
+
+const checkChromaDBStatus = () => {
+    if (isCheckingStatus.value) return;
+
+    isCheckingStatus.value = true;
+    window.axios.get('/chroma/status')
+        .then(result => {
+            toast.add({
+                severity: "success",
+                summary: "Success",
+                detail: result.data.message,
+                life: 5000,
+            });
+        })
+        .catch(error => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
+        })
+        .finally(() => {
+            isCheckingStatus.value = false;
+        })
+}
 </script>
 
 <template>
@@ -158,12 +185,12 @@ const deleteConversation = () => {
                         </div>
                     </ScrollPanel>
                 </div>
-                <div class="w-full relative">
+                <div class="w-full relative text-sm">
                     <div
                         v-if="showProfileOP"
                         :class="
                             $page.props.auth.user.admin
-                                ? '-top-[145px]'
+                                ? '-top-[175px]'
                                 : '-top-[100px]'
                         "
                         class="absolute w-full z-10 p-1 mb-2 rounded-lg bg-app-dark"
@@ -178,6 +205,16 @@ const deleteConversation = () => {
                             </div>
                             <div>Admin</div>
                         </Link>
+                        <div
+                            v-if="$page.props.auth.user.admin"
+                            @click="checkChromaDBStatus"
+                            class="flex gap-4 p-2 mt-1 cursor-pointer rounded-lg hover:bg-app-light"
+                        >
+                            <div>
+                                <span :class="isCheckingStatus ? 'pi pi-spin pi-spinner' : 'pi pi-database'"></span>
+                            </div>
+                            <div>Check ChromaDB</div>
+                        </div>
                         <div
                             class="flex gap-4 p-2 mb-1 cursor-not-allowed opacity-30 rounded-lg"
                         >

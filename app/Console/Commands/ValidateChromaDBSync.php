@@ -137,7 +137,11 @@ class ValidateChromaDBSync extends Command
             $this->info("All tests passed. RelationalDB is in sync with ChromaDB \u{2713}");
         }
         else {
-            $this->error("RelationalDB is NOT in sync with ChromaDB.");
+            $this->error("RelationalDB is NOT in sync with ChromaDB");
+
+            return -1;
         }
+
+        return 1;
     }
 }
