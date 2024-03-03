@@ -14,7 +14,7 @@ class DeleteCollections extends Command
      *
      * @var string
      */
-    protected $signature = 'app:chroma-destroy';
+    protected $signature = 'chroma:destroy';
 
     /**
      * The console command description.

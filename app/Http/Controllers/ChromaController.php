@@ -361,7 +361,7 @@ class ChromaController extends Controller
 
     public function validateSync(Request $request)
     {
-        $exitCode = Artisan::call('app:chroma-validate');
+        $exitCode = Artisan::call('chroma:check');
 
         if ($exitCode == 1) {
             $message = 'Relational database is in sync with ChromaDB';

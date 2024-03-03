@@ -63,12 +63,12 @@ UPDATE users SET admin=true WHERE id={USER_ID};
 ## Validate ChromaDB Sync
 To validate if ChromaDB is in sync with the relational database, you can use the following command:
 ```
-$ php artisan app:chroma-validate
+$ php artisan chroma:check
 ```
 
 ## Clearing ChromaDB Data
 To completely remove all stored data related to ``ChromaDB``, including ``embeddings`` and ``collections``, you can use the following command:
 ```
-$ php artisan app:chroma-destroy
+$ php artisan chroma:destroy
 ```
 

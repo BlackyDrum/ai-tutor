@@ -14,7 +14,7 @@ class ValidateChromaDBSync extends Command
      *
      * @var string
      */
-    protected $signature = 'app:chroma-validate';
+    protected $signature = 'chroma:check';
 
     /**
      * The console command description.
