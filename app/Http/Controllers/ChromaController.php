@@ -299,14 +299,7 @@ class ChromaController extends Controller
             ->withPort(config('chromadb.chroma_port'))
             ->withDatabase(config('chromadb.chroma_database'))
             ->withTenant(config('chromadb.chroma_tenant'))
-            ->withHttpClient(new Client([
-                'base_uri' => config('chromadb.chroma_host') . ':' . config('chromadb.chroma_port'),
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . config('chromadb.chroma_server_auth_credentials')
-                ],
-            ]))
+            ->withAuthToken(config('chromadb.chroma_server_auth_credentials'))
             ->connect();
     }
 }
