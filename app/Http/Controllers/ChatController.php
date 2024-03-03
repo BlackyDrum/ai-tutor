@@ -46,30 +46,17 @@ class ChatController extends Controller
 
         $collection = Collections::query()->find($request->input('collection'))->name;
 
-        $pastMessages = Messages::query()
-            ->join('conversations', 'conversations.id', '=', 'messages.conversation_id')
-            ->where('conversations.api_id', '=', $request->input('conversation_id'))
-            ->select(['messages.user_message'])
-            ->orderBy('messages.created_at')
-            ->get();
-
-        // We use a transaction here allowing rollback of the rows created
-        // in 'createPromptWithContext' if something fails
-        DB::beginTransaction();
-
         try {
             $promptWithContext =
-                ChromaController::createPromptWithContext($collection, $request->input('message'), $request->input('conversation_id'), $pastMessages);
+                ChromaController::createPromptWithContext($collection, $request->input('message'), $request->input('conversation_id'));
         } catch (\Exception $exception) {
-            DB::rollBack();
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
         $token = HomeController::getBearerToken();
 
         if (is_array($token)) {
-            DB::rollBack();
-            return response()->json($token['reason'], intval($token['status']));
+            return response()->json($token['reason'], $token['status']);
         }
 
         $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
@@ -78,12 +65,11 @@ class ChatController extends Controller
         ]);
 
         if ($response->failed()) {
-            DB::rollBack();
             return response()->json($response->reason(), $response->status());
         }
 
         $conversation = Conversations::query()
-            ->where('api_id', $request->input('conversation_id'))
+            ->where('api_id', '=', $request->input('conversation_id'))
             ->first();
 
         $message = Messages::query()->create([
@@ -91,8 +77,6 @@ class ChatController extends Controller
             'agent_message' => htmlspecialchars($response->json()['response']),
             'conversation_id' => $conversation->id,
         ]);
-
-        DB::commit();
 
         $maxRequests = Auth::user()->max_requests;
         $remainingMessagesAlertLevels  = config('api.remaining_requests_alert_levels');

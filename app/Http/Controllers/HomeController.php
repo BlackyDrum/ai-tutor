@@ -31,7 +31,7 @@ class HomeController extends Controller
         $token = self::getBearerToken();
 
         if (is_array($token)) {
-            return response()->json($token['reason'], intval($token['status']));
+            return response()->json($token['reason'], $token['status']);
         }
 
         $message = $request->input('message');
@@ -101,7 +101,7 @@ class HomeController extends Controller
         $token = self::getBearerToken();
 
         if (is_array($token)) {
-            return response()->json($token['reason'], intval($token['status']));
+            return response()->json($token['reason'], $token['status']);
         }
 
         $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/delete-conversation', [

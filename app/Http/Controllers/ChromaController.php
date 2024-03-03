@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 
 class ChromaController extends Controller
 {
-    public static function createPromptWithContext($collectionName, $message, $conversation_id, $pastMessages = null)
+    public static function createPromptWithContext($collectionName, $message, $conversation_id)
     {
         $collection = self::getCollection($collectionName);
 
@@ -32,7 +32,6 @@ class ChromaController extends Controller
                            "always address the previous user messages\n" .
                            "Below you will find some context documents (delimited by Hashtags) that may help. Ignore it " .
                            "and use your own knowledge if the context seems irrelevant.\n\n";
-                           //"Below you will also find the user messages from the past. Always take that into account too.\n\n";
 
         $conversation = Conversations::query()
             ->where('api_id', '=', $conversation_id)
@@ -63,20 +62,6 @@ class ChromaController extends Controller
             $enhancedMessage .= "Context Document:\n" . $file->content . "\n";
             $enhancedMessage .= "###################\n";
         }
-
-        /*
-
-        $index = 1;
-        if ($pastMessages) {
-            foreach ($pastMessages as $pastMessage) {
-                $enhancedMessage .= "----------\n";
-                $enhancedMessage .= "Recent User Message $index:\n" . $pastMessage->user_message . "\n";
-                $enhancedMessage .= "----------\n";
-                $index++;
-            }
-        }
-
-        */
 
         $enhancedMessage .= "\nCurrent User Message:\n" . $message;
 
