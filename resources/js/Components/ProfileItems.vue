@@ -15,8 +15,8 @@ const checkChromaDBStatus = () => {
         .get("/chroma/status")
         .then((result) => {
             toast.add({
-                severity: "success",
-                summary: "Success",
+                severity: "info",
+                summary: "Info",
                 detail: result.data.message,
                 life: 5000,
             });
@@ -64,7 +64,7 @@ const checkChromaDBStatus = () => {
                     "
                 ></span>
             </div>
-            <div>Check ChromaDB</div>
+            <div>Check Sync</div>
         </div>
 
         <div
