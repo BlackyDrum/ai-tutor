@@ -185,6 +185,7 @@ class Embedding extends Resource
     {
         return false;
     }
+
     public function authorizedToRestore(Request $request)
     {
         return false;
