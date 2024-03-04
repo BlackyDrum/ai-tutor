@@ -19,13 +19,9 @@ return [
 
     'token_expiration' => 20, // Expiration time of auth tokens after creation (in seconds)
 
-    'max_requests' => 100, // Maximum number of messages per day per user
+    'max_requests' => 100, // Maximum number of messages per day per user (default value)
 
     'remaining_requests_alert_levels' => [10, 25, 50], // Show info when the user has n messages left for the day
 
-    'max_tokens' => 1000, // Maximum number of tokens in the generated response
-
     'max_message_length' => 2048, // Maximum number of characters for a single user message
-
-    'temperature' => 0.7,
 ];

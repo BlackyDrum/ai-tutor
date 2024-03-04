@@ -22,7 +22,7 @@ class User extends Authenticatable
         'password',
         'terms_accepted',
         'max_requests',
-        'ref_id'
+        'module_id',
     ];
 
     /**
@@ -48,5 +48,10 @@ class User extends Authenticatable
     public function messages()
     {
         return $this->hasManyThrough(Messages::class, Conversations::class, '', 'conversation_id');
+    }
+
+    public function module()
+    {
+        return $this->belongsTo(Modules::class, 'module_id');
     }
 }

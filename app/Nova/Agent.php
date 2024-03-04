@@ -99,10 +99,8 @@ class Agent extends Resource
                     return (bool)$this->resource->id;
                 }),
 
-            Text::make('Ref ID')
-                ->sortable()
-                ->readonly($this->resource->active)
-                ->rules('required', 'integer'),
+            BelongsTo::make('Module', 'module', Module::class)
+                ->readonly($this->resource->active && $this->resource->module_id),
 
             Boolean::make('Active')
                 ->readonly($this->resource->active),
@@ -137,7 +135,7 @@ class Agent extends Resource
 
     public function authorizedToDelete(Request $request)
     {
-        return !$this->resource->active;
+        return !$this->resource->active || !$this->resource->module_id;
     }
 
     public static function afterCreate(NovaRequest $request, Model $model)
@@ -177,7 +175,7 @@ class Agent extends Resource
         if ($model->active) {
             Agents::query()
                 ->whereNot('id', $model->id)
-                ->where('ref_id', $model->ref_id)
+                ->where('module_id', $model->module_id)
                 ->where('active', true)
                 ->update(['active' => false]);
         }

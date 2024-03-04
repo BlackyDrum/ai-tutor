@@ -2,26 +2,22 @@
 
 namespace App\Nova;
 
-use App\Http\Controllers\ChromaController;
-use App\Nova\Metrics\Collections;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Laravel\Nova\Actions\ExportAsCsv;
-use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Collection extends Resource
+class Module extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Collections>
+     * @var class-string<\App\Models\Module>
      */
-    public static $model = \App\Models\Collections::class;
+    public static $model = \App\Models\Modules::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -52,64 +48,40 @@ class Collection extends Resource
             ID::make()->sortable(),
 
             Text::make('Name')
-                ->rules('required', 'string', 'max:10', 'unique:collections,name')
                 ->sortable()
-                ->hideWhenUpdating()
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
-                }),
+                ->rules('required')
+                ->creationRules('unique:modules,name')
+                ->updateRules('unique:modules,name,{{resourceId}}'),
 
-            Number::make('Max Results')
+            Text::make('Ref ID')
+                ->sortable()
+                ->rules('required', 'integer')
+                ->creationRules('unique:modules,ref_id')
+                ->updateRules('unique:modules,ref_id,{{resourceId}}'),
+
+            Number::make('Temperature')
+                ->default(0.7)
+                ->step(0.1)
                 ->min(0)
-                ->rules('required', 'integer', 'gte:0'),
+                ->max(1)
+                ->rules('required', 'numeric','between:0,1'),
 
-            HasMany::make('Embedding'),
+            Number::make('Max Tokens')
+                ->default(1000)
+                ->min(0)
+                ->max(2048)
+                ->rules('required', 'integer', 'between:0,2048'),
 
-            DateTime::make('Created At')
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->sortable(),
+            HasMany::make('User', 'user', User::class),
+
+            HasMany::make('Agent', 'agent', Agent::class),
         ];
-    }
-
-
-    public static function afterCreate(NovaRequest $request, Model $model)
-    {
-        $result = ChromaController::createCollection($model->name);
-
-        if (!$result['status']) {
-            $model->forceDelete();
-            abort(500, $result['message']);
-        }
-    }
-
-    public static function afterDelete(NovaRequest $request, Model $model)
-    {
-        $result = ChromaController::deleteCollection($model);
-
-        if (!$result['status']) {
-            $model->restore();
-            abort(500, $result['message']);
-        }
-
-        $model->forceDelete();
-    }
-
-    public function authorizedToForceDelete(Request $request)
-    {
-        return false;
     }
 
     public function authorizedToReplicate(Request $request)
     {
         return false;
     }
-    public function authorizedToRestore(Request $request)
-    {
-        return false;
-    }
-
-    public static $group = 'ChromaDB';
 
     /**
      * Get the cards available for the request.
@@ -119,9 +91,7 @@ class Collection extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [
-            new Collections()
-        ];
+        return [];
     }
 
     /**
@@ -154,8 +124,6 @@ class Collection extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [
-            ExportAsCsv::make()->nameable(),
-        ];
+        return [];
     }
 }

@@ -22,11 +22,16 @@ class ChromaController extends Controller
     {
         $collection = self::getCollection($collectionName);
 
+        $maxResults = Collections::query()
+            ->where('name', '=', $collectionName)
+            ->first()
+            ->max_results;
+
         $queryResponse = $collection->query(
             queryTexts: [
                 $message
             ],
-            nResults: config('chromadb.max_document_results')
+            nResults: $maxResults
         );
 
         $enhancedMessage = "Try to answer the following user message. Always try to answer in the language from the user's message.\n" .

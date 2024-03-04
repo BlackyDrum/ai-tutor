@@ -19,7 +19,7 @@ class Agents extends Model
         'instructions',
         'active',
         'user_id',
-        'ref_id'
+        'module_id'
     ];
 
     protected $casts = [
@@ -34,5 +34,10 @@ class Agents extends Model
     public function conversations()
     {
         return $this->hasMany(Conversations::class, 'agent_id');
+    }
+
+    public function module()
+    {
+        return $this->belongsTo(Modules::class, 'module_id');
     }
 }

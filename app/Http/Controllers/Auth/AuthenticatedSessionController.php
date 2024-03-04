@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Agents;
 use App\Models\AuthTokens;
+use App\Models\Modules;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Carbon\Carbon;
@@ -69,11 +70,11 @@ class AuthenticatedSessionController extends Controller
             return response()->json(['message' => 'Unprocessable Content'], 422);
         }
 
-        $agent = Agents::query()
+        $module = Modules::query()
             ->where('ref_id', '=', $refId)
             ->first();
 
-        if (!$agent) {
+        if (!$module) {
             return response()->json(['message' => 'Invalid Ref ID'], 422);
         }
 
@@ -118,12 +119,20 @@ class AuthenticatedSessionController extends Controller
             return response()->json(['message' => 'Session Expired'], 419);
         }
 
+        $module = Modules::query()
+            ->where('ref_id', '=', $authToken->ref_id)
+            ->first();
+
+        if (!$module) {
+            return response()->json(['message' => 'Unprocessable Content'], 422);
+        }
+
         $user = User::updateOrCreate([
             'name' => $name,
         ], [
             'password' => Hash::make(Str::random(40)),
             'admin' => false,
-            'ref_id' => $authToken->ref_id,
+            'module_id' => $module->id,
             'max_requests' => config('api.max_requests'),
         ]);
 

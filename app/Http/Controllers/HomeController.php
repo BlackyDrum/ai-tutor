@@ -6,6 +6,7 @@ use App\Models\Agents;
 use App\Models\Collections;
 use App\Models\Conversations;
 use App\Models\Messages;
+use App\Models\Modules;
 use App\Models\User;
 use App\Rules\ValidateConversationOwner;
 use Illuminate\Http\Request;
@@ -36,8 +37,14 @@ class HomeController extends Controller
 
         $message = $request->input('message');
 
+        $module = Modules::query()->find(Auth::user()->module_id);
+
+        if (!$module) {
+            return response()->json('You are not associated with a module. Try to re-log.',500);
+        }
+
         $agent = Agents::query()
-            ->where('ref_id', '=', Auth::user()->ref_id)
+            ->where('module_id', '=', $module->id)
             ->where('active', '=', true)
             ->first();
 
@@ -48,8 +55,8 @@ class HomeController extends Controller
         $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
             'agent_id' => $agent->api_id,
             'creating_user' => config('api.username'),
-            'max_tokens' => config('api.max_tokens'),
-            'temperature' => config('api.temperature'),
+            'max_tokens' => $module->max_tokens,
+            'temperature' => $module->temperature,
         ]);
 
         if ($response1->failed()) {
@@ -62,8 +69,8 @@ class HomeController extends Controller
             'api_id' => $conversationID,
             'agent_id' => $agent->id,
             'creating_user' => config('api.username'),
-            'max_tokens' => config('api.max_tokens'),
-            'temperature' => config('api.temperature'),
+            'max_tokens' => $module->max_tokens,
+            'temperature' => $module->temperature,
             'user_id' => Auth::id(),
         ]);
 

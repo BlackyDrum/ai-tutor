@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('collections', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->unsignedBigInteger('max_results');
-            $table->softDeletes();
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedBigInteger('module_id')->nullable();
+
+            $table->foreign('module_id')->references('id')->on('modules')->onDelete('set null');
         });
     }
 
@@ -25,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('collections');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('module_id');
+        });
     }
 };

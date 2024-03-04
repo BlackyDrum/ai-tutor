@@ -6,6 +6,7 @@ use App\Nova\Metrics\Users;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use Laravel\Nova\Actions\ExportAsCsv;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Gravatar;
@@ -70,9 +71,7 @@ class User extends Resource
                     return config('api.max_requests');
                 }),
 
-            Text::make('Ref ID')
-                ->sortable()
-                ->rules('nullable', 'integer', 'exists:agents,ref_id'),
+            BelongsTo::make('Module', 'module', Module::class),
 
             Boolean::make('Admin'),
 

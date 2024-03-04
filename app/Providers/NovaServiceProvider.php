@@ -11,6 +11,7 @@ use App\Nova\Collection;
 use App\Nova\Conversation;
 use App\Nova\Embedding;
 use App\Nova\Message;
+use App\Nova\Module;
 use App\Nova\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
@@ -42,8 +43,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::dashboard(Main::class)->icon('chart-bar'),
 
                 MenuSection::make('Chat', [
-                    MenuItem::resource(Agent::class)
-                        ->withBadgeIf(fn() => 'No Active!', 'warning', fn() => Agents::query()->where('active', true)->count() === 0),
+                    MenuItem::resource(Agent::class),
                     MenuItem::resource(Conversation::class),
                     MenuItem::resource(Message::class),
                 ])->icon('annotation')->collapsable(),
@@ -53,6 +53,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         ->withBadgeIf(fn() => 'No Collection!', 'warning', fn() => Collections::query()->count() === 0),
                     MenuItem::resource(Embedding::class),
                 ])->icon('database')->collapsable(),
+
+                MenuSection::make('FH Aachen', [
+                    MenuItem::resource(Module::class),
+                ])->icon('academic-cap')->collapsable(),
 
                 MenuSection::make('Users', [
                     MenuItem::resource(User::class),
