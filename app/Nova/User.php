@@ -70,6 +70,10 @@ class User extends Resource
                     return config('api.max_requests');
                 }),
 
+            Text::make('Ref ID')
+                ->sortable()
+                ->rules('nullable', 'integer', 'exists:agents,ref_id'),
+
             Boolean::make('Admin'),
 
             Boolean::make('Terms Accepted')

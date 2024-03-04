@@ -22,6 +22,7 @@ class User extends Authenticatable
         'password',
         'terms_accepted',
         'max_requests',
+        'ref_id'
     ];
 
     /**
@@ -32,6 +33,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'id',
+        'ref_id'
     ];
 
     /**

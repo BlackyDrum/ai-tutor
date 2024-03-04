@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Agents;
 use App\Models\AuthTokens;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -64,13 +65,21 @@ class AuthenticatedSessionController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        if (!$name || !$refId || !is_numeric($refId) || !is_string($name)) {
+        if (!$name || !$refId || !is_string($name)) {
             return response()->json(['message' => 'Unprocessable Content'], 422);
         }
 
+        $agent = Agents::query()
+            ->where('ref_id', '=', $refId)
+            ->first();
+
+        if (!$agent) {
+            return response()->json(['message' => 'Invalid Ref ID'], 422);
+        }
+
         $authToken = AuthTokens::query()->create([
-            'name' => $request->input('user'),
-            'ref_id' => $request->input('ref_id'),
+            'name' => $name,
+            'ref_id' => $refId,
             'token' => Str::random(40)
         ]);
 
@@ -109,11 +118,12 @@ class AuthenticatedSessionController extends Controller
             return response()->json(['message' => 'Session Expired'], 419);
         }
 
-        $user = User::firstOrCreate([
+        $user = User::updateOrCreate([
             'name' => $name,
         ], [
             'password' => Hash::make(Str::random(40)),
             'admin' => false,
+            'ref_id' => $authToken->ref_id,
             'max_requests' => config('api.max_requests'),
         ]);
 

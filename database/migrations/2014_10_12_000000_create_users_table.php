@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('admin')->default(false);
             $table->boolean('terms_accepted')->default(false);
             $table->unsignedInteger('max_requests');
+            $table->unsignedBigInteger('ref_id')->nullable();
             $table->timestamps();
         });
     }

@@ -99,8 +99,12 @@ class Agent extends Resource
                     return (bool)$this->resource->id;
                 }),
 
+            Text::make('Ref ID')
+                ->sortable()
+                ->readonly($this->resource->active)
+                ->rules('required', 'integer'),
+
             Boolean::make('Active')
-                ->default(Agents::query()->count() == 0)
                 ->readonly($this->resource->active),
 
             BelongsTo::make('Creator', 'user', User::class)
@@ -173,6 +177,7 @@ class Agent extends Resource
         if ($model->active) {
             Agents::query()
                 ->whereNot('id', $model->id)
+                ->where('ref_id', $model->ref_id)
                 ->where('active', true)
                 ->update(['active' => false]);
         }

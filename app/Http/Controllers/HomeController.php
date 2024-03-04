@@ -36,9 +36,12 @@ class HomeController extends Controller
 
         $message = $request->input('message');
 
-        $agent = Agents::query()->where('active', '=', true)->first();
+        $agent = Agents::query()
+            ->where('ref_id', '=', Auth::user()->ref_id)
+            ->where('active', '=', true)
+            ->first();
 
-        if (empty($agent)) {
+        if (!$agent) {
             return response()->json('Internal Server Error',500);
         }
 
