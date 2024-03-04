@@ -55,13 +55,13 @@ $ php artisan serve
 13. **Visit http://localhost:8000 in your web browser to access the application.**
 
 ## Dashboard Access
-In order to have full access to the Admin's Dasboard, you need to manually set the ``admin`` flag to true. You can use the following command:
+In order to have full access to the Admin's Dasboard, you need to manually set the ``admin`` column in the ``users`` table to true. You can use the following command:
 ```sql
 UPDATE users SET admin=true WHERE id={USER_ID};
 ```
 
 ## Validate ChromaDB Sync
-To validate if ChromaDB is in sync with the relational database, you can use the following command:
+To validate if ``ChromaDB`` is in sync with the relational database, you can use the following command:
 ```
 $ php artisan chroma:check
 ```
