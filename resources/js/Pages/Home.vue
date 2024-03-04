@@ -27,7 +27,6 @@ const handleCreateConversation = (userMessage) => {
     window.axios
         .post("/chat/create-conversation", {
             message: userMessage,
-            collection: mainComponent.value.selectedCollection.id
         })
         .then((result) => {
             router.get(`/chat/${result.data.id}`);

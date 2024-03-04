@@ -25,8 +25,7 @@ class HomeController extends Controller
     public function createConversation(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:' . config('api.max_message_length'),
-            'collection' => 'required|integer|exists:collections,id'
+            'message' => 'required|string|max:' . config('api.max_message_length')
         ]);
 
         $token = self::getBearerToken();
@@ -74,10 +73,17 @@ class HomeController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        $collection = Collections::query()->find($request->input('collection'))->name;
+        $collection = Collections::query()
+            ->where('module_id', '=', $module->id)
+            ->first();
+
+        if (!$collection) {
+            $conversation->delete();
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
 
         try {
-            $promptWithContext = ChromaController::createPromptWithContext($collection, $request->input('message'), $conversationID);
+            $promptWithContext = ChromaController::createPromptWithContext($collection->name, $request->input('message'), $conversationID);
         } catch (\Exception $exception) {
             $conversation->delete();
             return response()->json(['message' => 'Internal Server Error'], 500);

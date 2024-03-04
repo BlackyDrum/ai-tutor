@@ -7,6 +7,7 @@ use App\Nova\Metrics\Collections;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Actions\ExportAsCsv;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
@@ -62,6 +63,10 @@ class Collection extends Resource
             Number::make('Max Results')
                 ->min(0)
                 ->rules('required', 'integer', 'gte:0'),
+
+            BelongsTo::make('Module', 'module', Module::class)
+                ->creationRules('unique:collections,module_id')
+                ->updateRules('unique:collections,module_id,{{resourceId}}'),
 
             HasMany::make('Embedding'),
 

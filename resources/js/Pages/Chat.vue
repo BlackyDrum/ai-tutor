@@ -67,7 +67,6 @@ const handleCreateConversation = (userMessage) => {
     window.axios
         .post("/chat/chat-agent", {
             message: userMessage,
-            collection: mainComponent.value.selectedCollection.id,
             conversation_id: page.props.conversation_id,
         })
         .then((result) => {

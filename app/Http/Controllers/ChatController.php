@@ -40,15 +40,20 @@ class ChatController extends Controller
     {
         $request->validate([
             'message' => 'required|string|max:' . config('api.max_message_length'),
-            'collection' => 'required|integer|exists:collections,id',
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()],
         ]);
 
-        $collection = Collections::query()->find($request->input('collection'))->name;
+        $collection = Collections::query()
+            ->where('module_id', '=', Auth::user()->module_id)
+            ->first();
+
+        if (!$collection) {
+            return response()->json('You are not associated with a module. Try to login again.',500);
+        }
 
         try {
             $promptWithContext =
-                ChromaController::createPromptWithContext($collection, $request->input('message'), $request->input('conversation_id'));
+                ChromaController::createPromptWithContext($collection->name, $request->input('message'), $request->input('conversation_id'));
         } catch (\Exception $exception) {
             return response()->json(['message' => 'Internal Server Error'], 500);
         }

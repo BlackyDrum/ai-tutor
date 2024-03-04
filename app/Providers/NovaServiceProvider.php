@@ -42,21 +42,20 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             return [
                 MenuSection::dashboard(Main::class)->icon('chart-bar'),
 
+                MenuSection::make('FH Aachen', [
+                    MenuItem::resource(Module::class),
+                ])->icon('academic-cap')->collapsable(),
+
+                MenuSection::make('ChromaDB', [
+                    MenuItem::resource(Collection::class),
+                    MenuItem::resource(Embedding::class),
+                ])->icon('database')->collapsable(),
+
                 MenuSection::make('Chat', [
                     MenuItem::resource(Agent::class),
                     MenuItem::resource(Conversation::class),
                     MenuItem::resource(Message::class),
                 ])->icon('annotation')->collapsable(),
-
-                MenuSection::make('ChromaDB', [
-                    MenuItem::resource(Collection::class)
-                        ->withBadgeIf(fn() => 'No Collection!', 'warning', fn() => Collections::query()->count() === 0),
-                    MenuItem::resource(Embedding::class),
-                ])->icon('database')->collapsable(),
-
-                MenuSection::make('FH Aachen', [
-                    MenuItem::resource(Module::class),
-                ])->icon('academic-cap')->collapsable(),
 
                 MenuSection::make('Users', [
                     MenuItem::resource(User::class),
