@@ -367,7 +367,7 @@ class ChromaController extends Controller
             $message = 'Relational database is in sync with ChromaDB';
         }
         else {
-            $message = 'Relational database is NOT in sync with ChromaDB';
+            $message = "Relational database is NOT in sync with ChromaDB. Use 'php artisan chroma:check' for more information";
         }
 
         return response()->json(['message' => $message], $exitCode == 1 ? 200 : 500);

@@ -30,6 +30,8 @@ class ValidateChromaDBSync extends Command
     {
         $this->info("Starting ChromaDB sync validation...\n");
 
+        $error = false;
+
         $client = ChromaController::getClient();
 
         $this->info("ChromaDB Version: {$client->version()}");
@@ -37,14 +39,47 @@ class ValidateChromaDBSync extends Command
         $this->info("ChromaDB Tenant: {$client->tenant}\n");
 
         $collections = $client->listCollections();
+        $chromaCollectionCount = count($collections);
+
+        $relationalCollections = Collections::all();
+
+        $this->info('Validating collections...');
+        if ($relationalCollections->count() != $chromaCollectionCount) {
+            $this->error("Count of collections doesn't match: RelationalDB: {$relationalCollections->count()}, ChromaDB: $chromaCollectionCount\n");
+        }
+        else {
+            $this->info("Count of collections matches: RelationalDB: {$relationalCollections->count()}, ChromaDB: $chromaCollectionCount \u{2713}\n");
+        }
 
         $names = [];
 
+        // Check if all ChromaDB collections have a corresponding
+        // collection in the relational database
         foreach ($collections as $collection) {
+            $relationalCollection = Collections::query()
+                ->where('name', '=', $collection->name)
+                ->first();
+
+            if (!$relationalCollection) {
+                $this->error("Cannot find RelationalDB Collection for {$collection->name}");
+
+                return -1;
+            }
+
             $names[] = $collection->name;
         }
 
-        $error = false;
+        // Check if all RelationalDB collections have a corresponding
+        // collection in ChromaDB
+        foreach ($relationalCollections as $collection) {
+            try {
+                ChromaController::getCollection($collection->name);
+            } catch (\Exception $exception) {
+                $this->error("Cannot find ChromaDB Collection for {$collection->name}");
+
+                return -1;
+            }
+        }
 
         foreach ($names as $collectionName) {
             $collectionError = false;
@@ -134,10 +169,10 @@ class ValidateChromaDBSync extends Command
         }
 
         if (!$error) {
-            $this->info("All tests passed. RelationalDB is in sync with ChromaDB \u{2713}");
+            $this->info("All tests passed. Relational Database is in sync with ChromaDB \u{2713}");
         }
         else {
-            $this->error("RelationalDB is NOT in sync with ChromaDB");
+            $this->error("Relational Database is NOT in sync with ChromaDB");
 
             return -1;
         }

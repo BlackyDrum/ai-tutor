@@ -26,7 +26,7 @@ const checkChromaDBStatus = () => {
                 severity: "error",
                 summary: "Error",
                 detail: error.response.data.message ?? error.response.data,
-                life: 5000,
+                life: 10000,
             });
         })
         .finally(() => {
