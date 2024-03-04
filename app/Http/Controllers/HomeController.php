@@ -40,7 +40,7 @@ class HomeController extends Controller
         $module = Modules::query()->find(Auth::user()->module_id);
 
         if (!$module) {
-            return response()->json('You are not associated with a module. Try to re-log.',500);
+            return response()->json('You are not associated with a module. Try to login again.',500);
         }
 
         $agent = Agents::query()
