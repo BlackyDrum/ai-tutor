@@ -34,12 +34,14 @@ class HomeController extends Controller
             return response()->json($token['reason'], $token['status']);
         }
 
-        $message = $request->input('message');
+        if (!Auth::user()->module_id) {
+            return response()->json('You are not associated with a module. Try to login again.',500);
+        }
 
         $module = Modules::query()->find(Auth::user()->module_id);
 
         if (!$module) {
-            return response()->json('You are not associated with a module. Try to login again.',500);
+            return response()->json('Internal Server Error',500);
         }
 
         $agent = Agents::query()
@@ -100,7 +102,7 @@ class HomeController extends Controller
         }
 
         Messages::query()->create([
-            'user_message' => $message,
+            'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars($response2->json()['response']),
             'conversation_id' => $conversation->id
         ]);

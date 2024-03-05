@@ -43,12 +43,16 @@ class ChatController extends Controller
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()],
         ]);
 
+        if (!Auth::user()->module_id) {
+            return response()->json('You are not associated with a module. Try to login again.',500);
+        }
+
         $collection = Collections::query()
             ->where('module_id', '=', Auth::user()->module_id)
             ->first();
 
         if (!$collection) {
-            return response()->json('You are not associated with a module. Try to login again.',500);
+            return response()->json('Internal Server Error.',500);
         }
 
         try {
