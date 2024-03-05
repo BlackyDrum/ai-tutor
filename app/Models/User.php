@@ -33,7 +33,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'id',
-        'ref_id'
+        'ref_id',
+        'max_requests',
+        'module_id'
     ];
 
     /**
