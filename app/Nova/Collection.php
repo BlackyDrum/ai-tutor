@@ -53,7 +53,7 @@ class Collection extends Resource
             ID::make()->sortable(),
 
             Text::make('Name')
-                ->rules('required', 'string', 'max:10', 'unique:collections,name')
+                ->rules('required', 'string', 'unique:collections,name')
                 ->sortable()
                 ->hideWhenUpdating()
                 ->readonly(function() {
