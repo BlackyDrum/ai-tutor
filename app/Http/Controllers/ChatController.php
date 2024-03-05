@@ -55,16 +55,23 @@ class ChatController extends Controller
             return response()->json('Internal Server Error.',500);
         }
 
+        // We use a transaction here in case the following API requests
+        // fail, allowing us to rollback the rows created in
+        // 'ChromaController::createPromptWithContext()'
+        DB::beginTransaction();
+
         try {
             $promptWithContext =
                 ChromaController::createPromptWithContext($collection->name, $request->input('message'), $request->input('conversation_id'));
         } catch (\Exception $exception) {
+            DB::rollBack();
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
         $token = HomeController::getBearerToken();
 
         if (is_array($token)) {
+            DB::rollBack();
             return response()->json($token['reason'], $token['status']);
         }
 
@@ -74,6 +81,7 @@ class ChatController extends Controller
         ]);
 
         if ($response->failed()) {
+            DB::rollBack();
             return response()->json($response->reason(), $response->status());
         }
 
@@ -86,6 +94,8 @@ class ChatController extends Controller
             'agent_message' => htmlspecialchars($response->json()['response']),
             'conversation_id' => $conversation->id,
         ]);
+
+        DB::commit();
 
         $maxRequests = Auth::user()->max_requests;
         $remainingMessagesAlertLevels  = config('api.remaining_requests_alert_levels');
