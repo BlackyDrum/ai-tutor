@@ -32,27 +32,23 @@ $ php artisan key:generate
 ```
 $ php artisan migrate
 ```
-8. **(Optional) Create a user:**
-```
-$ php artisan nova:user
-```
-9. **Install JavaScript dependencies:**
+8. **Install JavaScript dependencies:**
 ```
 $ npm install
 ```
-10. **Build the assets:**
+9. **Build the assets:**
 ```
 $ npm run build
 ```
-11. **Run the ChromaDB Docker container:**
+10. **Run the ChromaDB Docker container:**
 ```
 $ docker-compose up -d
 ```
-12. **Start the development server:**
+11. **Start the development server:**
 ```
 $ php artisan serve
 ```
-13. **Visit http://localhost:8000 in your web browser to access the application.**
+12. **Visit http://localhost:8000 in your web browser to access the application.**
 
 ## Dashboard Access
 In order to have full access to the Admin's Dasboard, you need to manually set the ``admin`` column in the ``users`` table to true. You can use the following command:
