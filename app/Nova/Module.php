@@ -33,7 +33,8 @@ class Module extends Resource
      */
     public static $search = [
         'id',
-        'name'
+        'name',
+        'ref_id'
     ];
 
     /**
