@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureIsAdmin
@@ -17,6 +18,8 @@ class EnsureIsAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check() || !$request->user()->admin) {
+            Log::warning('App: User with ID {user-id} tried to access the admin area');
+
             return redirect('/');
         }
 

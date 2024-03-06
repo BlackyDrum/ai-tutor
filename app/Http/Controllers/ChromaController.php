@@ -119,6 +119,11 @@ class ChromaController extends Controller
             }
 
             if ($response->failed()) {
+                Log::error('ConversAItion: Failed to convert pptx to json. Reason: {reason}. Status: {status}', [
+                    'reason' => $response->reason(),
+                    'status' => $response->status(),
+                ]);
+
                 return [
                     'status' => false,
                     'message' => $response->reason(),
@@ -164,6 +169,10 @@ class ChromaController extends Controller
             ];
         }
         else {
+            Log::warning('App: Attempted to process a file with the wrong format', [
+                'name' => $model->name
+            ]);
+
             if (file_exists($pathToFile)) {
                 unlink($pathToFile);
             }
@@ -186,6 +195,11 @@ class ChromaController extends Controller
             );
 
         } catch (\Exception $exception) {
+            Log::error('ChromaDB: Failed to add items to collection with ID {collection}. Reason: {reason}', [
+                'collection' => $model->collection_id,
+                'reason' => $exception->getMessage(),
+            ]);
+
             return [
                 'status' => false,
                 'message' => $exception->getMessage(),
@@ -260,6 +274,11 @@ class ChromaController extends Controller
 
             $model->size = strlen($model->content);
         } catch (\Exception $exception) {
+            Log::error('ChromaDB: Failed to update collection with ID {collection-id}. Reason: {reason}', [
+                'collection-id' => $model->collection_id,
+                'reason' => $exception->getMessage(),
+            ]);
+
             return [
                 'status' => false,
                 'message' => $exception->getMessage(),
@@ -290,6 +309,11 @@ class ChromaController extends Controller
 
             $collection->delete([$model->embedding_id]);
         } catch (\Exception $exception) {
+            Log::error('ChromaDB: Failed to delete items from collection with ID {collection-id}. Reason: {reason}', [
+                'collection-id' => $model->collection_id,
+                'reason' => $exception->getMessage(),
+            ]);
+
             return [
                 'status' => false,
                 'message' => $exception->getMessage(),
@@ -310,6 +334,11 @@ class ChromaController extends Controller
 
             $chromaDB->createCollection($name, embeddingFunction: $embeddingFunction);
         } catch (\Exception $exception) {
+            Log::error('ChromaDB: Failed to create new collection with name {collection}. Reason: {reason}', [
+                'collection' => $name,
+                'reason' => $exception->getMessage(),
+            ]);
+
             return [
                 'status' => false,
                 'message' => $exception->getMessage(),
@@ -328,6 +357,11 @@ class ChromaController extends Controller
 
             $chromaDB->deleteCollection($model->name);
         } catch (\Exception $exception) {
+            Log::error('ChromaDB: Failed to delete collection with ID {collection-id}. Reason: {reason}', [
+                'collection-id' => $model->id,
+                'reason' => $exception->getMessage(),
+            ]);
+
             return [
                 'status' => false,
                 'message' => $exception->getMessage(),

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class ValidateRemainingRequests
@@ -29,6 +30,11 @@ class ValidateRemainingRequests
             $nextAvailableTime = Carbon::parse($firstMessageTime)->addDay();
 
             $hoursUntilNextAvailableTime = Carbon::now()->diffInHours($nextAvailableTime, false);
+
+            Log::info('App: Daily limit reached for user with ID {user-id}', [
+                'next-available-message' => $nextAvailableTime,
+                'max_requests' => Auth::user()->max_requests,
+            ]);
 
             return response()->json(['message' => "Daily limit reached. Try again in $hoursUntilNextAvailableTime hours. ($nextAvailableTime)"], 429);
         }

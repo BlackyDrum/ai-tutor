@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Laravel\Nova\Actions\Action;
@@ -157,6 +158,12 @@ class Agent extends Resource
         ]);
 
         if ($response->failed()) {
+            Log::error('ConversAItion: Failed to create new agent. Reason: {reason}. Status: {status}', [
+                'reason' => $response->reason(),
+                'status' => $response->status(),
+                'agent-name' => $request->input('name'),
+            ]);
+
             $model->delete();
             abort(500, $response->reason());
         }

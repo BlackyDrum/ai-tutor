@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -28,6 +29,10 @@ class HomeController extends Controller
             'message' => 'required|string|max:' . config('api.max_message_length')
         ]);
 
+        Log::info('App: User with ID {user-id} is trying to create a new conversation', [
+            'message' => $request->input('message')
+        ]);
+
         $token = self::getBearerToken();
 
         if (is_array($token)) {
@@ -35,12 +40,18 @@ class HomeController extends Controller
         }
 
         if (!Auth::user()->module_id) {
+            Log::warning('App: User with ID {user-id} is not associated with a module');
+
             return response()->json('You are not associated with a module. Try to login again.',500);
         }
 
         $module = Modules::query()->find(Auth::user()->module_id);
 
         if (!$module) {
+            Log::error('App: Failed to find module with ID {module-id}', [
+                'module-id' => Auth::user()->module_id,
+            ]);
+
             return response()->json('Internal Server Error',500);
         }
 
@@ -50,6 +61,10 @@ class HomeController extends Controller
             ->first();
 
         if (!$agent) {
+            Log::critical('App: Failed to find active agent for module with ID {module-id}', [
+                'module-id' => $module->id,
+            ]);
+
             return response()->json('Internal Server Error',500);
         }
 
@@ -61,6 +76,15 @@ class HomeController extends Controller
         ]);
 
         if ($response1->failed()) {
+            Log::error('ConversAItion: Failed to create a new conversation. Reason: {reason}. Status: {status}', [
+                'reason' => $response1->reason(),
+                'status' => $response1->status(),
+                'agent-id' => $agent->id,
+                'agent-api-id' => $agent->api_id,
+                'max-tokens' => $module->max_tokens,
+                'temperature' => $module->temperature,
+            ]);
+
             return response()->json($response1->reason(), $response1->status());
         }
 
@@ -80,6 +104,10 @@ class HomeController extends Controller
             ->first();
 
         if (!$collection) {
+            Log::critical('App: Failed to find a collection for module with ID {module-id}', [
+                'module-id' => $module->id
+            ]);
+
             $conversation->delete();
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
@@ -87,6 +115,12 @@ class HomeController extends Controller
         try {
             $promptWithContext = ChromaController::createPromptWithContext($collection->name, $request->input('message'), $conversationID);
         } catch (\Exception $exception) {
+            Log::error('ChromaDB: Failed to create prompt with context. Reason: {message}', [
+                'message' => $exception->getMessage(),
+                'collection' => $collection->name,
+                'conversation-id' => $conversationID
+            ]);
+
             $conversation->delete();
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
@@ -97,6 +131,12 @@ class HomeController extends Controller
         ]);
 
         if ($response2->failed()) {
+            Log::error('ConversAItion: Failed to send message. Reason: {reason}. Status: {status}', [
+                'reason' => $response2->reason(),
+                'status' => $response2->status(),
+                'conversation-id' => $conversationID,
+            ]);
+
             $conversation->delete();
             return response()->json($response2->reason(), $response2->status());
         }
@@ -107,6 +147,10 @@ class HomeController extends Controller
             'conversation_id' => $conversation->id
         ]);
 
+        Log::info('App: User with ID {user-id} created a new conversation', [
+            'conversation-id' => $conversationID
+        ]);
+
         return response()->json(['id' => $conversationID]);
     }
 
@@ -114,6 +158,10 @@ class HomeController extends Controller
     {
         $request->validate([
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+        ]);
+
+        Log::info('App: User with ID {user-id} is trying to delete a conversation with ID {conversation-id}', [
+            'conversation-id' => $request->input('conversation_id')
         ]);
 
         $token = self::getBearerToken();
@@ -127,12 +175,22 @@ class HomeController extends Controller
         ]);
 
         if ($response->failed()) {
+            Log::error('ConversAItion: Failed to delete conversation. Reason: {reason}. Status: {status}', [
+                'reason' => $response->reason(),
+                'status' => $response->status(),
+                'conversation-id' => $request->input('conversation_id'),
+            ]);
+
             return response()->json($response->reason(), $response->status());
         }
 
         Conversations::query()
             ->where('api_id', '=', $request->input('conversation_id'))
             ->delete();
+
+        Log::info('App: User with ID {user-id} deleted a conversation with ID {conversation-id}', [
+            'conversation-id' => $request->input('conversation_id')
+        ]);
 
         return response()->json(['id' => $request->input('conversation_id')]);
     }
@@ -152,6 +210,11 @@ class HomeController extends Controller
                 'client_secret' => config('api.client_secret'),
             ]);
         } catch (\Exception $exception) {
+            Log::error('App/ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}', [
+                'reason' => $exception->getMessage(),
+                'status' => 500,
+            ]);
+
             return [
                 'reason' => 'Internal Server Error',
                 'status' => 500,
@@ -159,6 +222,11 @@ class HomeController extends Controller
         }
 
         if ($response->failed()) {
+            Log::error('ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}', [
+                'reason' => $response->reason(),
+                'status' => $response->status(),
+            ]);
+
             return [
                 'reason' => $response->reason(),
                 'status' => $response->status(),
@@ -177,6 +245,8 @@ class HomeController extends Controller
         User::query()->find(Auth::id())->update([
             'terms_accepted' => true,
         ]);
+
+        Log::info('App: User with ID {user-id} accepted the terms');
 
         return response()->json(['accepted' => true]);
     }

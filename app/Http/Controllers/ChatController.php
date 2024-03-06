@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ChatController extends Controller
@@ -22,6 +23,10 @@ class ChatController extends Controller
             ->first();
 
         if (empty($conversation) || $conversation->user_id !== Auth::id()) {
+            Log::info('App: User with ID {user-id} tried to access an invalid conversation', [
+                'conversation-id' => $id
+            ]);
+
             return redirect('/');
         }
 
@@ -29,6 +34,10 @@ class ChatController extends Controller
             ->where('conversation_id', '=', $conversation->id)
             ->orderBy('created_at')
             ->get();
+
+        Log::info('App: User with ID {user-id} accessed a conversation', [
+            'conversation-id' => $id
+        ]);
 
         return Inertia::render('Chat', [
             'messages' => $messages,
@@ -43,7 +52,14 @@ class ChatController extends Controller
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()],
         ]);
 
+        Log::info('App: User with ID {user-id} is trying to send a message in conversation with ID {conversation-id}', [
+            'message' => $request->input('message'),
+            'conversation-id' => $request->input('conversation_id')
+        ]);
+
         if (!Auth::user()->module_id) {
+            Log::warning('App: User with ID {user-id} is not associated with a module');
+
             return response()->json('You are not associated with a module. Try to login again.',500);
         }
 
@@ -52,6 +68,10 @@ class ChatController extends Controller
             ->first();
 
         if (!$collection) {
+            Log::critical('App: Failed to find a collection for module with ID {module-id}', [
+                'module-id' => Auth::user()->module_id
+            ]);
+
             return response()->json('Internal Server Error.',500);
         }
 
@@ -64,6 +84,12 @@ class ChatController extends Controller
             $promptWithContext =
                 ChromaController::createPromptWithContext($collection->name, $request->input('message'), $request->input('conversation_id'));
         } catch (\Exception $exception) {
+            Log::error('ChromaDB: Failed to create prompt with context. Reason: {message}', [
+                'message' => $exception->getMessage(),
+                'collection' => $collection->name,
+                'conversation-id' => $request->input('conversation_id')
+            ]);
+
             DB::rollBack();
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
@@ -81,6 +107,12 @@ class ChatController extends Controller
         ]);
 
         if ($response->failed()) {
+            Log::error('ConversAItion: Failed to send message. Reason: {reason}. Status: {status}', [
+                'reason' => $response->reason(),
+                'status' => $response->status(),
+                'conversation-id' => $request->input('conversation_id'),
+            ]);
+
             DB::rollBack();
             return response()->json($response->reason(), $response->status());
         }
@@ -93,6 +125,10 @@ class ChatController extends Controller
             'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars($response->json()['response']),
             'conversation_id' => $conversation->id,
+        ]);
+
+        Log::info('App: User with ID {user-id} sent a new message in conversation with ID {conversation-id}', [
+            'conversation-id' => $request->input('conversation_id'),
         ]);
 
         DB::commit();
