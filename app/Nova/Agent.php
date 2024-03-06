@@ -104,7 +104,7 @@ class Agent extends Resource
                 ->readonly($this->resource->active && $this->resource->module_id),
 
             Boolean::make('Active')
-                ->readonly($this->resource->active),
+                ->readonly($this->resource->active && $this->resource->module_id),
 
             BelongsTo::make('Creator', 'user', User::class)
                 ->default(Auth::id())
