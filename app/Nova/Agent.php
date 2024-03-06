@@ -193,6 +193,15 @@ class Agent extends Resource
         return false;
     }
 
+    public static function afterDelete(NovaRequest $request, Model $model)
+    {
+        Log::info('User with ID {user-id} deleted an agent', [
+            'id' => $model->id,
+            'name' => $model->name,
+            'api-id' => $model->api_id,
+        ]);
+    }
+
     public static $group = 'Chat';
 
     /**

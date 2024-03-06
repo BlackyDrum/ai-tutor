@@ -6,6 +6,7 @@ use App\Http\Controllers\ChromaController;
 use App\Nova\Metrics\Collections;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
@@ -96,6 +97,11 @@ class Collection extends Resource
             $model->restore();
             abort(500, $result['message']);
         }
+
+        Log::info('User with ID {user-id} deleted a collection', [
+            'id' => $model->id,
+            'name' => $model->name,
+        ]);
 
         $model->forceDelete();
     }

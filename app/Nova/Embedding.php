@@ -8,6 +8,7 @@ use App\Nova\Metrics\Embeddings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
@@ -164,6 +165,12 @@ class Embedding extends Resource
             $model->restore();
             abort(500, $result['message']);
         }
+
+        Log::info('User with ID {user-id} deleted an embedding', [
+            'id' => $model->id,
+            'name' => $model->name,
+            'embedding-id' => $model->embedding_id,
+        ]);
 
         $model->forceDelete();
     }

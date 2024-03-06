@@ -2,7 +2,9 @@
 
 namespace App\Nova;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\ID;
@@ -82,6 +84,15 @@ class Module extends Resource
     public function authorizedToReplicate(Request $request)
     {
         return false;
+    }
+
+    public static function afterDelete(NovaRequest $request, Model $model)
+    {
+        Log::info('User with ID {user-id} deleted a module', [
+            'id' => $model->id,
+            'name' => $model->name,
+            'ref-id' => $model->ref_id,
+        ]);
     }
 
     /**
