@@ -17,7 +17,7 @@ const isRenamingConversation = ref(false);
 const renameInput = ref();
 const showRenameInput = ref(false);
 
-const toggleHistoryOverlayPanel = (event, conversation) => {
+const toggleConversationOverlayPanel = (event, conversation) => {
     conversationOverlayPanel.value.toggle(event);
 
     selectedConversation.value = conversationOverlayPanel.value.visible ? conversation : null;
@@ -151,7 +151,7 @@ const renameConversation = () => {
                 {{ conversation.name }}
             </Link>
             <button
-                @click="toggleHistoryOverlayPanel($event, conversation.api_id)"
+                @click="toggleConversationOverlayPanel($event, conversation.api_id)"
                 class="block absolute right-2 top-1 p-1 rounded-lg hidden bg-app-dark group-hover:block"
             >
                 <span class="pi pi-ellipsis-h"></span>
