@@ -98,7 +98,7 @@ class Collection extends Resource
             abort(500, $result['message']);
         }
 
-        Log::info('User with ID {user-id} deleted a collection', [
+        Log::info('App: User with ID {user-id} deleted a collection', [
             'id' => $model->id,
             'name' => $model->name,
         ]);

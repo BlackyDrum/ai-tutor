@@ -195,7 +195,7 @@ class Agent extends Resource
 
     public static function afterDelete(NovaRequest $request, Model $model)
     {
-        Log::info('User with ID {user-id} deleted an agent', [
+        Log::info('App: User with ID {user-id} deleted an agent', [
             'id' => $model->id,
             'name' => $model->name,
             'api-id' => $model->api_id,

@@ -166,7 +166,7 @@ class Embedding extends Resource
             abort(500, $result['message']);
         }
 
-        Log::info('User with ID {user-id} deleted an embedding', [
+        Log::info('App: User with ID {user-id} deleted an embedding', [
             'id' => $model->id,
             'name' => $model->name,
             'embedding-id' => $model->embedding_id,

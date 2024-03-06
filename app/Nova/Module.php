@@ -88,7 +88,7 @@ class Module extends Resource
 
     public static function afterDelete(NovaRequest $request, Model $model)
     {
-        Log::info('User with ID {user-id} deleted a module', [
+        Log::info('App: User with ID {user-id} deleted a module', [
             'id' => $model->id,
             'name' => $model->name,
             'ref-id' => $model->ref_id,
