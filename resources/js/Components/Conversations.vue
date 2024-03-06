@@ -9,7 +9,7 @@ import InputText from "primevue/inputtext";
 const page = usePage();
 const toast = useToast();
 
-const historyOP = ref();
+const conversationOverlayPanel = ref();
 const selectedConversation = ref(null);
 const selectedConversationName = ref(null);
 const isDeletingConversation = ref(false);
@@ -18,9 +18,9 @@ const renameInput = ref();
 const showRenameInput = ref(false);
 
 const toggleHistoryOverlayPanel = (event, conversation) => {
-    historyOP.value.toggle(event);
+    conversationOverlayPanel.value.toggle(event);
 
-    selectedConversation.value = historyOP.value.visible ? conversation : null;
+    selectedConversation.value = conversationOverlayPanel.value.visible ? conversation : null;
 
     showRenameInput.value = false;
 };
@@ -62,7 +62,7 @@ const deleteConversation = () => {
         .finally(() => {
             selectedConversation.value = null;
 
-            historyOP.value.visible = false;
+            conversationOverlayPanel.value.visible = false;
 
             isDeletingConversation.value = false;
         });
@@ -73,7 +73,7 @@ const handleRenameConversation = () => {
 
     showRenameInput.value = true;
 
-    historyOP.value.visible = false;
+    conversationOverlayPanel.value.visible = false;
 
     selectedConversationName.value =
         page.props.auth.history[
@@ -170,7 +170,7 @@ const renameConversation = () => {
 
     <!-- Conversations Overlay Panel -->
     <OverlayPanel
-        ref="historyOP"
+        ref="conversationOverlayPanel"
         class="font-semibold bg-app-dark border-none z-50"
     >
         <div
