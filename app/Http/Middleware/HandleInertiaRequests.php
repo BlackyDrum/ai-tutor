@@ -37,7 +37,7 @@ class HandleInertiaRequests extends Middleware
         if (!str_starts_with($request->path(), 'admin') && Auth::check()) {
             $conversations = Conversations::query()
                 ->where('user_id', '=', Auth::id())
-                ->orderBy('created_at', 'desc')
+                ->orderBy('updated_at', 'desc')
                 ->get();
         }
 

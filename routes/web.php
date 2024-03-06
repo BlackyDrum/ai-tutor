@@ -33,6 +33,8 @@ Route::middleware(['auth'])->group(function() {
 
         Route::delete('/conversation', [HomeController::class, 'deleteConversation'])->name('conversation.delete');
 
+        Route::patch('/conversation/name', [HomeController::class, 'renameConversation'])->name('conversation.rename');
+
         Route::middleware([ValidateRemainingRequests::class, CheckAcceptedTerms::class])->group(function() {
             Route::post('/create-conversation', [HomeController::class, 'createConversation'])->name('conversation.create');
 

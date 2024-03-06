@@ -90,7 +90,12 @@ class HomeController extends Controller
 
         $conversationID = $response1->json()['id'];
 
+        $count = Conversations::query()
+            ->where('user_id', '=', Auth::id())
+            ->count();
+
         $conversation = Conversations::query()->create([
+            'name' => 'Chat #' . ($count + 1),
             'api_id' => $conversationID,
             'agent_id' => $agent->id,
             'creating_user' => config('api.username'),
@@ -193,6 +198,27 @@ class HomeController extends Controller
         ]);
 
         return response()->json(['id' => $request->input('conversation_id')]);
+    }
+
+    public function renameConversation(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:64',
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+        ]);
+
+        Conversations::query()
+            ->where('api_id', '=', $request->input('conversation_id'))
+            ->update([
+                'name' => $request->input('name')
+            ]);
+
+        Log::info('User with ID {user-id} renamed a conversation with ID {conversation-id}', [
+            'new-name' => $request->input('name'),
+            'conversation-id' => $request->input('conversation_id')
+        ]);
+
+        return response()->json(['name' => $request->input('name'), 'id' => $request->input('conversation_id')]);
     }
 
     public static function getBearerToken()

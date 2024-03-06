@@ -16,6 +16,7 @@ class Conversations extends Model
         'temperature',
         'api_id',
         'user_id',
+        'name',
     ];
 
     protected $hidden = [
