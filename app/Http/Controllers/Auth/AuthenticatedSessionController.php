@@ -175,7 +175,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        Log::info('Auth-Launch: Authentication successful. Logging in user with ID {user-id}');
+        Log::info('Auth-Launch: Authentication successful. Logging in user with name {name}', [
+            'name' => $name
+        ]);
 
         return redirect('/');
     }
