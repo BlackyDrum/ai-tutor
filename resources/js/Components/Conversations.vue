@@ -130,6 +130,8 @@ const renameConversation = () => {
         .finally(() => {
             selectedConversation.value = null;
 
+            selectedConversationName.value = null;
+
             showRenameInput.value = false;
 
             isRenamingConversation.value = false;
