@@ -11,7 +11,6 @@ const toast = useToast();
 
 const conversationOverlayPanel = ref();
 const selectedConversation = ref(null);
-const selectedConversationName = ref(null);
 const isDeletingConversation = ref(false);
 const isRenamingConversation = ref(false);
 const renameInput = ref();
@@ -21,7 +20,7 @@ const toggleConversationOverlayPanel = (event, conversation) => {
     conversationOverlayPanel.value.toggle(event);
 
     selectedConversation.value = conversationOverlayPanel.value.visible
-        ? conversation
+        ? JSON.parse(JSON.stringify(conversation))
         : null;
 
     showRenameInput.value = false;
@@ -29,8 +28,6 @@ const toggleConversationOverlayPanel = (event, conversation) => {
 
 const handleConversationOverlayPanelHiding = () => {
     if (selectedConversation.value && showRenameInput.value) return;
-
-    selectedConversationName.value = null;
 
     selectedConversation.value = null;
 };
@@ -43,7 +40,7 @@ const deleteConversation = () => {
     window.axios
         .delete("/chat/conversation", {
             data: {
-                conversation_id: selectedConversation.value,
+                conversation_id: selectedConversation.value.api_id,
             },
         })
         .then((result) => {
@@ -83,14 +80,6 @@ const handleRenameConversation = () => {
 
     showRenameInput.value = true;
 
-    selectedConversationName.value =
-        page.props.auth.history[
-            page.props.auth.history.findIndex(
-                (conversation) =>
-                    conversation.api_id === selectedConversation.value,
-            )
-        ].name;
-
     nextTick(() => {
         renameInput.value[0].$el.focus();
     });
@@ -105,13 +94,14 @@ const renameConversation = () => {
 
     window.axios
         .patch("/chat/conversation/name", {
-            name: selectedConversationName.value,
-            conversation_id: selectedConversation.value,
+            name: selectedConversation.value.name,
+            conversation_id: selectedConversation.value.api_id,
         })
         .then((result) => {
             const index = page.props.auth.history.findIndex(
                 (conversation) => conversation.api_id === result.data.id,
             );
+
             page.props.auth.history[index].name = result.data.name;
 
             // Move the renamed conversation to the top
@@ -130,8 +120,6 @@ const renameConversation = () => {
         .finally(() => {
             selectedConversation.value = null;
 
-            selectedConversationName.value = null;
-
             showRenameInput.value = false;
 
             isRenamingConversation.value = false;
@@ -147,7 +135,9 @@ const renameConversation = () => {
     >
         <div
             v-if="
-                !showRenameInput || selectedConversation !== conversation.api_id
+                !showRenameInput ||
+                (selectedConversation &&
+                    selectedConversation.api_id !== conversation.api_id)
             "
             class="relative flex group rounded-lg hover:bg-app-dark"
             :class="{
@@ -155,7 +145,9 @@ const renameConversation = () => {
                     conversation.api_id ===
                     $page.url.slice($page.url.lastIndexOf('/') + 1),
 
-                'bg-app-dark': selectedConversation === conversation.api_id,
+                'bg-app-dark':
+                    selectedConversation &&
+                    selectedConversation.api_id === conversation.api_id,
             }"
         >
             <Link
@@ -165,9 +157,7 @@ const renameConversation = () => {
                 {{ conversation.name }}
             </Link>
             <button
-                @click="
-                    toggleConversationOverlayPanel($event, conversation.api_id)
-                "
+                @click="toggleConversationOverlayPanel($event, conversation)"
                 class="block absolute right-2 top-1 p-1 pl-2 rounded-lg hidden bg-app-dark group-hover:block"
             >
                 <span class="pi pi-ellipsis-h"></span>
@@ -176,7 +166,7 @@ const renameConversation = () => {
 
         <div v-else class="block flex-1 my-1 py-2 rounded-lg">
             <InputText
-                v-model="selectedConversationName"
+                v-model="selectedConversation.name"
                 @keydown.enter="renameConversation"
                 ref="renameInput"
                 class="w-full rounded-lg text-white bg-black"
