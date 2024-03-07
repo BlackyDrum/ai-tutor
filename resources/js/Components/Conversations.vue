@@ -163,7 +163,7 @@ const renameConversation = () => {
                 v-model="selectedConversationName"
                 @keydown.enter="renameConversation"
                 ref="renameInput"
-                class="w-full rounded-lg text-white bg-black max-xl:w-3/4"
+                class="w-full rounded-lg text-white bg-black"
             />
         </div>
     </div>
