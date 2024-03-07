@@ -136,7 +136,7 @@ const renameConversation = () => {
             );
 
             // Also change browsers title if current conversation was renamed
-            if (page.props.auth.history[index].name === page.props.conversation_name) {
+            if (page.props.auth.history[index].api_id === page.props.conversation_id) {
                 page.props.conversation_name = result.data.name;
             }
 
