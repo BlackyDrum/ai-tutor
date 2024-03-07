@@ -19,6 +19,7 @@ import Avatar from "primevue/avatar";
 defineProps({
     messages: Array,
     conversation_id: String,
+    conversation_name: String,
 });
 
 const appName = import.meta.env.VITE_APP_NAME;
@@ -143,7 +144,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Chat" />
+        <Head :title="page.props.conversation_name" />
 
         <Main ref="mainComponent">
             <div

@@ -42,6 +42,7 @@ class ChatController extends Controller
         return Inertia::render('Chat', [
             'messages' => $messages,
             'conversation_id' => $id,
+            'conversation_name' => $conversation->name,
         ]);
     }
 
