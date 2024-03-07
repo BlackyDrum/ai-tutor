@@ -139,7 +139,7 @@ const renameConversation = () => {
             "
             class="relative flex group rounded-lg hover:bg-app-dark"
             :class="{
-                'bg-app-dark':
+                'bg-[#343537]':
                     conversation.api_id ===
                     $page.url.slice($page.url.lastIndexOf('/') + 1),
             }"
