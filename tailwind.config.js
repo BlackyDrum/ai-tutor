@@ -19,8 +19,6 @@ export default {
             colors: {
                 "app-light": "var(--app-light)",
                 "app-dark": "var(--app-dark)",
-                "admin-light": "var(--admin-light)",
-                "admin-dark": "var(--admin-dark)",
             },
         },
     },
