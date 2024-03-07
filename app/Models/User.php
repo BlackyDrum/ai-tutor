@@ -52,6 +52,11 @@ class User extends Authenticatable
         return $this->hasManyThrough(Messages::class, Conversations::class, '', 'conversation_id');
     }
 
+    public function conversations()
+    {
+        return $this->hasMany(Conversations::class, 'user_id');
+    }
+
     public function module()
     {
         return $this->belongsTo(Modules::class, 'module_id');

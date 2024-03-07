@@ -10,6 +10,7 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Gravatar;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
@@ -87,6 +88,8 @@ class User extends Resource
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
                 ->sortable(),
+
+            HasMany::make('Conversations'),
 
             HasManyThrough::make('Messages'),
         ];
