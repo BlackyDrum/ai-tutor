@@ -152,7 +152,7 @@ const renameConversation = () => {
             </Link>
             <button
                 @click="toggleConversationOverlayPanel($event, conversation.api_id)"
-                class="block absolute right-2 top-1 p-1 rounded-lg hidden bg-app-dark group-hover:block"
+                class="block absolute right-2 top-1 p-1 pl-2 rounded-lg hidden bg-app-dark group-hover:block"
             >
                 <span class="pi pi-ellipsis-h"></span>
             </button>
