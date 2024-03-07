@@ -2,12 +2,14 @@
 import { router, Link, usePage } from "@inertiajs/vue3";
 import { nextTick, ref } from "vue";
 import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
 
 import OverlayPanel from "primevue/overlaypanel";
 import InputText from "primevue/inputtext";
 
 const page = usePage();
 const toast = useToast();
+const confirm = useConfirm();
 
 const conversationOverlayPanel = ref();
 const selectedConversation = ref(null);
@@ -17,6 +19,8 @@ const renameInput = ref();
 const showRenameInput = ref(false);
 
 const toggleConversationOverlayPanel = (event, conversation) => {
+    if (isRenamingConversation.value || isDeletingConversation.value) return;
+
     conversationOverlayPanel.value.toggle(event);
 
     selectedConversation.value = conversationOverlayPanel.value.visible
@@ -35,44 +39,73 @@ const handleConversationOverlayPanelHiding = () => {
 const deleteConversation = () => {
     if (isDeletingConversation.value || isRenamingConversation.value) return;
 
+    conversationOverlayPanel.value.visible = false;
+
     isDeletingConversation.value = true;
 
-    window.axios
-        .delete("/chat/conversation", {
-            data: {
-                conversation_id: selectedConversation.value.api_id,
-            },
-        })
-        .then((result) => {
-            page.props.auth.history.splice(
-                page.props.auth.history.findIndex(
-                    (conversation) => conversation.api_id === result.data.id,
-                ),
-                1,
-            );
+    const conversationName = selectedConversation.value.name;
+    const conversationApiId = selectedConversation.value.api_id;
 
-            if (
-                typeof page.props.conversation_id !== "undefined" &&
-                result.data.id === page.props.conversation_id
-            ) {
-                router.get("/");
-            }
-        })
-        .catch((error) => {
-            toast.add({
-                severity: "error",
-                summary: "Error",
-                detail: error.response.data.message ?? error.response.data,
-                life: 5000,
-            });
-        })
-        .finally(() => {
+    confirm.require({
+        message: `This will delete ${conversationName}`,
+        header: "Delete conversation?",
+        icon: "pi pi-info-circle",
+        rejectLabel: "Cancel",
+        acceptLabel: "Delete",
+        rejectClass: "p-button-secondary p-button-outlined",
+        acceptClass: "p-button-danger",
+        acceptIcon: "pi pi-trash",
+        accept: () => {
+            window.axios
+                .delete("/chat/conversation", {
+                    data: {
+                        conversation_id: conversationApiId,
+                    },
+                })
+                .then((result) => {
+                    page.props.auth.history.splice(
+                        page.props.auth.history.findIndex(
+                            (conversation) =>
+                                conversation.api_id === result.data.id,
+                        ),
+                        1,
+                    );
+
+                    if (
+                        typeof page.props.conversation_id !== "undefined" &&
+                        result.data.id === page.props.conversation_id
+                    ) {
+                        router.get("/");
+                    }
+                })
+                .catch((error) => {
+                    toast.add({
+                        severity: "error",
+                        summary: "Error",
+                        detail:
+                            error.response.data.message ?? error.response.data,
+                        life: 5000,
+                    });
+                })
+                .finally(() => {
+                    selectedConversation.value = null;
+
+                    conversationOverlayPanel.value.visible = false;
+
+                    isDeletingConversation.value = false;
+                });
+        },
+        reject: () => {
             selectedConversation.value = null;
 
-            conversationOverlayPanel.value.visible = false;
+            isDeletingConversation.value = false;
+        },
+        onHide: () => {
+            selectedConversation.value = null;
 
             isDeletingConversation.value = false;
-        });
+        },
+    });
 };
 
 const handleRenameConversation = () => {
@@ -160,7 +193,13 @@ const renameConversation = () => {
                 @click="toggleConversationOverlayPanel($event, conversation)"
                 class="block absolute right-2 top-1 p-1 pl-2 rounded-lg hidden bg-app-dark group-hover:block"
             >
-                <span class="pi pi-ellipsis-h"></span>
+                <span
+                    :class="
+                        isDeletingConversation || isRenamingConversation
+                            ? 'pi pi-spin pi-spinner'
+                            : 'pi pi-ellipsis-h'
+                    "
+                ></span>
             </button>
         </div>
 
@@ -194,13 +233,7 @@ const renameConversation = () => {
             class="flex gap-4 p-2 text-sm text-red-600 cursor-pointer rounded-lg hover:bg-gray-700/20"
         >
             <div>
-                <span
-                    :class="
-                        isDeletingConversation
-                            ? 'pi pi-spin pi-spinner'
-                            : 'pi pi-trash'
-                    "
-                ></span>
+                <span class="pi pi-trash"></span>
             </div>
             <div class="block">Delete chat</div>
         </div>

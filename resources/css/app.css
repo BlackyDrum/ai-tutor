@@ -30,6 +30,20 @@
         scrollbar-width: thin;
         scrollbar-color: #ffffff transparent;
     }
+
+    .p-confirm-dialog * {
+        background-color: var(--app-dark);
+        color: white;
+    }
+
+    .p-confirm-dialog .p-button-danger{
+        background-color: #DC2626;
+        border: none;
+    }
+
+    .p-button-danger * {
+        background-color: #DC2626;
+    }
 }
 
 /*

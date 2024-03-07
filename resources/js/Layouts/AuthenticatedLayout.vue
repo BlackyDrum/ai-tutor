@@ -1,5 +1,7 @@
 <script setup>
 import Toast from "primevue/toast";
+import ConfirmDialog from 'primevue/confirmdialog';
+
 import NavBar from "@/Components/NavBar.vue";
 import Terms from "@/Components/Terms.vue";
 </script>
@@ -7,6 +9,7 @@ import Terms from "@/Components/Terms.vue";
 <template>
     <Toast />
     <Terms />
+    <ConfirmDialog class="max-w-full" />
     <div class="flex">
         <NavBar />
         <div class="w-full">
