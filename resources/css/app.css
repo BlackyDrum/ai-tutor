@@ -41,7 +41,7 @@
         border: none;
     }
 
-    .p-button-danger * {
+    .p-confirm-dialog .p-button-danger * {
         background-color: #DC2626;
     }
 }
