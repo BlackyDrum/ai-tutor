@@ -20,9 +20,19 @@ const showRenameInput = ref(false);
 const toggleConversationOverlayPanel = (event, conversation) => {
     conversationOverlayPanel.value.toggle(event);
 
-    selectedConversation.value = conversationOverlayPanel.value.visible ? conversation : null;
+    selectedConversation.value = conversationOverlayPanel.value.visible
+        ? conversation
+        : null;
 
     showRenameInput.value = false;
+};
+
+const handleConversationOverlayPanelHiding = () => {
+    if (selectedConversation.value && showRenameInput.value) return;
+
+    selectedConversationName.value = null;
+
+    selectedConversation.value = null;
 };
 
 const deleteConversation = () => {
@@ -69,11 +79,9 @@ const deleteConversation = () => {
 };
 
 const handleRenameConversation = () => {
-    if (isRenamingConversation.value) return;
+    if (isRenamingConversation.value || isDeletingConversation.value) return;
 
     showRenameInput.value = true;
-
-    conversationOverlayPanel.value.visible = false;
 
     selectedConversationName.value =
         page.props.auth.history[
@@ -86,6 +94,8 @@ const handleRenameConversation = () => {
     nextTick(() => {
         renameInput.value[0].$el.focus();
     });
+
+    conversationOverlayPanel.value.visible = false;
 };
 
 const renameConversation = () => {
@@ -142,6 +152,8 @@ const renameConversation = () => {
                 'bg-[#343537]':
                     conversation.api_id ===
                     $page.url.slice($page.url.lastIndexOf('/') + 1),
+
+                'bg-app-dark': selectedConversation === conversation.api_id,
             }"
         >
             <Link
@@ -151,7 +163,9 @@ const renameConversation = () => {
                 {{ conversation.name }}
             </Link>
             <button
-                @click="toggleConversationOverlayPanel($event, conversation.api_id)"
+                @click="
+                    toggleConversationOverlayPanel($event, conversation.api_id)
+                "
                 class="block absolute right-2 top-1 p-1 pl-2 rounded-lg hidden bg-app-dark group-hover:block"
             >
                 <span class="pi pi-ellipsis-h"></span>
@@ -172,6 +186,7 @@ const renameConversation = () => {
     <OverlayPanel
         ref="conversationOverlayPanel"
         class="font-semibold bg-app-dark border-none z-50"
+        @hide="handleConversationOverlayPanelHiding"
     >
         <div
             @click="handleRenameConversation"
