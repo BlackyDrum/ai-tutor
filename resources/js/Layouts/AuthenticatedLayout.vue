@@ -9,7 +9,7 @@ import Terms from "@/Components/Terms.vue";
 <template>
     <Toast />
     <Terms />
-    <ConfirmDialog class="max-w-full" />
+    <ConfirmDialog class="max-w-[95%]" />
     <div class="flex">
         <NavBar />
         <div class="w-full">
