@@ -203,6 +203,6 @@ const renameConversation = () => {
 <style>
 .p-overlaypanel:after,
 .p-overlaypanel:before {
-    display: none;
+    border-bottom-color: var(--app-dark);
 }
 </style>
