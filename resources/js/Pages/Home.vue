@@ -52,7 +52,7 @@ const handleCreateConversation = (userMessage) => {
             <div
                 class="w-full flex flex-col flex-1 items-center justify-center"
             >
-                <div v-if="!isSendingRequest" class="mb-4 border rounded-full">
+                <div v-if="!isSendingRequest" class="mb-4 border dark:border-none rounded-full">
                     <ApplicationLogo class="w-16" />
                 </div>
                 <div v-if="!isSendingRequest" class="text-2xl text-center font-bold">
