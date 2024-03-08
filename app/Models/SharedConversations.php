@@ -13,4 +13,9 @@ class SharedConversations extends Model
         'url_identifier',
         'conversation_id'
     ];
+
+    public function conversation()
+    {
+        return $this->belongsTo(Conversations::class, 'conversation_id');
+    }
 }
