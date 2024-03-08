@@ -22,7 +22,7 @@ const acceptTerms = () => {
         })
         .then((result) => {
             if (result.data.accepted) {
-                router.reload();
+                page.props.auth.user.terms_accepted_at = new Date();
             }
         })
         .catch((error) => {
