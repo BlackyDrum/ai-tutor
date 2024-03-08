@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('password');
             $table->boolean('admin')->default(false);
-            $table->boolean('terms_accepted')->default(false);
+            $table->timestamp('terms_accepted_at')->nullable();
             $table->unsignedInteger('max_requests');
             $table->timestamps();
         });

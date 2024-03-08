@@ -22,7 +22,7 @@ const acceptTerms = () => {
         })
         .then((result) => {
             if (result.data.accepted) {
-                page.props.auth.user.terms_accepted = true;
+                router.reload();
             }
         })
         .catch((error) => {
@@ -42,7 +42,7 @@ const acceptTerms = () => {
 <template>
     <Dialog
         class="w-[90%] lg:w-1/2 break-words"
-        :visible="!$page.props.auth.user.terms_accepted"
+        :visible="!$page.props.auth.user.terms_accepted_at"
         :closable="false"
         :draggable="false"
         modal

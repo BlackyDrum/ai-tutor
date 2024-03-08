@@ -17,7 +17,7 @@ class CheckAcceptedTerms
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::user()->terms_accepted) {
+        if (!Auth::user()->terms_accepted_at) {
             Log::info('App: User with ID {user-id} tried to access protected routes while terms are not accepted');
 
             abort(403, 'Terms not accepted');

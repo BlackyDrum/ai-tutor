@@ -20,7 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'password',
-        'terms_accepted',
+        'terms_accepted_at',
         'max_requests',
         'module_id',
     ];
@@ -45,6 +45,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
+
+        'terms_accepted_at' => 'datetime'
     ];
 
     public function messages()
