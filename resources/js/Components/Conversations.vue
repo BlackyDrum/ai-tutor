@@ -6,6 +6,8 @@ import { useConfirm } from "primevue/useconfirm";
 
 import OverlayPanel from "primevue/overlaypanel";
 import InputText from "primevue/inputtext";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
 
 const page = usePage();
 const toast = useToast();
@@ -15,8 +17,10 @@ const conversationOverlayPanel = ref();
 const selectedConversation = ref(null);
 const isDeletingConversation = ref(false);
 const isRenamingConversation = ref(false);
+const isSharingConversation = ref(false);
 const renameInput = ref();
 const showRenameInput = ref(false);
+const showConversationShareDialog = ref(false);
 
 const toggleConversationOverlayPanel = (event, conversation) => {
     if (isRenamingConversation.value || isDeletingConversation.value) return;
@@ -31,7 +35,11 @@ const toggleConversationOverlayPanel = (event, conversation) => {
 };
 
 const handleConversationOverlayPanelHiding = () => {
-    if (selectedConversation.value && showRenameInput.value) return;
+    if (
+        selectedConversation.value &&
+        (showRenameInput.value || showConversationShareDialog.value)
+    )
+        return;
 
     selectedConversation.value = null;
 };
@@ -136,7 +144,10 @@ const renameConversation = () => {
             );
 
             // Also change browsers title if current conversation was renamed
-            if (page.props.auth.history[index].api_id === page.props.conversation_id) {
+            if (
+                page.props.auth.history[index].api_id ===
+                page.props.conversation_id
+            ) {
                 page.props.conversation_name = result.data.name;
             }
 
@@ -161,6 +172,96 @@ const renameConversation = () => {
             showRenameInput.value = false;
 
             isRenamingConversation.value = false;
+        });
+};
+
+const handleConversationShare = () => {
+    conversationOverlayPanel.value.visible = false;
+
+    showConversationShareDialog.value = true;
+};
+
+const handleConversationShareDialogHide = () => {
+    selectedConversation.value = null;
+};
+
+const handleConversationShareLinkCopy = () => {
+    const id = selectedConversation.value.url_identifier;
+
+    router.get(
+        window.location.protocol +
+            "//" +
+            window.location.host +
+            `/chat/share/${id}`,
+    );
+};
+
+const createShareLink = () => {
+    if (isSharingConversation.value) return;
+
+    isSharingConversation.value = true;
+
+    window.axios
+        .post("/chat/conversation/share", {
+            conversation_id: selectedConversation.value.api_id,
+        })
+        .then((result) => {
+            const id = result.data.url_identifier;
+
+            navigator.clipboard.writeText(
+                window.location.protocol +
+                    "//" +
+                    window.location.host +
+                    `/chat/share/${id}`,
+            );
+
+            selectedConversation.value = null;
+
+            showConversationShareDialog.value = false;
+
+            toast.add({
+                severity: "success",
+                summary: "Success",
+                detail: "Copied shared conversation URL to clipboard",
+                life: 5000,
+            });
+
+            router.reload();
+        })
+        .catch((error) => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
+        })
+        .finally(() => {
+            isSharingConversation.value = false;
+        });
+};
+
+const deleteSharedConversation = () => {
+    window.axios
+        .delete("/chat/conversation/share", {
+            data: {
+                conversation_id: selectedConversation.value.api_id,
+            },
+        })
+        .then((result) => {
+            selectedConversation.value = null;
+
+            showConversationShareDialog.value = false;
+
+            router.reload();
+        })
+        .catch((error) => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
         });
 };
 </script>
@@ -225,6 +326,15 @@ const renameConversation = () => {
         @hide="handleConversationOverlayPanelHiding"
     >
         <div
+            @click="handleConversationShare"
+            class="flex gap-4 p-2 text-sm text-white cursor-pointer rounded-lg hover:bg-gray-700/20"
+        >
+            <div>
+                <span class="pi pi-share-alt"></span>
+            </div>
+            <div class="block">Share</div>
+        </div>
+        <div
             @click="handleRenameConversation"
             class="flex gap-4 p-2 text-sm text-white cursor-pointer rounded-lg hover:bg-gray-700/20"
         >
@@ -243,6 +353,47 @@ const renameConversation = () => {
             <div class="block">Delete chat</div>
         </div>
     </OverlayPanel>
+
+    <!-- Conversation Share Dialog -->
+    <Dialog
+        v-model:visible="showConversationShareDialog"
+        @hide="handleConversationShareDialogHide"
+        :draggable="false"
+        modal
+        header="Share link to conversation"
+        class="xl:max-w-[35%] max-w-[95%]"
+    >
+        <p v-if="selectedConversation.url_identifier">
+            You have shared this chat
+            <span
+                @click="handleConversationShareLinkCopy"
+                class="underline cursor-pointer"
+                >before</span
+            >. If you want to update the shared chat content,
+            <span
+                @click="deleteSharedConversation"
+                class="underline cursor-pointer"
+                >delete this link</span
+            >
+            and create a new shared link.
+        </p>
+        <p v-else>
+            Messages you send after creating your link won't be shared. Anyone
+            with the URL will be able to view the shared chat.
+        </p>
+        <div class="flex justify-end gap-2 mt-3">
+            <Button
+                @click="createShareLink"
+                :icon="
+                    isSharingConversation
+                        ? 'pi pi-spin pi-spinner'
+                        : 'pi pi-link'
+                "
+                label="Share link"
+                :disabled="selectedConversation.url_identifier"
+            />
+        </div>
+    </Dialog>
 </template>
 
 <style>

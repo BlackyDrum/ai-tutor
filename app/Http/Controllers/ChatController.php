@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Collections;
 use App\Models\Conversations;
 use App\Models\Messages;
+use App\Models\SharedConversations;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ChatController extends Controller
@@ -43,6 +45,43 @@ class ChatController extends Controller
             'messages' => $messages,
             'conversation_id' => $id,
             'conversation_name' => $conversation->name,
+            'isChat' => true,
+        ]);
+    }
+
+    public function share(string $id) {
+        $shared = SharedConversations::query()
+            ->where('shared_conversations.url_identifier', '=', $id)
+            ->first();
+
+        if (!$shared) {
+            Log::info('App: User with ID {user-id} tried to access an invalid, shared conversation', [
+                'shared-conversation-url-id' => $id
+            ]);
+
+            return redirect('/');
+        }
+
+        $name = Conversations::query()
+            ->find($shared->conversation_id)
+            ->name;
+
+        $messages = SharedConversations::query()
+            ->join('conversations', 'conversations.id', '=', 'shared_conversations.conversation_id')
+            ->join('messages', 'messages.conversation_id', '=', 'conversations.id')
+            ->where('shared_conversations.url_identifier', '=', $id)
+            ->whereRaw('messages.created_at < shared_conversations.created_at')
+            ->select([
+                'messages.user_message',
+                'messages.agent_message',
+            ])
+            ->get();
+
+        return Inertia::render('Chat', [
+            'messages' => $messages,
+            'conversation_id' => $id,
+            'conversation_name' => $name,
+            'isChat' => false,
         ]);
     }
 
@@ -156,6 +195,56 @@ class ChatController extends Controller
         }
 
         return response()->json($message);
+    }
+
+    public function createShare(Request $request)
+    {
+        $request->validate([
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+        ]);
+
+        $conversation = Conversations::query()
+            ->where('api_id', '=', $request->input('conversation_id'))
+            ->first();
+
+        $sharedConversation = SharedConversations::query()
+            ->where('conversation_id', '=', $conversation->id)
+            ->first();
+
+        if ($sharedConversation) {
+            return response()->json(['message' => 'You have shared this conversation already'], 409);
+        }
+
+        $sharedConversation = SharedConversations::query()->create([
+            'url_identifier' => Str::random(40),
+            'conversation_id' => $conversation->id,
+        ]);
+
+        Log::info('User with ID {user-id} shared a conversation', [
+            'url_identifier' => $sharedConversation->url_identifier,
+            'conversation_id' => $conversation->id,
+        ]);
+
+        return response()->json(['url_identifier' => $sharedConversation->url_identifier]);
+    }
+
+    public function deleteShare(Request $request)
+    {
+        $request->validate([
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+        ]);
+
+        $conversation = Conversations::query()
+            ->where('api_id', '=', $request->input('conversation_id'))
+            ->first();
+
+        SharedConversations::query()
+            ->where('conversation_id', '=', $conversation->id)
+            ->delete();
+
+        Log::info('User with ID {user-id} deleted a shared conversation', [
+            'conversation_id' => $conversation->id,
+        ]);
     }
 
     public static function getUserMessagesFromLastDay()
