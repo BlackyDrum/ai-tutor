@@ -120,6 +120,10 @@ class ChromaController extends Controller
                     'message' => $exception->getMessage(),
                 ]);
 
+                if (file_exists($pathToFile)) {
+                    unlink($pathToFile);
+                }
+
                 return [
                     'status' => false,
                     'message' => $exception->getMessage(),
