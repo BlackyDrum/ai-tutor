@@ -148,17 +148,27 @@ class Agent extends Resource
             abort(500, $token['reason']);
         }
 
-        $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-agent', [
-            'name' => $request->input('name'),
-            'context' => $request->input('context'),
-            'first_message' => $request->input('first_message'),
-            'response_shape' => $request->input('response_shape'),
-            'instructions' => $request->input('instructions'),
-            'creating_user' => config('api.username')
-        ]);
+        try {
+            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-agent', [
+                'name' => $request->input('name'),
+                'context' => $request->input('context'),
+                'first_message' => $request->input('first_message'),
+                'response_shape' => $request->input('response_shape'),
+                'instructions' => $request->input('instructions'),
+                'creating_user' => config('api.username')
+            ]);
+        } catch (\Exception $exception) {
+            Log::error('App/ConversAItion: Failed to create agent. Reason: {message}', [
+                'message' => $exception->getMessage(),
+                'agent-name' => $request->input('name'),
+            ]);
+
+            $model->delete();
+            abort(500, $exception->getMessage());
+        }
 
         if ($response->failed()) {
-            Log::error('ConversAItion: Failed to create new agent. Reason: {reason}. Status: {status}', [
+            Log::error('ConversAItion: Failed to create agent. Reason: {reason}. Status: {status}', [
                 'reason' => $response->reason(),
                 'status' => $response->status(),
                 'agent-name' => $request->input('name'),

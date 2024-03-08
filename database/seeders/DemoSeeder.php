@@ -53,14 +53,22 @@ class DemoSeeder extends Seeder
             abort(500, $token['reason']);
         }
 
-        $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-agent', [
-            'name' => 'DemoAgent_' . time(),
-            'context' => 'Testing GPT with Embeddings',
-            'first_message' => 'Hello.',
-            'response_shape' => 'Always provide code samples.',
-            'instructions' => 'You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. always explain the code snippets you send and try to provide sources where to learn more on that subject. if in doubt, do not answer with code and ask to clarify the prompt!',
-            'creating_user' => config('api.username'),
-        ]);
+        try {
+            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-agent', [
+                'name' => 'DemoAgent_' . time(),
+                'context' => 'Testing GPT with Embeddings',
+                'first_message' => 'Hello.',
+                'response_shape' => 'Always provide code samples.',
+                'instructions' => 'You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. always explain the code snippets you send and try to provide sources where to learn more on that subject. if in doubt, do not answer with code and ask to clarify the prompt!',
+                'creating_user' => config('api.username'),
+            ]);
+        } catch (\Exception $exception) {
+            $collection->forceDelete();
+            $user->delete();
+            $module->delete();
+            abort(500, $exception->getMessage());
+        }
+
 
         if ($response->failed()) {
             $collection->forceDelete();

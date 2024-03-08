@@ -12,6 +12,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -101,18 +102,29 @@ class ChromaController extends Controller
                 ];
             }
 
-            $response = Http::withToken($token)
-                ->withoutVerifying()
-                ->asMultipart()
-                ->post(config('api.url') . '/data/pptx-to-md', [
-                    [
-                        'name' => 'pptxfile',
-                        'contents' => fopen($pathToFile, 'r'),
-                        'headers' => [
-                            'Content-Type' => 'application/octet-stream',
+            try {
+                $response = Http::withToken($token)
+                    ->withoutVerifying()
+                    ->asMultipart()
+                    ->post(config('api.url') . '/data/pptx-to-md', [
+                        [
+                            'name' => 'pptxfile',
+                            'contents' => fopen($pathToFile, 'r'),
+                            'headers' => [
+                                'Content-Type' => 'application/octet-stream',
+                            ],
                         ],
-                    ],
+                    ]);
+            } catch (\Exception $exception) {
+                Log::error('App/ConversAItion: Failed to convert pptx to json. Reason: {message}', [
+                    'message' => $exception->getMessage(),
                 ]);
+
+                return [
+                    'status' => false,
+                    'message' => $exception->getMessage(),
+                ];
+            }
 
             if (file_exists($pathToFile)) {
                 unlink($pathToFile);

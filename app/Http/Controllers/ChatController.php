@@ -102,10 +102,20 @@ class ChatController extends Controller
             return response()->json($token['reason'], $token['status']);
         }
 
-        $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
-            'conversation_id' => $request->input('conversation_id'),
-            'message' => $promptWithContext,
-        ]);
+        try {
+            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
+                'conversation_id' => $request->input('conversation_id'),
+                'message' => $promptWithContext,
+            ]);
+        } catch (\Exception $exception) {
+            Log::error('App/ConversAItion: Failed to send message. Reason: {message}', [
+                'message' => $exception->getMessage(),
+                'conversation-id' => $request->input('conversation_id'),
+            ]);
+
+            DB::rollBack();
+            return response()->json('Internal Server Error', '500');
+        }
 
         if ($response->failed()) {
             Log::error('ConversAItion: Failed to send message. Reason: {reason}. Status: {status}', [

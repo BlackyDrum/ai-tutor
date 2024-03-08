@@ -68,15 +68,23 @@ class HomeController extends Controller
             return response()->json('Internal Server Error',500);
         }
 
-        $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
-            'agent_id' => $agent->api_id,
-            'creating_user' => config('api.username'),
-            'max_tokens' => $module->max_tokens,
-            'temperature' => $module->temperature,
-        ]);
+        try {
+            $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
+                'agent_id' => $agent->api_id,
+                'creating_user' => config('api.username'),
+                'max_tokens' => $module->max_tokens,
+                'temperature' => $module->temperature,
+            ]);
+        } catch (\Exception $exception) {
+            Log::error('App/ConversAItion: Failed to create conversation. Reason: {message}', [
+                'message' => $exception->getMessage(),
+            ]);
+
+            return response()->json('Internal Server Error', '500');
+        }
 
         if ($response1->failed()) {
-            Log::error('ConversAItion: Failed to create a new conversation. Reason: {reason}. Status: {status}', [
+            Log::error('ConversAItion: Failed to create conversation. Reason: {reason}. Status: {status}', [
                 'reason' => $response1->reason(),
                 'status' => $response1->status(),
                 'agent-id' => $agent->id,
@@ -130,10 +138,20 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
-        $response2 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
-            'conversation_id' => $conversationID,
-            'message' => $promptWithContext
-        ]);
+        try {
+            $response2 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
+                'conversation_id' => $conversationID,
+                'message' => $promptWithContext
+            ]);
+        } catch (\Exception $exception) {
+            Log::error('App/ConversAItion: Failed to send message. Reason: {message}', [
+                'message' => $exception->getMessage(),
+                'conversation-id' => $conversationID,
+            ]);
+
+            $conversation->delete();
+            return response()->json('Internal Server Error', '500');
+        }
 
         if ($response2->failed()) {
             Log::error('ConversAItion: Failed to send message. Reason: {reason}. Status: {status}', [
@@ -175,9 +193,18 @@ class HomeController extends Controller
             return response()->json($token['reason'], $token['status']);
         }
 
-        $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/delete-conversation', [
-            'conversation' => $request->input('conversation_id'),
-        ]);
+        try {
+            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/delete-conversation', [
+                'conversation' => $request->input('conversation_id'),
+            ]);
+        } catch (\Exception $exception) {
+            Log::error('App/ConversAItion: Failed to delete conversation. Reason: {message}', [
+                'message' => $exception->getMessage(),
+                'conversation-id' => $request->input('conversation_id'),
+            ]);
+
+            return response()->json('Internal Server Error', '500');
+        }
 
         if ($response->failed()) {
             Log::error('ConversAItion: Failed to delete conversation. Reason: {reason}. Status: {status}', [
