@@ -250,9 +250,11 @@ class HomeController extends Controller
 
     public static function getBearerToken()
     {
-        // We need to use a try-catch block here because we want to catch
-        // 'cURL error 6: Could not resolve host'. Client- and Server errors
-        // are handled by Laravel HTTP Client, e.g with $response->failed().
+        // To gracefully handle potential errors such as network issues, we encapsulate ALL Guzzle
+        // HTTP requests in a try-catch block. This approach ensures better error handling by capturing
+        // exceptions such as 'RequestException' or 'ConnectionException'. Laravel's HTTP client wrapper does not
+        // throw exceptions on client or server errors (400 and 500 level responses from servers). Instead,
+        // we have to determine if the request failed using $response->failed().
         try {
             $response = Http::withoutVerifying()->asForm()->post(config('api.url') . '/token', [
                 'username' => config('api.username'),
