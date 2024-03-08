@@ -185,7 +185,7 @@ const handleConversationShareDialogHide = () => {
     selectedConversation.value = null;
 };
 
-const handleConversationShareLinkCopy = () => {
+const handleConversationShareLinkClick = () => {
     const id = selectedConversation.value.url_identifier;
 
     router.get(
@@ -366,7 +366,7 @@ const deleteSharedConversation = () => {
         <p v-if="selectedConversation.url_identifier">
             You have shared this chat
             <span
-                @click="handleConversationShareLinkCopy"
+                @click="handleConversationShareLinkClick"
                 class="underline cursor-pointer"
                 >before</span
             >. If you want to update the shared chat content,
