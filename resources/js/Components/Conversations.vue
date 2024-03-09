@@ -213,20 +213,22 @@ const createShareLink = () => {
                     "//" +
                     window.location.host +
                     `/chat/share/${id}`,
-            );
+            )
+                .then(() => {
+                    toast.add({
+                        severity: "success",
+                        summary: "Success",
+                        detail: "Copied shared conversation URL to clipboard",
+                        life: 5000,
+                    });
 
-            selectedConversation.value = null;
+                    router.reload();
+                })
+                .finally(() => {
+                    selectedConversation.value = null;
 
-            showConversationShareDialog.value = false;
-
-            toast.add({
-                severity: "success",
-                summary: "Success",
-                detail: "Copied shared conversation URL to clipboard",
-                life: 5000,
-            });
-
-            router.reload();
+                    showConversationShareDialog.value = false;
+                })
         })
         .catch((error) => {
             toast.add({
