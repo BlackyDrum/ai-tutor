@@ -23,7 +23,7 @@ const showRenameInput = ref(false);
 const showConversationShareDialog = ref(false);
 
 const toggleConversationOverlayPanel = (event, conversation) => {
-    if (isRenamingConversation.value || isDeletingConversation.value) return;
+    if (isSendingRequest()) return;
 
     conversationOverlayPanel.value.toggle(event);
 
@@ -37,7 +37,9 @@ const toggleConversationOverlayPanel = (event, conversation) => {
 const handleConversationOverlayPanelHiding = () => {
     if (
         selectedConversation.value &&
-        (showRenameInput.value || showConversationShareDialog.value)
+        (showRenameInput.value ||
+            showConversationShareDialog.value ||
+            isDeletingConversation.value)
     )
         return;
 
@@ -45,17 +47,14 @@ const handleConversationOverlayPanelHiding = () => {
 };
 
 const deleteConversation = () => {
-    if (isDeletingConversation.value || isRenamingConversation.value) return;
-
-    conversationOverlayPanel.value.visible = false;
+    if (isSendingRequest()) return;
 
     isDeletingConversation.value = true;
 
-    const conversationName = selectedConversation.value.name;
-    const conversationApiId = selectedConversation.value.api_id;
+    conversationOverlayPanel.value.visible = false;
 
     confirm.require({
-        message: `This will delete ${conversationName}`,
+        message: `This will delete ${selectedConversation.value.name}`,
         header: "Delete conversation?",
         icon: "pi pi-info-circle",
         rejectLabel: "Cancel",
@@ -67,7 +66,7 @@ const deleteConversation = () => {
             window.axios
                 .delete("/chat/conversation", {
                     data: {
-                        conversation_id: conversationApiId,
+                        conversation_id: selectedConversation.value.api_id,
                     },
                 })
                 .then((result) => {
@@ -117,7 +116,7 @@ const deleteConversation = () => {
 };
 
 const handleRenameConversation = () => {
-    if (isRenamingConversation.value || isDeletingConversation.value) return;
+    if (isSendingRequest()) return;
 
     showRenameInput.value = true;
 
@@ -129,7 +128,7 @@ const handleRenameConversation = () => {
 };
 
 const renameConversation = () => {
-    if (isRenamingConversation.value || isDeletingConversation.value) return;
+    if (isSendingRequest()) return;
 
     isRenamingConversation.value = true;
 
@@ -197,7 +196,7 @@ const handleConversationShareLinkClick = () => {
 };
 
 const createShareLink = () => {
-    if (isSharingConversation.value) return;
+    if (isSendingRequest()) return;
 
     isSharingConversation.value = true;
 
@@ -208,12 +207,13 @@ const createShareLink = () => {
         .then((result) => {
             const id = result.data.url_identifier;
 
-            navigator.clipboard.writeText(
-                window.location.protocol +
-                    "//" +
-                    window.location.host +
-                    `/chat/share/${id}`,
-            )
+            navigator.clipboard
+                .writeText(
+                    window.location.protocol +
+                        "//" +
+                        window.location.host +
+                        `/chat/share/${id}`,
+                )
                 .then(() => {
                     toast.add({
                         severity: "success",
@@ -228,7 +228,7 @@ const createShareLink = () => {
                     selectedConversation.value = null;
 
                     showConversationShareDialog.value = false;
-                })
+                });
         })
         .catch((error) => {
             toast.add({
@@ -244,6 +244,8 @@ const createShareLink = () => {
 };
 
 const deleteSharedConversation = () => {
+    if (isSendingRequest()) return;
+
     window.axios
         .delete("/chat/conversation/share", {
             data: {
@@ -265,6 +267,14 @@ const deleteSharedConversation = () => {
                 life: 5000,
             });
         });
+};
+
+const isSendingRequest = () => {
+    return (
+        isSharingConversation.value ||
+        isRenamingConversation.value ||
+        isDeletingConversation.value
+    );
 };
 </script>
 
@@ -303,7 +313,7 @@ const deleteSharedConversation = () => {
             >
                 <span
                     :class="
-                        isDeletingConversation || isRenamingConversation
+                        isSendingRequest()
                             ? 'pi pi-spin pi-spinner'
                             : 'pi pi-ellipsis-h'
                     "
