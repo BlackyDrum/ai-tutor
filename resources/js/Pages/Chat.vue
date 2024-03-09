@@ -38,7 +38,7 @@ const scrollContainer = ref();
 onMounted(() => {
     hljs.highlightAll();
 
-    if (page.props.isChat) {
+    if (page.props.hasPrompt) {
         promptComponent.value.focusInput();
     }
 
@@ -49,7 +49,7 @@ const handleCreateConversation = (userMessage) => {
     if (
         userMessage.length === 0 ||
         isSendingRequest.value ||
-        !page.props.isChat
+        !page.props.hasPrompt
     )
         return;
 
@@ -172,7 +172,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                             <div class="flex flex-col min-w-0 w-full">
                                 <div class="font-bold">
                                     {{
-                                        $page.props.isChat ? "You" : "Anonymous"
+                                        $page.props.hasPrompt ? "You" : "Anonymous"
                                     }}
                                 </div>
                                 <div class="break-words">
@@ -226,7 +226,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                 </div>
             </div>
             <Prompt
-                v-if="$page.props.isChat"
+                v-if="$page.props.hasPrompt"
                 :sending="isSendingRequest"
                 @is-submitting="handleCreateConversation"
                 ref="promptComponent"

@@ -45,7 +45,7 @@ class ChatController extends Controller
             'messages' => $messages,
             'conversation_id' => $id,
             'conversation_name' => $conversation->name,
-            'isChat' => true,
+            'hasPrompt' => true,
         ]);
     }
 
@@ -81,7 +81,7 @@ class ChatController extends Controller
             'messages' => $messages,
             'conversation_id' => $id,
             'conversation_name' => $name,
-            'isChat' => false,
+            'hasPrompt' => false,
         ]);
     }
 
