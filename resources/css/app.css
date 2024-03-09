@@ -31,21 +31,12 @@
         scrollbar-color: #ffffff transparent;
     }
 
-    .p-confirm-dialog * {
+    .p-confirm-dialog *:not(.p-button-danger):not(.p-button-icon):not(.p-button-label) {
         background-color: var(--app-dark);
         color: white;
     }
 
-    .p-confirm-dialog .p-button-danger{
-        background-color: #DC2626;
-        border: none;
-    }
-
-    .p-confirm-dialog .p-button-danger * {
-        background-color: #DC2626;
-    }
-
-    .p-dialog *{
+    .p-dialog *:not(.p-button):not(.p-button-icon):not(.p-button-label)  {
         background-color: var(--app-dark);
         color: white;
     }
