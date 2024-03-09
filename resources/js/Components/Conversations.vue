@@ -18,6 +18,7 @@ const selectedConversation = ref(null);
 const isDeletingConversation = ref(false);
 const isRenamingConversation = ref(false);
 const isSharingConversation = ref(false);
+const isDeletingSharedConversation = ref(false);
 const renameInput = ref();
 const showRenameInput = ref(false);
 const showConversationShareDialog = ref(false);
@@ -246,6 +247,8 @@ const createShareLink = () => {
 const deleteSharedConversation = () => {
     if (isSendingRequest()) return;
 
+    isDeletingSharedConversation.value = true;
+
     window.axios
         .delete("/chat/conversation/share", {
             data: {
@@ -266,6 +269,9 @@ const deleteSharedConversation = () => {
                 detail: error.response.data.message ?? error.response.data,
                 life: 5000,
             });
+        })
+        .finally(() => {
+            isDeletingSharedConversation.value = false;
         });
 };
 
@@ -273,7 +279,8 @@ const isSendingRequest = () => {
     return (
         isSharingConversation.value ||
         isRenamingConversation.value ||
-        isDeletingConversation.value
+        isDeletingConversation.value ||
+        isDeletingSharedConversation.value
     );
 };
 </script>
@@ -397,7 +404,7 @@ const isSendingRequest = () => {
             <Button
                 @click="createShareLink"
                 :icon="
-                    isSharingConversation
+                    isSharingConversation || isDeletingSharedConversation
                         ? 'pi pi-spin pi-spinner'
                         : 'pi pi-link'
                 "
