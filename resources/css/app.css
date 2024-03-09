@@ -44,6 +44,11 @@
     .p-confirm-dialog .p-button-danger * {
         background-color: #DC2626;
     }
+
+    .p-dialog *{
+        background-color: var(--app-dark);
+        color: white;
+    }
 }
 
 /*

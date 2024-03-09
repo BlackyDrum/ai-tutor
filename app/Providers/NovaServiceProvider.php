@@ -12,6 +12,7 @@ use App\Nova\Conversation;
 use App\Nova\Embedding;
 use App\Nova\Message;
 use App\Nova\Module;
+use App\Nova\SharedConversation;
 use App\Nova\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
@@ -55,6 +56,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Agent::class),
                     MenuItem::resource(Conversation::class),
                     MenuItem::resource(Message::class),
+                    MenuItem::resource(SharedConversation::class),
                 ])->icon('annotation')->collapsable(),
 
                 MenuSection::make('Users', [

@@ -38,13 +38,20 @@ const scrollContainer = ref();
 onMounted(() => {
     hljs.highlightAll();
 
-    promptComponent.value.focusInput();
+    if (page.props.isChat) {
+        promptComponent.value.focusInput();
+    }
 
     scroll();
 });
 
 const handleCreateConversation = (userMessage) => {
-    if (userMessage.length === 0 || isSendingRequest.value) return;
+    if (
+        userMessage.length === 0 ||
+        isSendingRequest.value ||
+        !page.props.isChat
+    )
+        return;
 
     isSendingRequest.value = true;
 
@@ -82,7 +89,7 @@ const handleCreateConversation = (userMessage) => {
                 updated_at,
             });
 
-            if (typeof result.data.info !== 'undefined') {
+            if (typeof result.data.info !== "undefined") {
                 toast.add({
                     severity: "info",
                     summary: "Info",
@@ -144,7 +151,9 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
 
 <template>
     <AuthenticatedLayout>
-        <Head :title="page.props.conversation_name" />
+        <Head
+            :title="page.props.conversation_name"
+        />
 
         <Main ref="mainComponent">
             <div
@@ -161,7 +170,11 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                                 <UserAvatar />
                             </div>
                             <div class="flex flex-col min-w-0 w-full">
-                                <div class="font-bold">You</div>
+                                <div class="font-bold">
+                                    {{
+                                        $page.props.isChat ? "You" : "Anonymous"
+                                    }}
+                                </div>
                                 <div class="break-words">
                                     {{ message.user_message }}
                                 </div>
@@ -213,6 +226,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                 </div>
             </div>
             <Prompt
+                v-if="$page.props.isChat"
                 :sending="isSendingRequest"
                 @is-submitting="handleCreateConversation"
                 ref="promptComponent"
