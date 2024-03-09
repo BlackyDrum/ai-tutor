@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('shared_conversations', function (Blueprint $table) {
             $table->id();
-            $table->string('url_identifier');
+            $table->string('url_identifier')->unique();
             $table->unsignedBigInteger('conversation_id')->unique();
             $table->timestamps();
 
