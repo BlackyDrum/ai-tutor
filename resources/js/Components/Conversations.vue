@@ -1,6 +1,6 @@
 <script setup>
 import { router, Link, usePage } from "@inertiajs/vue3";
-import { nextTick, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 
@@ -24,7 +24,7 @@ const showRenameInput = ref(false);
 const showConversationShareDialog = ref(false);
 
 const toggleConversationOverlayPanel = (event, conversation) => {
-    if (isSendingRequest()) return;
+    if (isSendingRequest.value) return;
 
     conversationOverlayPanel.value.toggle(event);
 
@@ -48,7 +48,7 @@ const handleConversationOverlayPanelHiding = () => {
 };
 
 const deleteConversation = () => {
-    if (isSendingRequest()) return;
+    if (isSendingRequest.value) return;
 
     isDeletingConversation.value = true;
 
@@ -117,7 +117,7 @@ const deleteConversation = () => {
 };
 
 const handleRenameConversation = () => {
-    if (isSendingRequest()) return;
+    if (isSendingRequest.value) return;
 
     showRenameInput.value = true;
 
@@ -129,7 +129,7 @@ const handleRenameConversation = () => {
 };
 
 const renameConversation = () => {
-    if (isSendingRequest()) return;
+    if (isSendingRequest.value) return;
 
     isRenamingConversation.value = true;
 
@@ -197,7 +197,7 @@ const handleConversationShareLinkClick = () => {
 };
 
 const createShareLink = () => {
-    if (isSendingRequest()) return;
+    if (isSendingRequest.value) return;
 
     isSharingConversation.value = true;
 
@@ -245,7 +245,7 @@ const createShareLink = () => {
 };
 
 const deleteSharedConversation = () => {
-    if (isSendingRequest()) return;
+    if (isSendingRequest.value) return;
 
     isDeletingSharedConversation.value = true;
 
@@ -275,14 +275,14 @@ const deleteSharedConversation = () => {
         });
 };
 
-const isSendingRequest = () => {
+const isSendingRequest = computed(() => {
     return (
         isSharingConversation.value ||
         isRenamingConversation.value ||
         isDeletingConversation.value ||
         isDeletingSharedConversation.value
     );
-};
+});
 </script>
 
 <template>
@@ -320,7 +320,7 @@ const isSendingRequest = () => {
             >
                 <span
                     :class="
-                        isSendingRequest()
+                        isSendingRequest
                             ? 'pi pi-spin pi-spinner'
                             : 'pi pi-ellipsis-h'
                     "
