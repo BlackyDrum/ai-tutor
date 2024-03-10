@@ -131,14 +131,14 @@ class ValidateChromaDBSync extends Command
 
                 $name = $embedding->metadatas[0]['filename'];
                 if ($name != $relationalEmbedding->name) {
-                    $this->error("Name of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB Name: $name, ChromaDB Name: {$relationalEmbedding->name}");
+                    $this->error("Name of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB Name: {$relationalEmbedding->name}, ChromaDB Name: $name");
                     $error = true;
                     $collectionError = true;
                 }
 
                 $size = $embedding->metadatas[0]['size'];
                 if ($size != $relationalEmbedding->size) {
-                    $this->error("Size of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB Name: $size, ChromaDB Name: {$relationalEmbedding->size}");
+                    $this->error("Size of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB Name: {$relationalEmbedding->size}, ChromaDB Name: $size");
                     $error = true;
                     $collectionError = true;
                 }
