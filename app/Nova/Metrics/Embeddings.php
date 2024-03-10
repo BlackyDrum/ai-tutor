@@ -19,7 +19,6 @@ class Embeddings extends Value
     {
         return $this->result(
             Files::query()
-            ->whereNotNull('content')
             ->count()
         );
     }

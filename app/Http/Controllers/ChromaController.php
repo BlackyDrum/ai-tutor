@@ -82,7 +82,7 @@ class ChromaController extends Controller
 
         $filename = $model->name;
 
-        $model->parent_id = null;
+        $collectionId = $model->collection_id;
 
         // We need to manually create the files here, because the API endpoint
         // returns small artifacts of the pptx file. We do not want to store
@@ -148,6 +148,8 @@ class ChromaController extends Controller
 
             $result = self::createEmbeddingFromJson($response->json(), $model);
 
+            $model->forceDelete();
+
             $ids = $result['ids'];
             $documents = $result['documents'];
             $metadata = $result['metadata'];
@@ -161,6 +163,8 @@ class ChromaController extends Controller
             }
 
             $result = self::createEmbeddingFromJson($json, $model);
+
+            $model->forceDelete();
 
             $ids = $result['ids'];
             $documents = $result['documents'];
@@ -183,6 +187,10 @@ class ChromaController extends Controller
                     'size' => $model->size,
                 ]
             ];
+
+            $model->user_id = Auth::id();
+
+            $model->save();
         }
         else {
             Log::warning('App: Attempted to process a file with the wrong format', [
@@ -200,7 +208,7 @@ class ChromaController extends Controller
         }
 
         try {
-            $collection = Collections::query()->find($model->collection_id)->name;
+            $collection = Collections::query()->find($collectionId)->name;
 
             $collection = self::getCollection($collection);
 
@@ -212,7 +220,7 @@ class ChromaController extends Controller
 
         } catch (\Exception $exception) {
             Log::error('ChromaDB: Failed to add items to collection with ID {collection}. Reason: {reason}', [
-                'collection' => $model->collection_id,
+                'collection' => $collectionId,
                 'reason' => $exception->getMessage(),
             ]);
 
@@ -246,18 +254,17 @@ class ChromaController extends Controller
             $ids[] = $embedding_id;
             $documents[] = $contentOnSlide;
             $metadata[] = [
-                'filename' => $model->name . "_Slide_$index",
-                'size' => strlen($contentOnSlide)
+                'filename' => $model->name . " Slide $index",
+                'size' => strlen($contentOnSlide),
             ];
 
             Files::query()->create([
                 'embedding_id' => $embedding_id,
-                'name' => $model->name . "_Slide_$index",
+                'name' => $model->name . " Slide $index",
                 'content' => $contentOnSlide,
                 'size' => strlen($contentOnSlide),
                 'user_id' => Auth::id(),
                 'collection_id' => $model->collection_id,
-                'parent_id' => $model->id
             ]);
 
             $index++;
@@ -312,16 +319,6 @@ class ChromaController extends Controller
 
         try {
             $collection = self::getCollection($collection);
-
-            $slides = Files::query()
-                ->where('parent_id', '=', $model->id)
-                ->get();
-
-            foreach ($slides as $slide) {
-                $collection->delete([$slide->embedding_id]);
-
-                $slide->forceDelete();
-            }
 
             $collection->delete([$model->embedding_id]);
         } catch (\Exception $exception) {

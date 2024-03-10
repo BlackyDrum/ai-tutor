@@ -12,6 +12,8 @@ class Collections extends Model
 
     protected $fillable = [
         'name',
+        'max_results',
+        'module_id'
     ];
 
     protected $hidden = [

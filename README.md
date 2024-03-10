@@ -44,11 +44,19 @@ $ npm run build
 ```
 $ docker-compose up -d
 ```
-11. **Start the development server:**
+11. **(Optional) Synchronize ChromaDB with the relational database:**
+```
+$ php artisan chroma:sync
+```
+12. **(Optional) Seed the database with demo data:**
+```
+$ php artisan db:seed --class=DemoSeeder
+```
+13. **Start the development server:**
 ```
 $ php artisan serve
 ```
-12. **Visit http://localhost:8000 in your web browser to access the application.**
+14. **Visit http://localhost:8000 in your web browser to access the application.**
 
 ## Dashboard Access
 In order to have full access to the Admin's Dasboard, you need to manually set the ``admin`` column in the ``users`` table to true. You can use the following command:
@@ -61,6 +69,13 @@ To validate if ``ChromaDB`` is in sync with the relational database, you can use
 ```
 $ php artisan chroma:check
 ```
+
+## Sync ChromaDB with relational database
+If the validation failed, or if you want to synchronize ChromaDB with the relational database, you can use the following command:
+```
+$ php artisan chroma:sync
+```
+This step is beneficial for scenarios where ChromaDB has retained data that is yet to be reflected in the relational database.
 
 ## Clearing ChromaDB Data
 To completely remove all stored data related to ``ChromaDB``, including ``embeddings`` and ``collections``, you can use the following command:

@@ -18,7 +18,6 @@ class Files extends Model
         'mime',
         'user_id',
         'collection_id',
-        'parent_id',
         'embedding_id',
         'content'
     ];
@@ -35,16 +34,6 @@ class Files extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function embeddingBelongs()
-    {
-        return $this->belongsTo(Files::class, 'parent_id', 'id');
-    }
-
-    public function embeddingMany()
-    {
-        return $this->hasMany(Files::class, 'parent_id', 'id');
     }
 
 }

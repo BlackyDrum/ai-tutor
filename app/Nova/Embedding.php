@@ -102,20 +102,6 @@ class Embedding extends Resource
                     return (bool)$this->resource->id;
                 }),
 
-            BelongsTo::make('Parent', 'EmbeddingBelongs', Embedding::class)
-                ->sortable()
-                ->hideWhenCreating()
-                ->hideWhenUpdating(),
-
-            HasMany::make('Artifacts', 'EmbeddingMany', Embedding::class)
-                ->sortable()
-                ->showOnDetail(function(NovaRequest $request, $resource) {
-                    $count = Files::query()
-                        ->where('parent_id', '=', $resource->id)
-                        ->count();
-                    return $count != 0; // Only show relations when file has artifacts
-                }),
-
             BelongsTo::make('Creator', 'user', User::class)
                 ->default(Auth::id())
                 ->hideWhenUpdating()
@@ -132,6 +118,11 @@ class Embedding extends Resource
         ];
     }
 
+    public static function redirectAfterCreate(NovaRequest $request, $resource)
+    {
+        return '/resources/embeddings';
+    }
+
     public static function afterCreate(NovaRequest $request, Model $model)
     {
         $result = ChromaController::createEmbedding($model);
@@ -140,10 +131,6 @@ class Embedding extends Resource
             $model->forceDelete();
             abort(500, $result['message']);
         }
-
-        $model->user_id = Auth::id();
-
-        $model->save();
     }
 
     public static function afterUpdate(NovaRequest $request, Model $model)
@@ -173,15 +160,6 @@ class Embedding extends Resource
         ]);
 
         $model->forceDelete();
-    }
-
-    public function authorizedToUpdate(Request $request)
-    {
-        $count = Files::query()
-            ->where('parent_id', '=', $this->resource->id)
-            ->count();
-
-        return $count == 0 && ($this->resource->content != null || $this->resource->size == 0);
     }
 
     public function authorizedToForceDelete(Request $request)

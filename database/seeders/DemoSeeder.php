@@ -21,8 +21,6 @@ class DemoSeeder extends Seeder
      */
     public function run(): void
     {
-        Artisan::call('chroma:destroy');
-
         $module = Modules::query()->create([
             'name' => 'Demo',
             'ref_id' => 1214757,
@@ -38,16 +36,9 @@ class DemoSeeder extends Seeder
             'module_id' => $module->id,
         ]);
 
-        $collection = Collections::query()->create([
-            'name' => 'DemoCollection',
-            'max_results' => 5,
-            'module_id' => $module->id,
-        ]);
-
         $token = HomeController::getBearerToken();
 
         if (is_array($token)) {
-            $collection->forceDelete();
             $user->delete();
             $module->delete();
             abort(500, $token['reason']);
@@ -63,7 +54,6 @@ class DemoSeeder extends Seeder
                 'creating_user' => config('api.username'),
             ]);
         } catch (\Exception $exception) {
-            $collection->forceDelete();
             $user->delete();
             $module->delete();
             abort(500, $exception->getMessage());
@@ -71,7 +61,6 @@ class DemoSeeder extends Seeder
 
 
         if ($response->failed()) {
-            $collection->forceDelete();
             $user->delete();
             $module->delete();
             abort(500, $response->reason());
@@ -89,14 +78,24 @@ class DemoSeeder extends Seeder
             'module_id' => $module->id,
         ]);
 
-        $result = ChromaController::createCollection($collection->name);
+        $collection = Collections::query()
+            ->firstOrCreate([
+            'name' => 'DemoCollection'
+            ], [
+                'max_results' => 5,
+                'module_id' => $module->id,
+            ]);
 
-        if (!$result['status']) {
-            $collection->forceDelete();
-            $user->delete();
-            $module->delete();
-            $agent->delete();
-            abort(500, $result['message']);
+        if ($collection->wasRecentlyCreated) {
+            $result = ChromaController::createCollection($collection->name);
+
+            if (!$result['status']) {
+                $collection->forceDelete();
+                $user->delete();
+                $module->delete();
+                $agent->delete();
+                abort(500, $result['message']);
+            }
         }
     }
 }
