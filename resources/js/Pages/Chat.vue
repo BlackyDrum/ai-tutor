@@ -17,7 +17,6 @@ import Message from "primevue/message";
 import Avatar from "primevue/avatar";
 
 defineProps({
-    messages: Array,
     conversation_id: String,
     conversation_name: String,
 });
@@ -34,9 +33,12 @@ const isSendingRequest = ref(false);
 const promptComponent = ref();
 const mainComponent = ref();
 const scrollContainer = ref();
+const messages = ref([]);
 
 onBeforeMount(() => {
-    page.props.messages.map((message) => {
+    messages.value = JSON.parse(JSON.stringify(page.props.messages));
+
+    messages.value.map((message) => {
         message.agent_message = processAgentMessage(message.agent_message);
     });
 });
@@ -63,7 +65,7 @@ const handleCreateConversation = (userMessage) => {
     // prop to fully re-render, in order to scroll to the bottom.
     // Another option would be to use a timeout.
     new Promise((resolve, reject) => {
-        page.props.messages.push({
+        messages.value.push({
             agent_message: "",
             conversation_id: page.props.conversation_id,
             created_at: null,
@@ -83,7 +85,7 @@ const handleCreateConversation = (userMessage) => {
         })
         .then((result) => {
             const lastMessage =
-                page.props.messages[page.props.messages.length - 1];
+                messages.value[messages.value.length - 1];
 
             const { agent_message, created_at, id, updated_at } = result.data;
 
@@ -108,7 +110,7 @@ const handleCreateConversation = (userMessage) => {
             scroll();
         })
         .catch((error) => {
-            page.props.messages[page.props.messages.length - 1].error =
+            messages.value[messages.value.length - 1].error =
                 error.response.data.message ?? error.response.data;
         })
         .finally(() => {
