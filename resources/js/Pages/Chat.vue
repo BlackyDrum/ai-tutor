@@ -184,7 +184,7 @@ const processAgentMessage = (message) => {
                 <div
                     class="w-full max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"
                 >
-                    <div v-for="(message, index) in messages" :key="message.id">
+                    <div v-for="(message, index) in messages">
                         <div class="flex gap-3 mt-6">
                             <div class="max-md:hidden">
                                 <UserAvatar />
