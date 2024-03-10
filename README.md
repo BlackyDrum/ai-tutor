@@ -71,11 +71,11 @@ $ php artisan chroma:check
 ```
 
 ## Sync ChromaDB with relational database
-If the validation failed, or if you want to synchronize ChromaDB with the relational database, you can use the following command:
+If the validation failed, or if you want to synchronize ``ChromaDB`` with the relational database, you can use the following command:
 ```
 $ php artisan chroma:sync
 ```
-This step is beneficial for scenarios where ChromaDB has retained data that is yet to be reflected in the relational database.
+This step is beneficial for scenarios where ``ChromaDB`` has retained data that is yet to be reflected in the relational database.
 
 ## Clearing ChromaDB Data
 To completely remove all stored data related to ``ChromaDB``, including ``embeddings`` and ``collections``, you can use the following command:
