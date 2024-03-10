@@ -64,8 +64,10 @@ class SyncChromaDB extends Command
             $metadata = $data->metadatas;
             $ids = $data->ids;
 
+            $embeddingIds = [];
+
             foreach ($ids as $key => $id) {
-                Files::query()
+                $file = Files::query()
                     ->firstOrCreate([
                         'embedding_id' => $id,
                     ], [
@@ -75,7 +77,13 @@ class SyncChromaDB extends Command
                         'user_id' => null,
                         'collection_id' => $relationalCollection->id,
                     ]);
+
+                $embeddingIds[] = $file->embedding_id;
             }
+
+            Files::query()
+                ->whereNotIn('embedding_id', $embeddingIds)
+                ->forceDelete();
         }
 
         $this->info('Synced ChromaDB with relational database. Run \'php artisan chroma:check\' to validate.');
