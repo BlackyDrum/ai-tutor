@@ -104,12 +104,11 @@ class Embedding extends Resource
 
             BelongsTo::make('Creator', 'user', User::class)
                 ->default(Auth::id())
-                ->hideWhenUpdating()
                 ->hideWhenCreating()
                 ->sortable()
-                ->withMeta(['extraAttributes' => [
-                    'readonly' => true
-                ]]),
+                ->showOnUpdating(function () {
+                    return $this->resource->user_id == null;
+                }),
 
             DateTime::make('Created At')
                 ->hideWhenCreating()
