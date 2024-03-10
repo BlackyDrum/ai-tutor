@@ -223,7 +223,9 @@ const createShareLink = () => {
                         life: 5000,
                     });
 
-                    router.reload();
+                    router.reload({
+                        only: ["auth"],
+                    });
                 })
                 .finally(() => {
                     selectedConversation.value = null;
@@ -260,7 +262,9 @@ const deleteSharedConversation = () => {
 
             showConversationShareDialog.value = false;
 
-            router.reload();
+            router.reload({
+                only: ["auth"],
+            });
         })
         .catch((error) => {
             toast.add({

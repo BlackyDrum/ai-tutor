@@ -1,6 +1,6 @@
 <script setup>
 import { Head, usePage } from "@inertiajs/vue3";
-import { onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import showdown from "showdown";
@@ -35,9 +35,13 @@ const promptComponent = ref();
 const mainComponent = ref();
 const scrollContainer = ref();
 
-onMounted(() => {
-    hljs.highlightAll();
+onBeforeMount(() => {
+    page.props.messages.map((message) => {
+        message.agent_message = processAgentMessage(message.agent_message);
+    });
+});
 
+onMounted(() => {
     if (page.props.hasPrompt) {
         promptComponent.value.focusInput();
     }
@@ -80,14 +84,16 @@ const handleCreateConversation = (userMessage) => {
         .then((result) => {
             const lastMessage =
                 page.props.messages[page.props.messages.length - 1];
+
             const { agent_message, created_at, id, updated_at } = result.data;
 
             Object.assign(lastMessage, {
-                agent_message,
                 created_at,
                 id,
                 updated_at,
             });
+
+            lastMessage.agent_message = processAgentMessage(agent_message);
 
             if (typeof result.data.info !== "undefined") {
                 toast.add({
@@ -109,8 +115,6 @@ const handleCreateConversation = (userMessage) => {
             isSendingRequest.value = false;
 
             promptComponent.value.focusInput();
-
-            hljs.highlightAll();
 
             scroll();
         });
@@ -147,13 +151,27 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
         serialized.indexOf("</body>"),
     );
 };
+
+const processAgentMessage = (message) => {
+    const element = document.createElement("div");
+
+    element.innerHTML = decodeHtmlEntitiesInCodeBlocks(
+        DOMPurify.sanitize(converter.makeHtml(message), {
+            FORBID_TAGS: forbidTags,
+        }),
+    );
+
+    element.querySelectorAll("pre code").forEach((block) => {
+        hljs.highlightElement(block);
+    });
+
+    return element.innerHTML;
+};
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <Head
-            :title="page.props.conversation_name"
-        />
+        <Head :title="page.props.conversation_name" />
 
         <Main ref="mainComponent">
             <div
@@ -172,7 +190,9 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                             <div class="flex flex-col min-w-0 w-full">
                                 <div class="font-bold">
                                     {{
-                                        $page.props.hasPrompt ? "You" : "Anonymous"
+                                        $page.props.hasPrompt
+                                            ? "You"
+                                            : "Anonymous"
                                     }}
                                 </div>
                                 <div class="break-words">
@@ -202,16 +222,7 @@ const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
                                 <div
                                     class="prose break-words dark:prose-invert"
                                     v-if="typeof message.error === 'undefined'"
-                                    v-html="
-                                        decodeHtmlEntitiesInCodeBlocks(
-                                            DOMPurify.sanitize(
-                                                converter.makeHtml(
-                                                    message.agent_message,
-                                                ),
-                                                { FORBID_TAGS: forbidTags },
-                                            ),
-                                        )
-                                    "
+                                    v-html="message.agent_message"
                                 ></div>
                                 <div v-else>
                                     <Message
