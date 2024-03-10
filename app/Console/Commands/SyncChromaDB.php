@@ -82,6 +82,7 @@ class SyncChromaDB extends Command
             }
 
             Files::query()
+                ->where('collection_id', '=', $relationalCollection->id)
                 ->whereNotIn('embedding_id', $embeddingIds)
                 ->forceDelete();
         }
