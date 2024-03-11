@@ -197,7 +197,7 @@ const processAgentMessage = (message) => {
                                             : "Anonymous"
                                     }}
                                 </div>
-                                <div class="break-words">
+                                <div class="break-words whitespace-pre-wrap">
                                     {{ message.user_message }}
                                 </div>
                             </div>
