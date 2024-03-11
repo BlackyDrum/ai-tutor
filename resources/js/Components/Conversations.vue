@@ -185,17 +185,6 @@ const handleConversationShareDialogHide = () => {
     selectedConversation.value = null;
 };
 
-const handleConversationShareLinkClick = () => {
-    const id = selectedConversation.value.url_identifier;
-
-    router.get(
-        window.location.protocol +
-            "//" +
-            window.location.host +
-            `/chat/share/${id}`,
-    );
-};
-
 const createShareLink = () => {
     if (isSendingRequest.value) return;
 
@@ -286,6 +275,10 @@ const isSendingRequest = computed(() => {
         isDeletingConversation.value ||
         isDeletingSharedConversation.value
     );
+});
+
+const getSharedConversationLink = computed(() => {
+    return `${window.location.protocol}//${window.location.host}/chat/share/${selectedConversation.value.url_identifier}`;
 });
 </script>
 
@@ -388,10 +381,10 @@ const isSendingRequest = computed(() => {
     >
         <p v-if="selectedConversation.url_identifier">
             You have shared this chat
-            <span
-                @click="handleConversationShareLinkClick"
+            <Link
+                :href="getSharedConversationLink"
                 class="underline cursor-pointer"
-                >before</span
+                >before</Link
             >. If you want to update the shared chat content,
             <span
                 @click="deleteSharedConversation"
