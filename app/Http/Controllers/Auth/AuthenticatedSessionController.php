@@ -60,6 +60,12 @@ class AuthenticatedSessionController extends Controller
     {
         $token = config('api.auth_key');
 
+        if (empty($token)) {
+            Log::error('Auth-Prepare: Auth Key is not set in the environment file');
+
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $name = $request->input('user');
         $refId = $request->input('ref_id');
 
