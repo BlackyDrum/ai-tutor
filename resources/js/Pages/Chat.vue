@@ -187,7 +187,7 @@ const processAgentMessage = (message) => {
                     <div v-for="(message, index) in messages">
                         <div class="flex gap-3 mt-6">
                             <div class="max-md:hidden">
-                                <UserAvatar />
+                                <UserAvatar :label="!$page.props.hasPrompt ? 'A' : undefined" />
                             </div>
                             <div class="flex flex-col min-w-0 w-full">
                                 <div class="font-bold">
