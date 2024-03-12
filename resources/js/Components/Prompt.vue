@@ -31,6 +31,8 @@ const handleSubmitButton = () => {
 };
 
 const handleSubmit = () => {
+    if (userMessage.value.trim().length === 0) return;
+
     emit("is-submitting", userMessage.value);
 
     userMessage.value = "";
@@ -79,7 +81,7 @@ const handleInput = () => {
             <Button
                 type="button"
                 @click="handleSubmitButton"
-                :disabled="sending"
+                :disabled="sending || userMessage.trim().length === 0"
                 class="absolute bottom-5 right-4 rounded-lg text-black border border-black bg-white p-0.5 disabled:opacity-10 dark:border-white"
                 data-testid="send-button"
             >
