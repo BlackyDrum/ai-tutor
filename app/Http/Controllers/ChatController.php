@@ -93,7 +93,6 @@ class ChatController extends Controller
         ]);
 
         Log::info('App: User with ID {user-id} is trying to send a message in conversation with ID {conversation-id}', [
-            'message' => $request->input('message'),
             'conversation-id' => $request->input('conversation_id')
         ]);
 
