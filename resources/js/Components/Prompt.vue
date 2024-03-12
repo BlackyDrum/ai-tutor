@@ -65,7 +65,7 @@ const handleInput = () => {
 
 <template>
     <div class="w-full text-center">
-        <form class="relative w-full max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[95%] mx-auto">
+        <form class="relative mx-auto w-full max-w-[48rem] max-lg:max-w-[95%]">
             <Textarea
                 v-model="userMessage"
                 :disabled="sending"

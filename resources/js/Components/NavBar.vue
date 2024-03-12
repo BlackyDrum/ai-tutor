@@ -57,7 +57,7 @@ const handleResize = () => {
     </div>
 
     <div
-        class="h-dvh w-[200px] lg:w-[260px] z-20 flex-shrink-0 bg-black text-white max-sm:fixed"
+        class="h-dvh w-[260px] z-20 flex-shrink-0 bg-black text-white max-md:fixed"
         :class="{ hidden: !showResponsiveNavBar }"
     >
         <nav class="h-full w-full p-2">

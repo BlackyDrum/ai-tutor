@@ -182,11 +182,11 @@ const processAgentMessage = (message) => {
                 class="w-full flex flex-1 justify-center mb-6 px-4 overflow-y-auto"
             >
                 <div
-                    class="w-full max-w-[48rem] max-xl:max-w-[40rem] max-lg:max-w-[35rem] max-md:max-w-[25rem] max-md:max-w-[20rem]"
+                    class="w-full max-w-[48rem]"
                 >
                     <div v-for="(message, index) in messages">
                         <div class="flex gap-3 mt-6">
-                            <div class="max-md:hidden">
+                            <div>
                                 <UserAvatar :label="!$page.props.hasPrompt ? 'A' : undefined" />
                             </div>
                             <div class="flex flex-col min-w-0 w-full">
@@ -203,7 +203,7 @@ const processAgentMessage = (message) => {
                             </div>
                         </div>
                         <div class="flex gap-3 mt-6">
-                            <div class="max-md:hidden">
+                            <div>
                                 <Avatar
                                     image="/static/img/app-logo.png"
                                     shape="circle"
