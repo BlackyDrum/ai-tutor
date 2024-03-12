@@ -45,7 +45,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
-
         'terms_accepted_at' => 'datetime'
     ];
 

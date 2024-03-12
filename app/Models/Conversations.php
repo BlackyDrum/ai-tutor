@@ -30,10 +30,6 @@ class Conversations extends Model
         'created_at',
     ];
 
-    protected $casts = [
-        'api_id' => 'string',
-    ];
-
     public function agent()
     {
         return $this->belongsTo(Agents::class, 'agent_id');

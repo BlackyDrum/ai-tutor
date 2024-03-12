@@ -22,10 +22,6 @@ class Files extends Model
         'content'
     ];
 
-    protected $casts = [
-        'id' => 'string'
-    ];
-
     public function collection()
     {
         return $this->belongsTo(Collections::class);
