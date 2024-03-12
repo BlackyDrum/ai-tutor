@@ -58,7 +58,7 @@ const handleInput = () => {
         textareaElement.style.height = "auto";
 
         const maxHeight = 200; // Maximum height in pixels
-        textareaElement.style.height = `${Math.min(textareaElement.scrollHeight, maxHeight)}px`;
+        textareaElement.style.height = `${Math.min(textareaElement.scrollHeight + 2, maxHeight)}px`;
     });
 };
 </script>
