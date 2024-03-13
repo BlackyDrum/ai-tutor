@@ -410,18 +410,4 @@ class ChromaController extends Controller
             ->withAuthToken(config('chromadb.chroma_server_auth_credentials'))
             ->connect();
     }
-
-    public function validateSync(Request $request)
-    {
-        $exitCode = Artisan::call('chroma:check');
-
-        if ($exitCode == 1) {
-            $message = 'Relational database is in sync with ChromaDB';
-        }
-        else {
-            $message = "Relational database is NOT in sync with ChromaDB. Use 'php artisan chroma:check' for more information";
-        }
-
-        return response()->json(['message' => $message], $exitCode == 1 ? 200 : 500);
-    }
 }

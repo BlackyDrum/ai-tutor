@@ -23,9 +23,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function() {
     Route::get('/', [HomeController::class, 'show'])->name('home');
 
-    Route::get('/chroma/status', [ChromaController::class, 'validateSync'])
-        ->middleware(EnsureIsAdmin::class)->name('chroma.status');
-
     Route::patch('/accept-terms', [HomeController::class, 'acceptTerms'])->name('terms');
 
     Route::prefix('chat')->name('chat.')->group(function() {
