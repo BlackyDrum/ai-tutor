@@ -17,6 +17,7 @@
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/framework": "^11.0",
         "laravel/nova": "^4.0",
+        "laravel/pulse": "^1.0@beta",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
         "smalot/pdfparser": "^2.8",
@@ -73,6 +74,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "beta",
     "prefer-stable": true
 }
