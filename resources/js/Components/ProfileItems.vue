@@ -20,7 +20,7 @@ const toast = useToast();
             class="block flex gap-4 p-2 mb-1 cursor-pointer rounded-lg hover:bg-app-light"
         >
             <div>
-                <span class="pi pi-user"></span>
+                <span class="pi pi-shield"></span>
             </div>
             <div>Admin</div>
         </Link>
