@@ -172,7 +172,8 @@ class ValidateChromaDBSync extends Command
             $this->info("All tests passed. Relational Database is in sync with ChromaDB \u{2713}");
         }
         else {
-            $this->error("Relational Database is NOT in sync with ChromaDB");
+            $this->error("Relational Database is NOT in sync with ChromaDB.\nShould there be an overabundance of records or missing embeddings, consider running 'php artisan chroma:sync' to sync the databases.");
+            $this->error("Alternatively, you may delete all entries from the 'collection' and/or 'files' table and run 'php artisan:chroma:sync' to repopulate the data from ChromaDB");
 
             return -1;
         }
