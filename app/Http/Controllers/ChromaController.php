@@ -8,6 +8,7 @@ use App\Models\Conversations;
 use App\Models\Files;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
+use Codewithkyrian\ChromaDB\Embeddings\OpenAIEmbeddingFunction;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -397,6 +398,12 @@ class ChromaController extends Controller
 
     public static function getEmbeddingFunction()
     {
+        $embeddingFunction = config('chromadb.chroma_embedding_function');
+
+        if ($embeddingFunction == 'openai') {
+            return new OpenAIEmbeddingFunction(config('chromadb.openai_api_key'));
+        }
+
         return new JinaEmbeddingFunction(config('chromadb.jina_api_key'), 'jina-embeddings-v2-base-de');
     }
 
