@@ -398,7 +398,7 @@ class ChromaController extends Controller
 
     public static function getEmbeddingFunction()
     {
-        $embeddingFunction = config('chromadb.chroma_embedding_function');
+        $embeddingFunction = config('chromadb.embedding_function');
 
         if ($embeddingFunction == 'openai') {
             return new OpenAIEmbeddingFunction(config('chromadb.openai_api_key'));
@@ -410,11 +410,11 @@ class ChromaController extends Controller
     public static function getClient()
     {
         return ChromaDB::factory()
-            ->withHost(config('chromadb.chroma_host'))
-            ->withPort(config('chromadb.chroma_port'))
-            ->withDatabase(config('chromadb.chroma_database'))
-            ->withTenant(config('chromadb.chroma_tenant'))
-            ->withAuthToken(config('chromadb.chroma_server_auth_credentials'))
+            ->withHost(config('chromadb.host'))
+            ->withPort(config('chromadb.port'))
+            ->withDatabase(config('chromadb.database'))
+            ->withTenant(config('chromadb.tenant'))
+            ->withAuthToken(config('chromadb.server_auth_credentials'))
             ->connect();
     }
 }
