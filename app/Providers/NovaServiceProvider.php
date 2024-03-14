@@ -63,7 +63,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(User::class),
                 ])->icon('user')->collapsable(),
 
-                MenuSection::make('Pulse', [
+                MenuSection::make('Health', [
                     MenuItem::externalLink('Performance', '/pulse')
                         ->openInNewTab(),
                 ])->icon('heart')->collapsable(),
