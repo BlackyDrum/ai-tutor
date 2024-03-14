@@ -19,9 +19,13 @@ class ValidateChromaDBSync extends Action
 {
     use InteractsWithQueue, Queueable;
 
-    public $name = "Check ChromaDB Sync with relational database";
+    public $name = 'Check sync';
+
+    public $confirmText = 'This action will verify the synchronization of data between our relational database and ChromaDB';
 
     public $standalone = true;
+
+    public $onlyOnIndex = true;
 
     /**
      * Perform the action on the given models.
@@ -39,7 +43,7 @@ class ValidateChromaDBSync extends Action
             return ActionResponse::message($message);
         }
         else {
-            $message = "Relational database is NOT in sync with ChromaDB. Use 'php artisan chroma:check' for more information";
+            $message = "Relational database is NOT in sync with ChromaDB. Use 'php artisan chroma:check' on a command line for more information";
             return ActionResponse::danger($message);
         }
     }
