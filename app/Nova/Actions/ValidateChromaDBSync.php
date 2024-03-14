@@ -21,7 +21,7 @@ class ValidateChromaDBSync extends Action
 
     public $name = 'Check sync';
 
-    public $confirmText = 'This action will verify the synchronization of data between our relational database and ChromaDB';
+    public $confirmText = 'This action will verify the synchronization of collections and embeddings between our relational database and ChromaDB';
 
     public $standalone = true;
 
