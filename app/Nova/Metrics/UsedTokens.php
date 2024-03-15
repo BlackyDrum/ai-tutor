@@ -3,11 +3,13 @@
 namespace App\Nova\Metrics;
 
 use App\Models\Messages;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Metrics\Trend;
+use Laravel\Nova\Metrics\Value;
 use Laravel\Nova\Nova;
 
-class MessagesPerDay extends Trend
+class UsedTokens extends Value
 {
     /**
      * Calculate the value of the metric.
@@ -17,13 +19,14 @@ class MessagesPerDay extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByDays($request, Messages::class)
-                    ->showSumValue();
+        $result = Messages::query()
+            ->select(DB::raw('SUM(prompt_tokens + completion_tokens) as total'))
+            ->first();
+
+        return $this->result($result->total);
     }
 
-    public $width = '1/3';
-
-    public $name = 'Messages';
+    public $name = "Total Tokens";
 
     /**
      * Get the ranges available for the metric.
@@ -32,13 +35,7 @@ class MessagesPerDay extends Trend
      */
     public function ranges()
     {
-        return [
-            7 => Nova::__('7 Days'),
-            14 => Nova::__('14 Days'),
-            30 => Nova::__('30 Days'),
-            60 => Nova::__('60 Days'),
-            90 => Nova::__('90 Days'),
-        ];
+        return [];
     }
 
     /**
@@ -49,15 +46,5 @@ class MessagesPerDay extends Trend
     public function cacheFor()
     {
         // return now()->addMinutes(5);
-    }
-
-    /**
-     * Get the URI key for the metric.
-     *
-     * @return string
-     */
-    public function uriKey()
-    {
-        return 'messages-per-day';
     }
 }

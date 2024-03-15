@@ -21,7 +21,7 @@ class ConversationsPerDay extends Trend
                     ->showSumValue();
     }
 
-    public $width = '1/2';
+    public $width = '1/3';
 
     public $name = 'Conversations';
 

@@ -6,6 +6,7 @@ use App\Nova\Metrics\Collections;
 use App\Nova\Metrics\ConversationsPerDay;
 use App\Nova\Metrics\Embeddings;
 use App\Nova\Metrics\MessagesPerDay;
+use App\Nova\Metrics\UsedTokens;
 use App\Nova\Metrics\Users;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Dashboards\Main as Dashboard;
@@ -23,6 +24,7 @@ class Main extends Dashboard
             new Users(),
             new ConversationsPerDay,
             new MessagesPerDay(),
+            new UsedTokens(),
             new Collections(),
             new Embeddings()
         ];
