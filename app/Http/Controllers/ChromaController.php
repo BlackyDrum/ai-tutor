@@ -478,7 +478,7 @@ class ChromaController extends Controller
             return new OpenAIEmbeddingFunction(config('api.openai_api_key'));
         }
 
-        return new JinaEmbeddingFunction(config('api.jina_api_key'), 'jina-embeddings-v2-base-de');
+        return new JinaEmbeddingFunction(config('api.jina_api_key'), config('api.jina_language_model'));
     }
 
     public static function getClient()
