@@ -138,8 +138,6 @@ class ChatController extends Controller
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
-        $token = config('chromadb.openai_api_key');
-
         $messages = Messages::query()
             ->where('conversation_id', '=', $conversation->id)
             ->get();
