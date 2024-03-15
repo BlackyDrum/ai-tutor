@@ -63,7 +63,6 @@ class HomeController extends Controller
             'name' => 'Chat #' . ($count + 1),
             'api_id' => Str::random(40),
             'agent_id' => $agent->id,
-            'creating_user' => config('api.username'),
             'max_tokens' => $module->max_tokens,
             'temperature' => $module->temperature,
             'user_id' => Auth::id(),

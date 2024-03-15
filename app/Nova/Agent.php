@@ -155,7 +155,6 @@ class Agent extends Resource
                 'first_message' => $request->input('first_message'),
                 'response_shape' => $request->input('response_shape'),
                 'instructions' => $request->input('instructions'),
-                'creating_user' => config('api.username')
             ]);
         } catch (\Exception $exception) {
             Log::error('App/ConversAItion: Failed to create agent. Reason: {message}', [

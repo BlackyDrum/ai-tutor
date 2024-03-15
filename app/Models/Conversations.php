@@ -11,7 +11,6 @@ class Conversations extends Model
 
     protected $fillable = [
         'agent_id',
-        'creating_user',
         'max_tokens',
         'temperature',
         'api_id',
@@ -22,7 +21,6 @@ class Conversations extends Model
     protected $hidden = [
         'id',
         'agent_id',
-        'creating_user',
         'max_tokens',
         'temperature',
         'user_id',
