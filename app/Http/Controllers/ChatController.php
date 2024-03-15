@@ -23,7 +23,7 @@ class ChatController extends Controller
     public function show(string $id)
     {
         $conversation = Conversations::query()
-            ->where('api_id', $id)
+            ->where('url_id', $id)
             ->first();
 
         if (empty($conversation) || $conversation->user_id !== Auth::id()) {
@@ -87,7 +87,7 @@ class ChatController extends Controller
     {
         $request->validate([
             'message' => 'required|string|max:' . config('api.max_message_length'),
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()],
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()],
         ]);
 
         if (!Auth::user()->module_id) {
@@ -135,7 +135,7 @@ class ChatController extends Controller
         }
 
         $conversation = Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
+            ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
         $token = config('chromadb.openai_api_key');
@@ -214,11 +214,11 @@ class ChatController extends Controller
     public function createShare(Request $request)
     {
         $request->validate([
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
         ]);
 
         $conversation = Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
+            ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
         $sharedConversation = SharedConversations::query()
@@ -245,11 +245,11 @@ class ChatController extends Controller
     public function deleteShare(Request $request)
     {
         $request->validate([
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
         ]);
 
         $conversation = Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
+            ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
         SharedConversations::query()

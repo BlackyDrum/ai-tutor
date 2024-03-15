@@ -67,14 +67,14 @@ const deleteConversation = () => {
             window.axios
                 .delete("/chat/conversation", {
                     data: {
-                        conversation_id: selectedConversation.value.api_id,
+                        conversation_id: selectedConversation.value.url_id,
                     },
                 })
                 .then((result) => {
                     page.props.auth.history.splice(
                         page.props.auth.history.findIndex(
                             (conversation) =>
-                                conversation.api_id === result.data.id,
+                                conversation.url_id === result.data.id,
                         ),
                         1,
                     );
@@ -136,16 +136,16 @@ const renameConversation = () => {
     window.axios
         .patch("/chat/conversation/name", {
             name: selectedConversation.value.name,
-            conversation_id: selectedConversation.value.api_id,
+            conversation_id: selectedConversation.value.url_id,
         })
         .then((result) => {
             const index = page.props.auth.history.findIndex(
-                (conversation) => conversation.api_id === result.data.id,
+                (conversation) => conversation.url_id === result.data.id,
             );
 
             // Also change browsers title if current conversation was renamed
             if (
-                page.props.auth.history[index].api_id ===
+                page.props.auth.history[index].url_id ===
                 page.props.conversation_id
             ) {
                 page.props.conversation_name = result.data.name;
@@ -192,7 +192,7 @@ const createShareLink = () => {
 
     window.axios
         .post("/chat/conversation/share", {
-            conversation_id: selectedConversation.value.api_id,
+            conversation_id: selectedConversation.value.url_id,
         })
         .then((result) => {
             const id = result.data.shared_url_id;
@@ -243,7 +243,7 @@ const deleteSharedConversation = () => {
     window.axios
         .delete("/chat/conversation/share", {
             data: {
-                conversation_id: selectedConversation.value.api_id,
+                conversation_id: selectedConversation.value.url_id,
             },
         })
         .then((result) => {
@@ -285,28 +285,28 @@ const getSharedConversationLink = computed(() => {
 <template>
     <div
         v-for="(conversation, index) in $page.props.auth.history"
-        :key="conversation.api_id"
+        :key="conversation.url_id"
         class="my-2"
     >
         <div
             v-if="
                 !showRenameInput ||
                 (selectedConversation &&
-                    selectedConversation.api_id !== conversation.api_id)
+                    selectedConversation.url_id !== conversation.url_id)
             "
             class="relative flex group rounded-lg hover:bg-app-dark"
             :class="{
                 'bg-[#343537]':
-                    conversation.api_id ===
+                    conversation.url_id ===
                     $page.url.slice($page.url.lastIndexOf('/') + 1),
 
                 'bg-app-dark':
                     selectedConversation &&
-                    selectedConversation.api_id === conversation.api_id,
+                    selectedConversation.url_id === conversation.url_id,
             }"
         >
             <Link
-                :href="`/chat/${conversation.api_id}`"
+                :href="`/chat/${conversation.url_id}`"
                 class="block flex-1 my-1 px-2 py-1 whitespace-nowrap truncate rounded-lg cursor-pointer"
             >
                 {{ conversation.name }}

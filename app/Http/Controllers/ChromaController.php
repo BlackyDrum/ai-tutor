@@ -43,7 +43,7 @@ class ChromaController extends Controller
                            "and use your own knowledge if the context seems irrelevant.\n\n";
 
         $conversation = Conversations::query()
-            ->where('api_id', '=', $conversation_id)
+            ->where('url_id', '=', $conversation_id)
             ->first();
 
         foreach ($queryResponse->ids[0] as $id) {

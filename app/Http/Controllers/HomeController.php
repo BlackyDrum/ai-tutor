@@ -57,12 +57,12 @@ class HomeController extends Controller
 
         $conversation = Conversations::query()->create([
             'name' => 'Chat #' . ($count + 1),
-            'api_id' => Str::random(40),
+            'url_id' => Str::random(40),
             'agent_id' => $agent->id,
             'user_id' => Auth::id(),
         ]);
 
-        $conversationID = $conversation->api_id;
+        $conversationID = $conversation->url_id;
 
         $collection = Collections::query()
             ->where('module_id', '=', $module->id)
@@ -137,11 +137,11 @@ class HomeController extends Controller
     public function deleteConversation(Request $request)
     {
         $request->validate([
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
         ]);
 
         Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
+            ->where('url_id', '=', $request->input('conversation_id'))
             ->delete();
 
         Log::info('App: User with ID {user-id} deleted a conversation with ID {conversation-id}', [
@@ -155,11 +155,11 @@ class HomeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:64',
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
         ]);
 
         Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
+            ->where('url_id', '=', $request->input('conversation_id'))
             ->update([
                 'name' => $request->input('name')
             ]);

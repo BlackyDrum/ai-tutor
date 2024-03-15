@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('api_id')->unique();
+            $table->string('url_id')->unique();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('agent_id')->after('user_id');
             $table->timestamps();

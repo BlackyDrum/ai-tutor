@@ -46,7 +46,6 @@ class Agent extends Resource
      */
     public static $search = [
         'id',
-        'api_id',
         'name'
     ];
 
@@ -164,7 +163,6 @@ class Agent extends Resource
         Log::info('App: User with ID {user-id} deleted an agent', [
             'id' => $model->id,
             'name' => $model->name,
-            'api-id' => $model->api_id,
         ]);
     }
 

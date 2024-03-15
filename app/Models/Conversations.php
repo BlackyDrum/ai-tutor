@@ -13,7 +13,7 @@ class Conversations extends Model
         'agent_id',
         'max_tokens',
         'temperature',
-        'api_id',
+        'url_id',
         'user_id',
         'name',
     ];

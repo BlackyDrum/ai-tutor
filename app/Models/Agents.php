@@ -11,7 +11,6 @@ class Agents extends Model
 
     protected $fillable = [
         'id',
-        'api_id',
         'name',
         'context',
         'first_message',
