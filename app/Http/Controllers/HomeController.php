@@ -30,10 +30,6 @@ class HomeController extends Controller
             'message' => 'required|string|max:' . config('api.max_message_length')
         ]);
 
-        Log::info('App: User with ID {user-id} is trying to create a new conversation', [
-            'message' => $request->input('message')
-        ]);
-
         if (!Auth::user()->module_id) {
             Log::warning('App: User with ID {user-id} is not associated with a module');
 
@@ -98,7 +94,7 @@ class HomeController extends Controller
 
         $response = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
             'model' => config('api.openai_language_model'),
-            'temperature' => (int)Auth::user()->temperature,
+            'temperature' => (float)Auth::user()->temperature,
             'max_tokens' => (int)Auth::user()->max_tokens,
             'messages' => [
                 [
@@ -142,10 +138,6 @@ class HomeController extends Controller
     {
         $request->validate([
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
-        ]);
-
-        Log::info('App: User with ID {user-id} is trying to delete a conversation with ID {conversation-id}', [
-            'conversation-id' => $request->input('conversation_id')
         ]);
 
         Conversations::query()

@@ -39,10 +39,6 @@ class ChatController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        Log::info('App: User with ID {user-id} accessed a conversation', [
-            'conversation-id' => $id
-        ]);
-
         return Inertia::render('Chat', [
             'messages' => $messages,
             'conversation_id' => $id,
@@ -92,10 +88,6 @@ class ChatController extends Controller
         $request->validate([
             'message' => 'required|string|max:' . config('api.max_message_length'),
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()],
-        ]);
-
-        Log::info('App: User with ID {user-id} is trying to send a message in conversation with ID {conversation-id}', [
-            'conversation-id' => $request->input('conversation_id')
         ]);
 
         if (!Auth::user()->module_id) {
@@ -168,7 +160,7 @@ class ChatController extends Controller
 
         $response = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
             'model' => config('api.openai_language_model'),
-            'temperature' => (int)Auth::user()->temperature,
+            'temperature' => (float)Auth::user()->temperature,
             'max_tokens' => (int)Auth::user()->max_tokens,
             'messages' => [
                 [
@@ -201,10 +193,6 @@ class ChatController extends Controller
             'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
             'completion_tokens' => $response->json()['usage']['completion_tokens'],
             'conversation_id' => $conversation->id,
-        ]);
-
-        Log::info('App: User with ID {user-id} sent a new message in conversation with ID {conversation-id}', [
-            'conversation-id' => $request->input('conversation_id'),
         ]);
 
         DB::commit();
