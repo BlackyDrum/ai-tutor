@@ -172,9 +172,9 @@ class AuthenticatedSessionController extends Controller
             'password' => Hash::make(Str::random(40)),
             'admin' => false,
             'module_id' => $module->id,
-            'max_requests' => config('api.max_requests'),
-            'temperature' => config('api.temperature'),
-            'max_tokens' => config('api.max_tokens'),
+            'max_requests' => config('chat.max_requests'),
+            'temperature' => config('chat.temperature'),
+            'max_tokens' => config('chat.max_tokens'),
         ]);
 
         $user->module_id = $module->id;

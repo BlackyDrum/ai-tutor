@@ -69,7 +69,7 @@ class User extends Resource
                 ->rules('required', 'min:0')
                 ->min(0)
                 ->default(function() {
-                    return config('api.max_requests');
+                    return config('chat.max_requests');
                 }),
 
             Number::make('Temperature')

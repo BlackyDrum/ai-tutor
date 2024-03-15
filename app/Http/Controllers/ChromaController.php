@@ -103,7 +103,7 @@ class ChromaController extends Controller
                 $response = Http::withToken($token)
                     ->withoutVerifying()
                     ->asMultipart()
-                    ->post(config('api.url') . '/data/pptx-to-md', [
+                    ->post(config('conversaition.url') . '/data/pptx-to-md', [
                         [
                             'name' => 'pptxfile',
                             'contents' => fopen($pathToFile, 'r'),
@@ -475,10 +475,10 @@ class ChromaController extends Controller
         $embeddingFunction = config('chromadb.embedding_function');
 
         if ($embeddingFunction == 'openai') {
-            return new OpenAIEmbeddingFunction(config('chromadb.openai_api_key'));
+            return new OpenAIEmbeddingFunction(config('api.openai_api_key'));
         }
 
-        return new JinaEmbeddingFunction(config('chromadb.jina_api_key'), 'jina-embeddings-v2-base-de');
+        return new JinaEmbeddingFunction(config('api.jina_api_key'), 'jina-embeddings-v2-base-de');
     }
 
     public static function getClient()

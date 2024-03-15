@@ -27,7 +27,7 @@ class HomeController extends Controller
     public function createConversation(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:' . config('api.max_message_length')
+            'message' => 'required|string|max:' . config('chat.max_message_length')
         ]);
 
         if (!Auth::user()->module_id) {
@@ -120,7 +120,7 @@ class HomeController extends Controller
 
     public static function sendMessageToOpenAI($systemMessage, $userMessage, $recentMessages = null)
     {
-        $token = config('chromadb.openai_api_key');
+        $token = config('api.openai_api_key');
 
         $messages = [
             ['role' => 'system', 'content' => $systemMessage]
@@ -189,13 +189,13 @@ class HomeController extends Controller
         // throw exceptions on client or server errors (400 and 500 level responses from servers). Instead,
         // we have to determine if the request failed using $response->failed().
         try {
-            $response = Http::withoutVerifying()->asForm()->post(config('api.url') . '/token', [
-                'username' => config('api.username'),
-                'password' => config('api.password'),
-                'grant_type' => config('api.grant_type'),
-                'scope' => config('api.scope'),
-                'client_id' => config('api.client_id'),
-                'client_secret' => config('api.client_secret'),
+            $response = Http::withoutVerifying()->asForm()->post(config('conversaition.url') . '/token', [
+                'username' => config('conversaition.username'),
+                'password' => config('conversaition.password'),
+                'grant_type' => config('conversaition.grant_type'),
+                'scope' => config('conversaition.scope'),
+                'client_id' => config('conversaition.client_id'),
+                'client_secret' => config('conversaition.client_secret'),
             ]);
         } catch (\Exception $exception) {
             Log::error('App/ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}', [

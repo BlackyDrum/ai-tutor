@@ -86,7 +86,7 @@ class ChatController extends Controller
     public function chat(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:' . config('api.max_message_length'),
+            'message' => 'required|string|max:' . config('chat.max_message_length'),
             'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()],
         ]);
 
@@ -181,7 +181,7 @@ class ChatController extends Controller
         DB::commit();
 
         $maxRequests = Auth::user()->max_requests;
-        $remainingMessagesAlertLevels  = config('api.remaining_requests_alert_levels');
+        $remainingMessagesAlertLevels  = config('chat.remaining_requests_alert_levels');
 
         $messages = self::getUserMessagesFromLastDay();
 
