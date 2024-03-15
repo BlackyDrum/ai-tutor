@@ -65,6 +65,7 @@ class Collection extends Resource
                 ->rules('required', 'integer', 'gte:0'),
 
             BelongsTo::make('Module', 'module', Module::class)
+                ->nullable()
                 ->creationRules('unique:collections,module_id')
                 ->updateRules('unique:collections,module_id,{{resourceId}}'),
 
