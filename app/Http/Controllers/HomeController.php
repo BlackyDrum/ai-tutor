@@ -167,6 +167,8 @@ class HomeController extends Controller
         Messages::query()->create([
             'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars($response2->json()['response']),
+            'prompt_tokens' => $response2->json()['prompt_tokens'],
+            'completion_tokens' => $response2->json()['completion_tokens'],
             'conversation_id' => $conversation->id
         ]);
 

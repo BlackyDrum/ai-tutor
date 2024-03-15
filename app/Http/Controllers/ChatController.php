@@ -173,6 +173,8 @@ class ChatController extends Controller
         $message = Messages::query()->create([
             'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars($response->json()['response']),
+            'prompt_tokens' => $response->json()['prompt_tokens'],
+            'completion_tokens' => $response->json()['completion_tokens'],
             'conversation_id' => $conversation->id,
         ]);
 

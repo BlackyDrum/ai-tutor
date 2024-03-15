@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOneThrough;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -57,6 +58,12 @@ class Message extends Resource
             Textarea::make('User Message'),
 
             Textarea::make('Agent Message'),
+
+            Number::make('Prompt Tokens')
+                ->hideWhenUpdating(),
+
+            Number::make('Completion Tokens')
+                ->hideWhenUpdating(),
 
             DateTime::make('Created At')
                 ->hideWhenCreating()
