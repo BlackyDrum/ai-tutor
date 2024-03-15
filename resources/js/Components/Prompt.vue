@@ -104,10 +104,10 @@ const handleInput = () => {
         </form>
     </div>
     <div class="my-2 text-center text-xs">
-        {{ appName }} can make mistakes. Please contact
-        <a class="underline" href="mailto:remmy@fh-aachen.de"
-            >remmy@fh-aachen.de</a
+        Practical Project by <strong>Gani Aytan</strong>. Please contact
+        <a class="underline" href="mailto:gani.aytan@alumni.fh-aachen.de"
+            >gani.aytan@alumni.fh-aachen.de</a
         >
-        for technical assistance.
+        for questions or technical assistance.
     </div>
 </template>
