@@ -21,7 +21,7 @@ class MessagesPerDay extends Trend
                     ->showSumValue();
     }
 
-    public $width = '1/3';
+    public $width = '1/2';
 
     public $name = 'Messages';
 

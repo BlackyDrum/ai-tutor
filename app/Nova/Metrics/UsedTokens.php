@@ -34,6 +34,8 @@ class UsedTokens extends Value
 
     public $name = 'Total Tokens';
 
+    public $width = '1/2';
+
     /**
      * Get the ranges available for the metric.
      *
