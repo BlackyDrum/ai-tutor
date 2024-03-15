@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agents;
 use App\Models\Collections;
+use App\Models\ConversationHasDocument;
 use App\Models\Conversations;
 use App\Models\Messages;
+use App\Models\Modules;
 use App\Models\SharedConversations;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
@@ -21,7 +24,7 @@ class ChatController extends Controller
     public function show(string $id)
     {
         $conversation = Conversations::query()
-            ->where('api_id', $id)
+            ->where('url_id', $id)
             ->first();
 
         if (empty($conversation) || $conversation->user_id !== Auth::id()) {
@@ -36,10 +39,6 @@ class ChatController extends Controller
             ->where('conversation_id', '=', $conversation->id)
             ->orderBy('created_at')
             ->get();
-
-        Log::info('App: User with ID {user-id} accessed a conversation', [
-            'conversation-id' => $id
-        ]);
 
         return Inertia::render('Chat', [
             'messages' => $messages,
@@ -88,12 +87,8 @@ class ChatController extends Controller
     public function chat(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:' . config('api.max_message_length'),
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()],
-        ]);
-
-        Log::info('App: User with ID {user-id} is trying to send a message in conversation with ID {conversation-id}', [
-            'conversation-id' => $request->input('conversation_id')
+            'message' => 'required|string|max:' . config('chat.max_message_length'),
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()],
         ]);
 
         if (!Auth::user()->module_id) {
@@ -101,6 +96,13 @@ class ChatController extends Controller
 
             return response()->json('You are not associated with a module. Try to login again.',500);
         }
+
+        $module = Modules::query()->find(Auth::user()->module_id);
+
+        $agent = Agents::query()
+            ->where('module_id', '=', $module->id)
+            ->where('active', '=', true)
+            ->first();
 
         $collection = Collections::query()
             ->where('module_id', '=', Auth::user()->module_id)
@@ -113,6 +115,8 @@ class ChatController extends Controller
 
             return response()->json('Internal Server Error.',500);
         }
+
+        $now = Carbon::now();
 
         // We use a transaction here in case the following API requests
         // fail, allowing us to rollback the rows created in
@@ -133,30 +137,45 @@ class ChatController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
-        $token = HomeController::getBearerToken();
+        $conversation = Conversations::query()
+            ->where('url_id', '=', $request->input('conversation_id'))
+            ->first();
 
-        if (is_array($token)) {
-            DB::rollBack();
-            return response()->json($token['reason'], $token['status']);
+        $messages = Messages::query()
+            ->where('conversation_id', '=', $conversation->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(config('chat.max_messages_included'))
+            ->get()
+            ->reverse();
+
+        // If older messages (and therefore embeddings/documents) leave the context window,
+        // we delete the entries from the 'conversation_has_documents' table, so that
+        // they can potentially be embedded in the context once again
+        if ($messages->isNotEmpty()) {
+            ConversationHasDocument::query()
+                ->where('conversation_id', '=', $conversation->id)
+                ->where('created_at', '<', $messages->first()->created_at)
+                ->delete();
         }
 
-        try {
-            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
-                'conversation_id' => $request->input('conversation_id'),
-                'message' => $promptWithContext,
-            ]);
-        } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to send message. Reason: {message}', [
-                'message' => $exception->getMessage(),
-                'conversation-id' => $request->input('conversation_id'),
-            ]);
+        $recentMessages = [];
 
-            DB::rollBack();
-            return response()->json('Internal Server Error', '500');
+        foreach ($messages as $message) {
+            $recentMessages[] = [
+                'role' => 'user',
+                'content' => $message->user_message_with_context,
+            ];
+
+            $recentMessages[] = [
+                'role' => 'assistant',
+                'content' => htmlspecialchars_decode($message->agent_message),
+            ];
         }
+
+        $response = HomeController::sendMessageToOpenAI($agent->instructions, $promptWithContext, $recentMessages);
 
         if ($response->failed()) {
-            Log::error('ConversAItion: Failed to send message. Reason: {reason}. Status: {status}', [
+            Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
                 'reason' => $response->reason(),
                 'status' => $response->status(),
                 'conversation-id' => $request->input('conversation_id'),
@@ -166,26 +185,20 @@ class ChatController extends Controller
             return response()->json($response->reason(), $response->status());
         }
 
-        $conversation = Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
-            ->first();
-
         $message = Messages::query()->create([
             'user_message' => $request->input('message'),
-            'agent_message' => htmlspecialchars($response->json()['response']),
-            'prompt_tokens' => $response->json()['prompt_tokens'],
-            'completion_tokens' => $response->json()['completion_tokens'],
+            'agent_message' => htmlspecialchars($response->json()['choices'][0]['message']['content']),
+            'user_message_with_context' => $promptWithContext,
+            'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
+            'completion_tokens' => $response->json()['usage']['completion_tokens'],
             'conversation_id' => $conversation->id,
-        ]);
-
-        Log::info('App: User with ID {user-id} sent a new message in conversation with ID {conversation-id}', [
-            'conversation-id' => $request->input('conversation_id'),
+            'created_at' => $now
         ]);
 
         DB::commit();
 
         $maxRequests = Auth::user()->max_requests;
-        $remainingMessagesAlertLevels  = config('api.remaining_requests_alert_levels');
+        $remainingMessagesAlertLevels  = config('chat.remaining_requests_alert_levels');
 
         $messages = self::getUserMessagesFromLastDay();
 
@@ -201,11 +214,11 @@ class ChatController extends Controller
     public function createShare(Request $request)
     {
         $request->validate([
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
         ]);
 
         $conversation = Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
+            ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
         $sharedConversation = SharedConversations::query()
@@ -232,11 +245,11 @@ class ChatController extends Controller
     public function deleteShare(Request $request)
     {
         $request->validate([
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
         ]);
 
         $conversation = Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
+            ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
         SharedConversations::query()

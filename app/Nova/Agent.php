@@ -46,7 +46,6 @@ class Agent extends Resource
      */
     public static $search = [
         'id',
-        'api_id',
         'name'
     ];
 
@@ -61,13 +60,11 @@ class Agent extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('API ID')
-                ->hideWhenCreating()
-                ->hideWhenUpdating(),
-
             Text::make('Name')
                 ->rules('required','string','max:255', Rule::unique('agents', 'name')->ignore($this->resource->id))
                 ->sortable(),
+
+            /*
 
             Text::make('Context')
                 ->rules('required','string','max:255')
@@ -93,12 +90,10 @@ class Agent extends Resource
                     return (bool)$this->resource->id;
                 }),
 
+            */
+
             Textarea::make('Instructions')
-                ->rules('required','string')
-                ->hideWhenUpdating()
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
-                }),
+                ->rules('required','string'),
 
             BelongsTo::make('Module', 'module', Module::class)
                 ->readonly($this->resource->active && $this->resource->module_id),
@@ -141,47 +136,7 @@ class Agent extends Resource
 
     public static function afterCreate(NovaRequest $request, Model $model)
     {
-        $token = HomeController::getBearerToken();
-
-        if (is_array($token)) {
-            $model->delete();
-            abort(500, $token['reason']);
-        }
-
-        try {
-            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-agent', [
-                'name' => $request->input('name'),
-                'context' => $request->input('context'),
-                'first_message' => $request->input('first_message'),
-                'response_shape' => $request->input('response_shape'),
-                'instructions' => $request->input('instructions'),
-                'creating_user' => config('api.username')
-            ]);
-        } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to create agent. Reason: {message}', [
-                'message' => $exception->getMessage(),
-                'agent-name' => $request->input('name'),
-            ]);
-
-            $model->delete();
-            abort(500, $exception->getMessage());
-        }
-
-        if ($response->failed()) {
-            Log::error('ConversAItion: Failed to create agent. Reason: {reason}. Status: {status}', [
-                'reason' => $response->reason(),
-                'status' => $response->status(),
-                'agent-name' => $request->input('name'),
-            ]);
-
-            $model->delete();
-            abort(500, $response->reason());
-        }
-
-        $model->api_id = $response->json()['id'];
-
         $model->user_id = Auth::id();
-
         $model->save();
 
         self::changeActiveStatus($model);
@@ -208,7 +163,6 @@ class Agent extends Resource
         Log::info('App: User with ID {user-id} deleted an agent', [
             'id' => $model->id,
             'name' => $model->name,
-            'api-id' => $model->api_id,
         ]);
     }
 

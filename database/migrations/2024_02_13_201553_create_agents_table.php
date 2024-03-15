@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('agents', function (Blueprint $table) {
             $table->id();
-            $table->string('api_id')->unique()->nullable();
             $table->string('name');
-            $table->string('context');
-            $table->string('first_message');
-            $table->text('response_shape');
+            //$table->string('context');
+            //$table->string('first_message');
+            //$table->text('response_shape');
             $table->text('instructions');
             $table->boolean('active')->default(false);
             $table->unsignedBigInteger('user_id')->nullable();

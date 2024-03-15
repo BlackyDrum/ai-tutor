@@ -37,7 +37,7 @@ class Conversation extends Resource
      */
     public static $search = [
         'id',
-        'api_id'
+        'url_id'
     ];
 
     /**
@@ -53,11 +53,7 @@ class Conversation extends Resource
 
             Text::make('Name'),
 
-            Text::make('api_id'),
-
-            Number::make('Max Tokens'),
-
-            Number::make('Temperature'),
+            Text::make('url_id'),
 
             BelongsTo::make('Agent'),
 

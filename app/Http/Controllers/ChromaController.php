@@ -36,14 +36,10 @@ class ChromaController extends Controller
             nResults: $maxResults
         );
 
-        $enhancedMessage = "Try to answer the following user message. Always try to answer in the language from the user's message.\n" .
-                           "You will also find the user messages from the past. If the current message doesn't make sense " .
-                           "always address the previous user messages\n" .
-                           "Below you will find some context documents (delimited by Hashtags) that may help. Ignore it " .
-                           "and use your own knowledge if the context seems irrelevant.\n\n";
+        $enhancedMessage = "";
 
         $conversation = Conversations::query()
-            ->where('api_id', '=', $conversation_id)
+            ->where('url_id', '=', $conversation_id)
             ->first();
 
         foreach ($queryResponse->ids[0] as $id) {
@@ -67,12 +63,12 @@ class ChromaController extends Controller
                     'file_id' => $file->id
                 ]);
 
-            $enhancedMessage .= "###################\n";
+            $enhancedMessage .= "\n\"\"\"\n";
             $enhancedMessage .= "Context Document:\n" . $file->content . "\n";
-            $enhancedMessage .= "###################\n";
+            $enhancedMessage .= "\"\"\"\n";
         }
 
-        $enhancedMessage .= "\nCurrent User Message:\n" . $message;
+        $enhancedMessage .= "\n\nUser Message:\n" . $message . "\n";
 
         return $enhancedMessage;
     }
@@ -107,7 +103,7 @@ class ChromaController extends Controller
                 $response = Http::withToken($token)
                     ->withoutVerifying()
                     ->asMultipart()
-                    ->post(config('api.url') . '/data/pptx-to-md', [
+                    ->post(config('conversaition.url') . '/data/pptx-to-md', [
                         [
                             'name' => 'pptxfile',
                             'contents' => fopen($pathToFile, 'r'),
@@ -479,10 +475,10 @@ class ChromaController extends Controller
         $embeddingFunction = config('chromadb.embedding_function');
 
         if ($embeddingFunction == 'openai') {
-            return new OpenAIEmbeddingFunction(config('chromadb.openai_api_key'));
+            return new OpenAIEmbeddingFunction(config('api.openai_api_key'), '', config('api.openai_embedding_model'));
         }
 
-        return new JinaEmbeddingFunction(config('chromadb.jina_api_key'), 'jina-embeddings-v2-base-de');
+        return new JinaEmbeddingFunction(config('api.jina_api_key'), config('api.jina_embedding_model'));
     }
 
     public static function getClient()

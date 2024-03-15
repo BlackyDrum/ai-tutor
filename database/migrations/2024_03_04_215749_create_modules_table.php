@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('ref_id')->unique();
-            $table->float('temperature');
-            $table->unsignedBigInteger('max_tokens');
             $table->timestamps();
         });
     }

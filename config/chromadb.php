@@ -12,8 +12,4 @@ return [
     'embedding_function' => env('CHROMA_EMBEDDING_FUNCTION', 'jina'),
 
     'server_auth_credentials' => env('CHROMA_SERVER_AUTH_CREDENTIALS'),
-
-    'jina_api_key' => env('JINA_API_KEY'),
-
-    'openai_api_key' => env('OPENAI_API_KEY'),
 ];

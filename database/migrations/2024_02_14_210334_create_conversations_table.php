@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('api_id')->unique();
-            $table->unsignedBigInteger('max_tokens')->default(1000);
-            $table->float('temperature')->default(0.5);
-            $table->string('creating_user');
+            $table->string('url_id')->unique();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('agent_id')->after('user_id');
             $table->timestamps();

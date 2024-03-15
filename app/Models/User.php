@@ -23,6 +23,8 @@ class User extends Authenticatable
         'terms_accepted_at',
         'max_requests',
         'module_id',
+        'temperature',
+        'max_tokens',
     ];
 
     /**
@@ -35,7 +37,9 @@ class User extends Authenticatable
         'id',
         'ref_id',
         'max_requests',
-        'module_id'
+        'module_id',
+        'temperature',
+        'max_tokens'
     ];
 
     /**

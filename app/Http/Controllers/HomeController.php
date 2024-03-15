@@ -9,11 +9,13 @@ use App\Models\Messages;
 use App\Models\Modules;
 use App\Models\User;
 use App\Rules\ValidateConversationOwner;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -26,18 +28,8 @@ class HomeController extends Controller
     public function createConversation(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:' . config('api.max_message_length')
+            'message' => 'required|string|max:' . config('chat.max_message_length')
         ]);
-
-        Log::info('App: User with ID {user-id} is trying to create a new conversation', [
-            'message' => $request->input('message')
-        ]);
-
-        $token = self::getBearerToken();
-
-        if (is_array($token)) {
-            return response()->json($token['reason'], $token['status']);
-        }
 
         if (!Auth::user()->module_id) {
             Log::warning('App: User with ID {user-id} is not associated with a module');
@@ -46,14 +38,6 @@ class HomeController extends Controller
         }
 
         $module = Modules::query()->find(Auth::user()->module_id);
-
-        if (!$module) {
-            Log::error('App: Failed to find module with ID {module-id}', [
-                'module-id' => Auth::user()->module_id,
-            ]);
-
-            return response()->json('Internal Server Error',500);
-        }
 
         $agent = Agents::query()
             ->where('module_id', '=', $module->id)
@@ -68,49 +52,18 @@ class HomeController extends Controller
             return response()->json('Internal Server Error',500);
         }
 
-        try {
-            $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
-                'agent_id' => $agent->api_id,
-                'creating_user' => config('api.username'),
-                'max_tokens' => $module->max_tokens,
-                'temperature' => $module->temperature,
-            ]);
-        } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to create conversation. Reason: {message}', [
-                'message' => $exception->getMessage(),
-            ]);
-
-            return response()->json('Internal Server Error', '500');
-        }
-
-        if ($response1->failed()) {
-            Log::error('ConversAItion: Failed to create conversation. Reason: {reason}. Status: {status}', [
-                'reason' => $response1->reason(),
-                'status' => $response1->status(),
-                'agent-id' => $agent->id,
-                'agent-api-id' => $agent->api_id,
-                'max-tokens' => $module->max_tokens,
-                'temperature' => $module->temperature,
-            ]);
-
-            return response()->json($response1->reason(), $response1->status());
-        }
-
-        $conversationID = $response1->json()['id'];
-
         $count = Conversations::query()
             ->where('user_id', '=', Auth::id())
             ->count();
 
         $conversation = Conversations::query()->create([
             'name' => 'Chat #' . ($count + 1),
-            'api_id' => $conversationID,
+            'url_id' => Str::random(40),
             'agent_id' => $agent->id,
-            'creating_user' => config('api.username'),
-            'max_tokens' => $module->max_tokens,
-            'temperature' => $module->temperature,
             'user_id' => Auth::id(),
         ]);
+
+        $conversationID = $conversation->url_id;
 
         $collection = Collections::query()
             ->where('module_id', '=', $module->id)
@@ -125,6 +78,13 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
+
+        // Capture the current timestamp here before adding entries to the 'conversation_has_document'
+        // table within 'createPromptWithContext'. This step is crucial for accurately identifying
+        // and deleting these entries once they fall outside the context window, ensuring they are
+        // correctly timed in relation to the conversation's flow.
+        $now = Carbon::now();
+
         try {
             $promptWithContext = ChromaController::createPromptWithContext($collection->name, $request->input('message'), $conversationID);
         } catch (\Exception $exception) {
@@ -138,38 +98,26 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
-        try {
-            $response2 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
-                'conversation_id' => $conversationID,
-                'message' => $promptWithContext
-            ]);
-        } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to send message. Reason: {message}', [
-                'message' => $exception->getMessage(),
-                'conversation-id' => $conversationID,
+        $response = self::sendMessageToOpenAI($agent->instructions, $promptWithContext);
+
+        if ($response->failed()) {
+            Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
+                'reason' => $response->reason(),
+                'status' => $response->status(),
             ]);
 
             $conversation->delete();
-            return response()->json('Internal Server Error', '500');
-        }
-
-        if ($response2->failed()) {
-            Log::error('ConversAItion: Failed to send message. Reason: {reason}. Status: {status}', [
-                'reason' => $response2->reason(),
-                'status' => $response2->status(),
-                'conversation-id' => $conversationID,
-            ]);
-
-            $conversation->delete();
-            return response()->json($response2->reason(), $response2->status());
+            return response()->json($response->reason(), $response->status());
         }
 
         Messages::query()->create([
             'user_message' => $request->input('message'),
-            'agent_message' => htmlspecialchars($response2->json()['response']),
-            'prompt_tokens' => $response2->json()['prompt_tokens'],
-            'completion_tokens' => $response2->json()['completion_tokens'],
-            'conversation_id' => $conversation->id
+            'agent_message' => htmlspecialchars($response->json()['choices'][0]['message']['content']),
+            'user_message_with_context' => $promptWithContext,
+            'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
+            'completion_tokens' => $response->json()['usage']['completion_tokens'],
+            'conversation_id' => $conversation->id,
+            'created_at' => $now
         ]);
 
         Log::info('App: User with ID {user-id} created a new conversation', [
@@ -179,47 +127,39 @@ class HomeController extends Controller
         return response()->json(['id' => $conversationID]);
     }
 
+    public static function sendMessageToOpenAI($systemMessage, $userMessage, $recentMessages = null)
+    {
+        $token = config('api.openai_api_key');
+
+        $messages = [
+            ['role' => 'system', 'content' => $systemMessage]
+        ];
+
+        if ($recentMessages) {
+            $messages = array_merge($messages, $recentMessages);
+        }
+
+        $userMessage =
+            "Use the context from this or from previous messages to answer the user's question.\n\n" . $userMessage;
+
+        $messages[] = ['role' => 'user', 'content' => $userMessage];
+
+        return Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
+            'model' => config('api.openai_language_model'),
+            'temperature' => (float)Auth::user()->temperature,
+            'max_tokens' => (int)Auth::user()->max_tokens,
+            'messages' => $messages
+        ]);
+    }
+
     public function deleteConversation(Request $request)
     {
         $request->validate([
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
         ]);
-
-        Log::info('App: User with ID {user-id} is trying to delete a conversation with ID {conversation-id}', [
-            'conversation-id' => $request->input('conversation_id')
-        ]);
-
-        $token = self::getBearerToken();
-
-        if (is_array($token)) {
-            return response()->json($token['reason'], $token['status']);
-        }
-
-        try {
-            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/delete-conversation', [
-                'conversation' => $request->input('conversation_id'),
-            ]);
-        } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to delete conversation. Reason: {message}', [
-                'message' => $exception->getMessage(),
-                'conversation-id' => $request->input('conversation_id'),
-            ]);
-
-            return response()->json('Internal Server Error', '500');
-        }
-
-        if ($response->failed()) {
-            Log::error('ConversAItion: Failed to delete conversation. Reason: {reason}. Status: {status}', [
-                'reason' => $response->reason(),
-                'status' => $response->status(),
-                'conversation-id' => $request->input('conversation_id'),
-            ]);
-
-            return response()->json($response->reason(), $response->status());
-        }
 
         Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
+            ->where('url_id', '=', $request->input('conversation_id'))
             ->delete();
 
         Log::info('App: User with ID {user-id} deleted a conversation with ID {conversation-id}', [
@@ -233,11 +173,11 @@ class HomeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:64',
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,api_id', new ValidateConversationOwner()]
+            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
         ]);
 
         Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
+            ->where('url_id', '=', $request->input('conversation_id'))
             ->update([
                 'name' => $request->input('name')
             ]);
@@ -258,13 +198,13 @@ class HomeController extends Controller
         // throw exceptions on client or server errors (400 and 500 level responses from servers). Instead,
         // we have to determine if the request failed using $response->failed().
         try {
-            $response = Http::withoutVerifying()->asForm()->post(config('api.url') . '/token', [
-                'username' => config('api.username'),
-                'password' => config('api.password'),
-                'grant_type' => config('api.grant_type'),
-                'scope' => config('api.scope'),
-                'client_id' => config('api.client_id'),
-                'client_secret' => config('api.client_secret'),
+            $response = Http::withoutVerifying()->asForm()->post(config('conversaition.url') . '/token', [
+                'username' => config('conversaition.username'),
+                'password' => config('conversaition.password'),
+                'grant_type' => config('conversaition.grant_type'),
+                'scope' => config('conversaition.scope'),
+                'client_id' => config('conversaition.client_id'),
+                'client_secret' => config('conversaition.client_secret'),
             ]);
         } catch (\Exception $exception) {
             Log::error('App/ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}', [

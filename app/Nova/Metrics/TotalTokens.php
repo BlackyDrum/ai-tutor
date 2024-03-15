@@ -10,7 +10,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 use Laravel\Nova\Nova;
 
-class UsedTokens extends Value
+class TotalTokens extends Value
 {
     /**
      * Calculate the value of the metric.
@@ -32,7 +32,7 @@ class UsedTokens extends Value
         return $this->result($result->total);
     }
 
-    public $name = 'Total Tokens';
+    public $width = '1/2';
 
     /**
      * Get the ranges available for the metric.

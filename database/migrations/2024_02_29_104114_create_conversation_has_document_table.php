@@ -19,6 +19,8 @@ return new class extends Migration
 
             $table->foreign('conversation_id')->references('id')->on('conversations')->onDelete('cascade');
             $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+
+            $table->unique(['conversation_id', 'file_id']);
         });
     }
 

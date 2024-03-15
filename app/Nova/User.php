@@ -69,8 +69,21 @@ class User extends Resource
                 ->rules('required', 'min:0')
                 ->min(0)
                 ->default(function() {
-                    return config('api.max_requests');
+                    return config('chat.max_requests');
                 }),
+
+            Number::make('Temperature')
+                ->default(0.7)
+                ->step(0.1)
+                ->min(0)
+                ->max(1)
+                ->rules('required', 'numeric','between:0,1'),
+
+            Number::make('Max Tokens')
+                ->default(1000)
+                ->min(0)
+                ->max(2048)
+                ->rules('required', 'integer', 'between:0,2048'),
 
             BelongsTo::make('Module', 'module', Module::class),
 
