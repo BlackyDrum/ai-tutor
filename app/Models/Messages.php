@@ -20,6 +20,9 @@ class Messages extends Model
 
     protected $hidden = [
         'id',
+        'user_message_with_context',
+        'prompt_tokens',
+        'completion_tokens',
         'conversation_id',
     ];
 

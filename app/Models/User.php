@@ -35,7 +35,9 @@ class User extends Authenticatable
         'id',
         'ref_id',
         'max_requests',
-        'module_id'
+        'module_id',
+        'temperature',
+        'max_tokens'
     ];
 
     /**
