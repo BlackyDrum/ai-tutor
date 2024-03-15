@@ -475,7 +475,7 @@ class ChromaController extends Controller
         $embeddingFunction = config('chromadb.embedding_function');
 
         if ($embeddingFunction == 'openai') {
-            return new OpenAIEmbeddingFunction(config('api.openai_api_key'));
+            return new OpenAIEmbeddingFunction(config('api.openai_api_key'), '', config('api.openai_embedding_model'));
         }
 
         return new JinaEmbeddingFunction(config('api.jina_api_key'), config('api.jina_embedding_model'));
