@@ -39,9 +39,6 @@ class DemoSeeder extends Seeder
 
         $agent = Agents::query()->create([
             'name' => 'DemoAgent_' . time(),
-            'context' => 'Testing GPT with Embeddings',
-            'first_message' => 'Hello.',
-            'response_shape' => 'Always provide code samples.',
             'instructions' => 'You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. always explain the code snippets you send and try to provide sources where to learn more on that subject. if in doubt, do not answer with code and ask to clarify the prompt!',
             'active' => true,
             'user_id' => $user->id,

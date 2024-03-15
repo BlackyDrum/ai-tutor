@@ -64,6 +64,8 @@ class Agent extends Resource
                 ->rules('required','string','max:255', Rule::unique('agents', 'name')->ignore($this->resource->id))
                 ->sortable(),
 
+            /*
+
             Text::make('Context')
                 ->rules('required','string','max:255')
                 ->hideFromIndex()
@@ -87,6 +89,8 @@ class Agent extends Resource
                 ->readonly(function() {
                     return (bool)$this->resource->id;
                 }),
+            
+            */
 
             Textarea::make('Instructions')
                 ->rules('required','string')
