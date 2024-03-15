@@ -168,7 +168,7 @@ class ChatController extends Controller
 
             $recentMessages[] = [
                 'role' => 'assistant',
-                'content' => $message->agent_message,
+                'content' => htmlspecialchars_decode($message->agent_message),
             ];
         }
 
