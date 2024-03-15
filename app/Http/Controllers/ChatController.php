@@ -156,7 +156,7 @@ class ChatController extends Controller
             ];
         }
 
-        $response = HomeController::sendMessage($agent->instructions, $promptWithContext, $recentMessages);
+        $response = HomeController::sendMessageToOpenAI($agent->instructions, $promptWithContext, $recentMessages);
 
         if ($response->failed()) {
             Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [

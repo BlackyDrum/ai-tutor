@@ -90,7 +90,7 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
-        $response = self::sendMessage($agent->instructions, $promptWithContext);
+        $response = self::sendMessageToOpenAI($agent->instructions, $promptWithContext);
 
         if ($response->failed()) {
             Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
@@ -118,7 +118,7 @@ class HomeController extends Controller
         return response()->json(['id' => $conversationID]);
     }
 
-    public static function sendMessage($systemMessage, $userMessage, $recentMessages = null)
+    public static function sendMessageToOpenAI($systemMessage, $userMessage, $recentMessages = null)
     {
         $token = config('chromadb.openai_api_key');
 
