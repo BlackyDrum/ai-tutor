@@ -21,13 +21,15 @@ class DemoSeeder extends Seeder
      */
     public function run(): void
     {
-        $module = Modules::query()->create([
-            'name' => 'Demo',
+        $module = Modules::firstOrCreate([
             'ref_id' => 1214757,
+        ], [
+            'name' => 'Demo',
         ]);
 
-        $user = User::query()->create([
+        $user = User::firstOrCreate([
             'name' => 'admin',
+        ], [
             'password' => '$2y$12$/NMljmWG.5fUFtpGtFihiu4N49eIoU.CYMRtH7YG6tCqaGTlXrsvm',
             'admin' => true,
             'max_requests' => 100,
@@ -37,8 +39,9 @@ class DemoSeeder extends Seeder
         ]);
 
 
-        $agent = Agents::query()->create([
-            'name' => 'DemoAgent_' . time(),
+        $agent = Agents::firstOrCreate([
+            'name' => 'DemoAgent',
+        ], [
             'instructions' => 'You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. always explain the code snippets you send and try to provide sources where to learn more on that subject. if in doubt, do not answer with code and ask to clarify the prompt!',
             'active' => true,
             'user_id' => $user->id,
