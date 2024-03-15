@@ -193,6 +193,21 @@ class ChromaController extends Controller
 
             $model->save();
         }
+        elseif (str_ends_with($filename, 'md')) {
+            $markdown = file_get_contents($pathToFile);
+
+            if (file_exists($pathToFile)) {
+                unlink($pathToFile);
+            }
+
+            $result = self::createEmbeddingFromMarkdown($markdown, $model);
+
+            $model->forceDelete();
+
+            $ids = $result['ids'];
+            $documents = $result['documents'];
+            $metadata = $result['metadata'];
+        }
         else {
             Log::warning('App: Attempted to process a file with the wrong format', [
                 'name' => $model->name
@@ -236,6 +251,68 @@ class ChromaController extends Controller
         ];
     }
 
+    private static function createAndStoreSlide($model, $title, $body, $index)
+    {
+        $embedding_id = Str::random(40) . '.slide';
+        $contentOnSlide = "Title: $title\n$body";
+
+        Files::query()->create([
+            'embedding_id' => $embedding_id,
+            'name' => $model->name . " Slide $index",
+            'content' => $contentOnSlide,
+            'size' => strlen($contentOnSlide),
+            'user_id' => Auth::id(),
+            'collection_id' => $model->collection_id,
+        ]);
+
+        $metadata = [
+            'filename' => $model->name . " Slide $index",
+            'size' => strlen($contentOnSlide),
+        ];
+
+        return [
+            'id' => $embedding_id,
+            'document' => $contentOnSlide,
+            'metadata' => $metadata,
+        ];
+    }
+
+    private static function createEmbeddingFromMarkdown($markdown, $model)
+    {
+        $markdown = preg_replace('/---/s', '', $markdown);
+
+        $slides = preg_split('/\n# /', $markdown, -1, PREG_SPLIT_NO_EMPTY);
+
+        $ids = [];
+        $documents = [];
+        $metadata = [];
+        $index = 1;
+
+        foreach ($slides as $key => $slide) {
+
+            // Since we're splitting by '\n# ', all slides except the first will not have '# ' in front. Add it manually.
+            if ($key > 0) {
+                $slide = "# " . $slide;
+            }
+
+            $slide = array_values(array_filter(explode("\n", $slide), fn($element) => !empty(trim($element))));
+
+            $result = self::createAndStoreSlide($model, substr($slide[0], 1), $slide[1], $index);
+
+            $ids[] = $result['id'];
+            $documents[] = $result['document'];
+            $metadata[] = $result['metadata'];
+
+            $index++;
+        }
+
+        return [
+            'ids' => $ids,
+            'documents' => $documents,
+            'metadata' => $metadata
+        ];
+    }
+
     private static function createEmbeddingFromJson($json, $model)
     {
         $ids = [];
@@ -243,30 +320,15 @@ class ChromaController extends Controller
         $metadata = [];
         $index = 1;
 
-        // Creating and storing artifacts/slides
         foreach ($json['content'] as $content) {
-            $embedding_id = Str::random(40) . '.slide';
+            $title = $content['title'];
+            $body = implode("\n", $content['content']);
 
-            $contentOnSlide = "Title: {$content['title']}\n";
-            foreach ($content['content'] as $item) {
-                $contentOnSlide .= "$item\n";
-            }
+            $result = self::createAndStoreSlide($model, $title, $body, $index);
 
-            $ids[] = $embedding_id;
-            $documents[] = $contentOnSlide;
-            $metadata[] = [
-                'filename' => $model->name . " Slide $index",
-                'size' => strlen($contentOnSlide),
-            ];
-
-            Files::query()->create([
-                'embedding_id' => $embedding_id,
-                'name' => $model->name . " Slide $index",
-                'content' => $contentOnSlide,
-                'size' => strlen($contentOnSlide),
-                'user_id' => Auth::id(),
-                'collection_id' => $model->collection_id,
-            ]);
+            $ids[] = $result['id'];
+            $documents[] = $result['document'];
+            $metadata[] = $result['metadata'];
 
             $index++;
         }
