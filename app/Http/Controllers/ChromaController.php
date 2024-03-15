@@ -36,11 +36,7 @@ class ChromaController extends Controller
             nResults: $maxResults
         );
 
-        $enhancedMessage = "Try to answer the following user message. Always try to answer in the language from the user's message.\n" .
-                           "You will also find the user messages from the past. If the current message doesn't make sense " .
-                           "always address the previous user messages\n" .
-                           "Below you will find some context documents (delimited by Hashtags) that may help. Ignore it " .
-                           "and use your own knowledge if the context seems irrelevant.\n\n";
+        $enhancedMessage = "Use the below context or the context from previous messages to answer the user's question.\n\n";
 
         $conversation = Conversations::query()
             ->where('url_id', '=', $conversation_id)
@@ -67,12 +63,12 @@ class ChromaController extends Controller
                     'file_id' => $file->id
                 ]);
 
-            $enhancedMessage .= "###################\n";
+            $enhancedMessage .= "\"\"\"\n";
             $enhancedMessage .= "Context Document:\n" . $file->content . "\n";
-            $enhancedMessage .= "###################\n";
+            $enhancedMessage .= "\"\"\"\n";
         }
 
-        $enhancedMessage .= "\nCurrent User Message:\n" . $message;
+        $enhancedMessage .= "\n\nUser Message:\n" . $message . "\n";
 
         return $enhancedMessage;
     }

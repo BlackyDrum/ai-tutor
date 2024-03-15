@@ -89,15 +89,11 @@ class Agent extends Resource
                 ->readonly(function() {
                     return (bool)$this->resource->id;
                 }),
-            
+
             */
 
             Textarea::make('Instructions')
-                ->rules('required','string')
-                ->hideWhenUpdating()
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
-                }),
+                ->rules('required','string'),
 
             BelongsTo::make('Module', 'module', Module::class)
                 ->readonly($this->resource->active && $this->resource->module_id),
