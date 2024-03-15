@@ -51,7 +51,7 @@ class ChatController extends Controller
 
     public function share(string $id) {
         $shared = SharedConversations::query()
-            ->where('shared_conversations.url_identifier', '=', $id)
+            ->where('shared_conversations.shared_url_id', '=', $id)
             ->first();
 
         if (!$shared) {
@@ -69,7 +69,7 @@ class ChatController extends Controller
         $messages = SharedConversations::query()
             ->join('conversations', 'conversations.id', '=', 'shared_conversations.conversation_id')
             ->join('messages', 'messages.conversation_id', '=', 'conversations.id')
-            ->where('shared_conversations.url_identifier', '=', $id)
+            ->where('shared_conversations.shared_url_id', '=', $id)
             ->whereRaw('messages.created_at < shared_conversations.created_at')
             ->select([
                 'messages.user_message',
@@ -215,16 +215,16 @@ class ChatController extends Controller
         }
 
         $sharedConversation = SharedConversations::query()->create([
-            'url_identifier' => Str::random(40),
+            'shared_url_id' => Str::random(40),
             'conversation_id' => $conversation->id,
         ]);
 
         Log::info('User with ID {user-id} shared a conversation', [
-            'url_identifier' => $sharedConversation->url_identifier,
+            'shared_url_id' => $sharedConversation->shared_url_id,
             'conversation_id' => $conversation->id,
         ]);
 
-        return response()->json(['url_identifier' => $sharedConversation->url_identifier]);
+        return response()->json(['shared_url_id' => $sharedConversation->shared_url_id]);
     }
 
     public function deleteShare(Request $request)

@@ -22,7 +22,7 @@ class SharedConversation extends Resource
      *
      * @var string
      */
-    public static $title = 'url_identifier';
+    public static $title = 'shared_url_id';
 
     /**
      * The columns that should be searched.
@@ -31,7 +31,7 @@ class SharedConversation extends Resource
      */
     public static $search = [
         'id',
-        'url_identifier'
+        'shared_url_id'
     ];
 
     /**
@@ -45,7 +45,7 @@ class SharedConversation extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('URL Identifier'),
+            Text::make('Shared URL ID', 'shared_url_id'),
 
             BelongsTo::make('Conversation')
         ];

@@ -195,7 +195,7 @@ const createShareLink = () => {
             conversation_id: selectedConversation.value.api_id,
         })
         .then((result) => {
-            const id = result.data.url_identifier;
+            const id = result.data.shared_url_id;
 
             navigator.clipboard
                 .writeText(
@@ -278,7 +278,7 @@ const isSendingRequest = computed(() => {
 });
 
 const getSharedConversationLink = computed(() => {
-    return `${window.location.protocol}//${window.location.host}/chat/share/${selectedConversation.value.url_identifier}`;
+    return `${window.location.protocol}//${window.location.host}/chat/share/${selectedConversation.value.shared_url_id}`;
 });
 </script>
 
@@ -379,7 +379,7 @@ const getSharedConversationLink = computed(() => {
         header="Share link to conversation"
         class="xl:max-w-[35%] max-w-[95%]"
     >
-        <p v-if="selectedConversation.url_identifier">
+        <p v-if="selectedConversation.shared_url_id">
             You have shared this chat
             <Link
                 :href="getSharedConversationLink"
@@ -406,7 +406,7 @@ const getSharedConversationLink = computed(() => {
                         : 'pi pi-link'
                 "
                 label="Share link"
-                :disabled="selectedConversation.url_identifier"
+                :disabled="selectedConversation.shared_url_id"
             />
         </div>
     </Dialog>

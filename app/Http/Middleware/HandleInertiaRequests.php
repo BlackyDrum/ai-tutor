@@ -41,7 +41,7 @@ class HandleInertiaRequests extends Middleware
                 ->orderBy('updated_at', 'desc')
                 ->select([
                     'conversations.*',
-                    'shared_conversations.url_identifier'
+                    'shared_conversations.shared_url_id'
                 ])
                 ->get();
         }
