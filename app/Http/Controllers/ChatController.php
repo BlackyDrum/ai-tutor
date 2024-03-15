@@ -158,22 +158,7 @@ class ChatController extends Controller
             ];
         }
 
-        $response = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
-            'model' => config('api.openai_language_model'),
-            'temperature' => (float)Auth::user()->temperature,
-            'max_tokens' => (int)Auth::user()->max_tokens,
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => $agent->instructions
-                ],
-                ...$recentMessages,
-                [
-                    'role' => 'user',
-                    'content' => $promptWithContext
-                ]
-            ]
-        ]);
+        $response = HomeController::sendMessage($agent->instructions, $promptWithContext, $recentMessages);
 
         if ($response->failed()) {
             Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [

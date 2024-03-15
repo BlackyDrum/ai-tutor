@@ -90,23 +90,7 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
-        $token = config('chromadb.openai_api_key');
-
-        $response = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
-            'model' => config('api.openai_language_model'),
-            'temperature' => (float)Auth::user()->temperature,
-            'max_tokens' => (int)Auth::user()->max_tokens,
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => $agent->instructions
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $promptWithContext
-                ]
-            ]
-        ]);
+        $response = self::sendMessage($agent->instructions, $promptWithContext);
 
         if ($response->failed()) {
             Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
@@ -132,6 +116,28 @@ class HomeController extends Controller
         ]);
 
         return response()->json(['id' => $conversationID]);
+    }
+
+    public static function sendMessage($systemMessage, $userMessage, $recentMessages = null)
+    {
+        $token = config('chromadb.openai_api_key');
+
+        $messages = [
+            ['role' => 'system', 'content' => $systemMessage]
+        ];
+
+        if ($recentMessages) {
+            $messages = array_merge($messages, $recentMessages);
+        }
+
+        $messages[] = ['role' => 'user', 'content' => $userMessage];
+
+        return Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
+            'model' => config('api.openai_language_model'),
+            'temperature' => (float)Auth::user()->temperature,
+            'max_tokens' => (int)Auth::user()->max_tokens,
+            'messages' => $messages
+        ]);
     }
 
     public function deleteConversation(Request $request)
