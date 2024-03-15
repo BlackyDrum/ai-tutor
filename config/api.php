@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'url' => env('API_URL'),
+    'url' => env('CONVERSAITION_URL'),
 
-    'username' => env('API_USERNAME'),
+    'username' => env('CONVERSAITION_USERNAME'),
 
-    'password' => env('API_PASSWORD'),
+    'password' => env('CONVERSAITION_PASSWORD'),
 
-    'scope' => env('API_SCOPE'),
+    'scope' => env('CONVERSAITION_SCOPE'),
 
-    'grant_type' => env('API_GRANT_TYPE'),
+    'grant_type' => env('CONVERSAITION_GRANT_TYPE'),
 
-    'client_id' => env('API_CLIENT_ID'),
+    'client_id' => env('CONVERSAITION_CLIENT_ID'),
 
-    'client_secret' => env('API_CLIENT_SECRET'),
+    'client_secret' => env('CONVERSAITION_CLIENT_SECRET'),
 
     'auth_key' => env('API_AUTH_KEY'),
 
