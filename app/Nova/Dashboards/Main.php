@@ -6,6 +6,7 @@ use App\Nova\Metrics\Collections;
 use App\Nova\Metrics\ConversationsPerDay;
 use App\Nova\Metrics\Embeddings;
 use App\Nova\Metrics\MessagesPerDay;
+use App\Nova\Metrics\Tokens;
 use App\Nova\Metrics\TotalCosts;
 use App\Nova\Metrics\TotalTokens;
 use App\Nova\Metrics\Users;
@@ -22,8 +23,8 @@ class Main extends Dashboard
     public function cards()
     {
         return [
-            new TotalTokens(),
             new TotalCosts(),
+            new Tokens(),
             new Users(),
             new ConversationsPerDay,
             new MessagesPerDay(),
