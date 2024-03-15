@@ -68,7 +68,7 @@ return [
         'app' => [
             'driver' => 'single',
             'path' => storage_path('logs/app.log'),
-            'level' => 'info',
+            'level' => env('LOG_LEVEL', 'info'),
             'replace_placeholders' => true,
         ],
 
