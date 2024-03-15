@@ -36,37 +36,8 @@ class DemoSeeder extends Seeder
             'module_id' => $module->id,
         ]);
 
-        $token = HomeController::getBearerToken();
-
-        if (is_array($token)) {
-            $user->delete();
-            $module->delete();
-            abort(500, $token['reason']);
-        }
-
-        try {
-            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-agent', [
-                'name' => 'DemoAgent_' . time(),
-                'context' => 'Testing GPT with Embeddings',
-                'first_message' => 'Hello.',
-                'response_shape' => 'Always provide code samples.',
-                'instructions' => 'You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. always explain the code snippets you send and try to provide sources where to learn more on that subject. if in doubt, do not answer with code and ask to clarify the prompt!',
-            ]);
-        } catch (\Exception $exception) {
-            $user->delete();
-            $module->delete();
-            abort(500, $exception->getMessage());
-        }
-
-
-        if ($response->failed()) {
-            $user->delete();
-            $module->delete();
-            abort(500, $response->reason());
-        }
 
         $agent = Agents::query()->create([
-            'api_id' => $response->json()['id'],
             'name' => 'DemoAgent_' . time(),
             'context' => 'Testing GPT with Embeddings',
             'first_message' => 'Hello.',
