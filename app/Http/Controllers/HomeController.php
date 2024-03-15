@@ -148,35 +148,6 @@ class HomeController extends Controller
             'conversation-id' => $request->input('conversation_id')
         ]);
 
-        $token = self::getBearerToken();
-
-        if (is_array($token)) {
-            return response()->json($token['reason'], $token['status']);
-        }
-
-        try {
-            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/delete-conversation', [
-                'conversation' => $request->input('conversation_id'),
-            ]);
-        } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to delete conversation. Reason: {message}', [
-                'message' => $exception->getMessage(),
-                'conversation-id' => $request->input('conversation_id'),
-            ]);
-
-            return response()->json('Internal Server Error', '500');
-        }
-
-        if ($response->failed()) {
-            Log::error('ConversAItion: Failed to delete conversation. Reason: {reason}. Status: {status}', [
-                'reason' => $response->reason(),
-                'status' => $response->status(),
-                'conversation-id' => $request->input('conversation_id'),
-            ]);
-
-            return response()->json($response->reason(), $response->status());
-        }
-
         Conversations::query()
             ->where('api_id', '=', $request->input('conversation_id'))
             ->delete();
