@@ -97,7 +97,7 @@ class HomeController extends Controller
         $token = config('chromadb.openai_api_key');
 
         $response2 = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-3.5-turbo',
+            'model' => config('api.openai_language_model'),
             'temperature' => (int)Auth::user()->temperature,
             'max_tokens' => (int)Auth::user()->max_tokens,
             'messages' => [

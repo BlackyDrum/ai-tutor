@@ -17,6 +17,8 @@ return [
 
     'auth_key' => env('API_AUTH_KEY'),
 
+    'openai_language_model' => env('OPENAI_LANGUAGE_MODEL'),
+
     'token_expiration' => 20, // Expiration time of auth tokens after creation (in seconds)
 
     'max_requests' => 100, // Maximum number of messages per day per user (default value)
