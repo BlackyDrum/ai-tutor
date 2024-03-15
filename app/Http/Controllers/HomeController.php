@@ -130,6 +130,9 @@ class HomeController extends Controller
             $messages = array_merge($messages, $recentMessages);
         }
 
+        $userMessage =
+            "Use the context from this or from previous messages to answer the user's question.\n\n" . $userMessage;
+
         $messages[] = ['role' => 'user', 'content' => $userMessage];
 
         return Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [

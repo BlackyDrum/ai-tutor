@@ -36,7 +36,7 @@ class ChromaController extends Controller
             nResults: $maxResults
         );
 
-        $enhancedMessage = "Use the below context or the context from previous messages to answer the user's question.\n\n";
+        $enhancedMessage = "";
 
         $conversation = Conversations::query()
             ->where('url_id', '=', $conversation_id)
@@ -63,7 +63,7 @@ class ChromaController extends Controller
                     'file_id' => $file->id
                 ]);
 
-            $enhancedMessage .= "\"\"\"\n";
+            $enhancedMessage .= "\n\"\"\"\n";
             $enhancedMessage .= "Context Document:\n" . $file->content . "\n";
             $enhancedMessage .= "\"\"\"\n";
         }
