@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agents;
 use App\Models\Collections;
+use App\Models\ConversationHasDocument;
 use App\Models\Conversations;
 use App\Models\Messages;
 use App\Models\Modules;
@@ -115,6 +116,8 @@ class ChatController extends Controller
             return response()->json('Internal Server Error.',500);
         }
 
+        $now = Carbon::now();
+
         // We use a transaction here in case the following API requests
         // fail, allowing us to rollback the rows created in
         // 'ChromaController::createPromptWithContext()'
@@ -140,7 +143,20 @@ class ChatController extends Controller
 
         $messages = Messages::query()
             ->where('conversation_id', '=', $conversation->id)
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->limit(config('chat.max_messages_included'))
+            ->get()
+            ->reverse();
+
+        // If older messages (and therefore embeddings/documents) leave the context window,
+        // we delete the entries from the 'conversation_has_documents' table, so that
+        // they can potentially be embedded in the context once again
+        if ($messages->isNotEmpty()) {
+            ConversationHasDocument::query()
+                ->where('conversation_id', '=', $conversation->id)
+                ->where('created_at', '<', $messages->first()->created_at)
+                ->delete();
+        }
 
         $recentMessages = [];
 
@@ -176,6 +192,7 @@ class ChatController extends Controller
             'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
             'completion_tokens' => $response->json()['usage']['completion_tokens'],
             'conversation_id' => $conversation->id,
+            'created_at' => $now
         ]);
 
         DB::commit();

@@ -9,6 +9,7 @@ use App\Models\Messages;
 use App\Models\Modules;
 use App\Models\User;
 use App\Rules\ValidateConversationOwner;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +78,13 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
+
+        // Capture the current timestamp here before adding entries to the 'conversation_has_document'
+        // table within 'createPromptWithContext'. This step is crucial for accurately identifying
+        // and deleting these entries once they fall outside the context window, ensuring they are
+        // correctly timed in relation to the conversation's flow.
+        $now = Carbon::now();
+
         try {
             $promptWithContext = ChromaController::createPromptWithContext($collection->name, $request->input('message'), $conversationID);
         } catch (\Exception $exception) {
@@ -108,7 +116,8 @@ class HomeController extends Controller
             'user_message_with_context' => $promptWithContext,
             'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
             'completion_tokens' => $response->json()['usage']['completion_tokens'],
-            'conversation_id' => $conversation->id
+            'conversation_id' => $conversation->id,
+            'created_at' => $now
         ]);
 
         Log::info('App: User with ID {user-id} created a new conversation', [

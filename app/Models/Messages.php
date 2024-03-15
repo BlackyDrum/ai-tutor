@@ -16,6 +16,8 @@ class Messages extends Model
         'prompt_tokens',
         'completion_tokens',
         'conversation_id',
+        'created_at',
+        'updated_at'
     ];
 
     protected $hidden = [
