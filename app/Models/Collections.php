@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\ChromaController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 class Collections extends Model
 {
@@ -28,5 +30,17 @@ class Collections extends Model
     public function module()
     {
         return $this->belongsTo(Modules::class, 'module_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updating(function (Model $model) {
+            $oldName = $model->getOriginal('name');
+            $newName = $model->name;
+
+            ChromaController::updateCollection($oldName, $newName);
+        });
     }
 }

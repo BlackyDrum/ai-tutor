@@ -364,6 +364,22 @@ class ChromaController extends Controller
         ];
     }
 
+    public static function updateCollection($oldName, $newName) {
+        try {
+            $collection = self::getCollection($oldName);
+
+            $collection->modify($newName, []);
+        } catch (\Exception $exception) {
+            Log::error('ChromaDB: Failed to update collection with name {name}. Reason: {reason}', [
+                'name' => $oldName,
+                'reason' => $exception->getMessage(),
+            ]);
+
+            // this is handled by nova
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
     public static function deleteCollection($model)
     {
         try {

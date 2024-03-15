@@ -55,12 +55,10 @@ class Collection extends Resource
             ID::make()->sortable(),
 
             Text::make('Name')
-                ->rules('required', 'string', 'unique:collections,name')
-                ->sortable()
-                ->hideWhenUpdating()
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
-                }),
+                ->rules('required', 'string')
+                ->creationRules('unique:collections,name')
+                ->updateRules('unique:collections,name,{{resourceId}}')
+                ->sortable(),
 
             Number::make('Max Results')
                 ->min(0)
