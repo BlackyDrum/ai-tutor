@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -33,12 +34,6 @@ class HomeController extends Controller
             'message' => $request->input('message')
         ]);
 
-        $token = self::getBearerToken();
-
-        if (is_array($token)) {
-            return response()->json($token['reason'], $token['status']);
-        }
-
         if (!Auth::user()->module_id) {
             Log::warning('App: User with ID {user-id} is not associated with a module');
 
@@ -46,14 +41,6 @@ class HomeController extends Controller
         }
 
         $module = Modules::query()->find(Auth::user()->module_id);
-
-        if (!$module) {
-            Log::error('App: Failed to find module with ID {module-id}', [
-                'module-id' => Auth::user()->module_id,
-            ]);
-
-            return response()->json('Internal Server Error',500);
-        }
 
         $agent = Agents::query()
             ->where('module_id', '=', $module->id)
@@ -68,49 +55,21 @@ class HomeController extends Controller
             return response()->json('Internal Server Error',500);
         }
 
-        try {
-            $response1 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/create-conversation', [
-                'agent_id' => $agent->api_id,
-                'creating_user' => config('api.username'),
-                'max_tokens' => $module->max_tokens,
-                'temperature' => $module->temperature,
-            ]);
-        } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to create conversation. Reason: {message}', [
-                'message' => $exception->getMessage(),
-            ]);
-
-            return response()->json('Internal Server Error', '500');
-        }
-
-        if ($response1->failed()) {
-            Log::error('ConversAItion: Failed to create conversation. Reason: {reason}. Status: {status}', [
-                'reason' => $response1->reason(),
-                'status' => $response1->status(),
-                'agent-id' => $agent->id,
-                'agent-api-id' => $agent->api_id,
-                'max-tokens' => $module->max_tokens,
-                'temperature' => $module->temperature,
-            ]);
-
-            return response()->json($response1->reason(), $response1->status());
-        }
-
-        $conversationID = $response1->json()['id'];
-
         $count = Conversations::query()
             ->where('user_id', '=', Auth::id())
             ->count();
 
         $conversation = Conversations::query()->create([
             'name' => 'Chat #' . ($count + 1),
-            'api_id' => $conversationID,
+            'api_id' => Str::random(40),
             'agent_id' => $agent->id,
             'creating_user' => config('api.username'),
             'max_tokens' => $module->max_tokens,
             'temperature' => $module->temperature,
             'user_id' => Auth::id(),
         ]);
+
+        $conversationID = $conversation->api_id;
 
         $collection = Collections::query()
             ->where('module_id', '=', $module->id)
@@ -138,23 +97,26 @@ class HomeController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
-        try {
-            $response2 = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
-                'conversation_id' => $conversationID,
-                'message' => $promptWithContext
-            ]);
-        } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to send message. Reason: {message}', [
-                'message' => $exception->getMessage(),
-                'conversation-id' => $conversationID,
-            ]);
+        $token = config('chromadb.openai_api_key');
 
-            $conversation->delete();
-            return response()->json('Internal Server Error', '500');
-        }
+        $response2 = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => (int)$module->temperature,
+            'max_tokens' => (int)$module->max_tokens,
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => $agent->instructions
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $promptWithContext
+                ]
+            ]
+        ]);
 
         if ($response2->failed()) {
-            Log::error('ConversAItion: Failed to send message. Reason: {reason}. Status: {status}', [
+            Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
                 'reason' => $response2->reason(),
                 'status' => $response2->status(),
                 'conversation-id' => $conversationID,
@@ -166,9 +128,9 @@ class HomeController extends Controller
 
         Messages::query()->create([
             'user_message' => $request->input('message'),
-            'agent_message' => htmlspecialchars($response2->json()['response']),
-            'prompt_tokens' => $response2->json()['prompt_tokens'],
-            'completion_tokens' => $response2->json()['completion_tokens'],
+            'agent_message' => htmlspecialchars($response2->json()['choices'][0]['message']['content']),
+            'prompt_tokens' => $response2->json()['usage']['prompt_tokens'],
+            'completion_tokens' => $response2->json()['usage']['completion_tokens'],
             'conversation_id' => $conversation->id
         ]);
 

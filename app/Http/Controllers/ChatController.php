@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agents;
 use App\Models\Collections;
 use App\Models\Conversations;
 use App\Models\Messages;
+use App\Models\Modules;
 use App\Models\SharedConversations;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
@@ -102,6 +104,13 @@ class ChatController extends Controller
             return response()->json('You are not associated with a module. Try to login again.',500);
         }
 
+        $module = Modules::query()->find(Auth::user()->module_id);
+
+        $agent = Agents::query()
+            ->where('module_id', '=', $module->id)
+            ->where('active', '=', true)
+            ->first();
+
         $collection = Collections::query()
             ->where('module_id', '=', Auth::user()->module_id)
             ->first();
@@ -133,30 +142,49 @@ class ChatController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
-        $token = HomeController::getBearerToken();
+        $conversation = Conversations::query()
+            ->where('api_id', '=', $request->input('conversation_id'))
+            ->first();
 
-        if (is_array($token)) {
-            DB::rollBack();
-            return response()->json($token['reason'], $token['status']);
+        $token = config('chromadb.openai_api_key');
+
+        $messages = Messages::query()
+            ->where('conversation_id', '=', $conversation->id)
+            ->get();
+
+        $recentMessages = [];
+
+        foreach ($messages as $message) {
+            $recentMessages[] = [
+                'role' => 'user',
+                'content' => $message->user_message,
+            ];
+
+            $recentMessages[] = [
+                'role' => 'assistant',
+                'content' => $message->agent_message,
+            ];
         }
 
-        try {
-            $response = Http::withToken($token)->withoutVerifying()->post(config('api.url') . '/agents/chat-agent', [
-                'conversation_id' => $request->input('conversation_id'),
-                'message' => $promptWithContext,
-            ]);
-        } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to send message. Reason: {message}', [
-                'message' => $exception->getMessage(),
-                'conversation-id' => $request->input('conversation_id'),
-            ]);
-
-            DB::rollBack();
-            return response()->json('Internal Server Error', '500');
-        }
+        $response = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => (int)$module->temperature,
+            'max_tokens' => (int)$module->max_tokens,
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => $agent->instructions
+                ],
+                ...$recentMessages,
+                [
+                    'role' => 'user',
+                    'content' => $promptWithContext
+                ]
+            ]
+        ]);
 
         if ($response->failed()) {
-            Log::error('ConversAItion: Failed to send message. Reason: {reason}. Status: {status}', [
+            Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
                 'reason' => $response->reason(),
                 'status' => $response->status(),
                 'conversation-id' => $request->input('conversation_id'),
@@ -166,15 +194,11 @@ class ChatController extends Controller
             return response()->json($response->reason(), $response->status());
         }
 
-        $conversation = Conversations::query()
-            ->where('api_id', '=', $request->input('conversation_id'))
-            ->first();
-
         $message = Messages::query()->create([
             'user_message' => $request->input('message'),
-            'agent_message' => htmlspecialchars($response->json()['response']),
-            'prompt_tokens' => $response->json()['prompt_tokens'],
-            'completion_tokens' => $response->json()['completion_tokens'],
+            'agent_message' => htmlspecialchars($response->json()['choices'][0]['message']['content']),
+            'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
+            'completion_tokens' => $response->json()['usage']['completion_tokens'],
             'conversation_id' => $conversation->id,
         ]);
 
