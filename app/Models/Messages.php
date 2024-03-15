@@ -12,6 +12,7 @@ class Messages extends Model
     protected $fillable = [
         'user_message',
         'agent_message',
+        'user_message_with_context',
         'prompt_tokens',
         'completion_tokens',
         'conversation_id',

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('user_message');
             $table->text('agent_message');
+            $table->text('user_message_with_context');
             $table->unsignedInteger('prompt_tokens');
             $table->unsignedInteger('completion_tokens');
             $table->unsignedBigInteger('conversation_id');

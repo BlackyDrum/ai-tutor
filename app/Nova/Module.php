@@ -62,19 +62,6 @@ class Module extends Resource
                 ->creationRules('unique:modules,ref_id')
                 ->updateRules('unique:modules,ref_id,{{resourceId}}'),
 
-            Number::make('Temperature')
-                ->default(0.7)
-                ->step(0.1)
-                ->min(0)
-                ->max(1)
-                ->rules('required', 'numeric','between:0,1'),
-
-            Number::make('Max Tokens')
-                ->default(1000)
-                ->min(0)
-                ->max(2048)
-                ->rules('required', 'integer', 'between:0,2048'),
-
             HasMany::make('User', 'user', User::class),
 
             HasMany::make('Agent', 'agent', Agent::class),

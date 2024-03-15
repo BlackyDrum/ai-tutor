@@ -63,8 +63,6 @@ class HomeController extends Controller
             'name' => 'Chat #' . ($count + 1),
             'api_id' => Str::random(40),
             'agent_id' => $agent->id,
-            'max_tokens' => $module->max_tokens,
-            'temperature' => $module->temperature,
             'user_id' => Auth::id(),
         ]);
 
@@ -100,8 +98,8 @@ class HomeController extends Controller
 
         $response2 = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
             'model' => 'gpt-3.5-turbo',
-            'temperature' => (int)$module->temperature,
-            'max_tokens' => (int)$module->max_tokens,
+            'temperature' => (int)Auth::user()->temperature,
+            'max_tokens' => (int)Auth::user()->max_tokens,
             'messages' => [
                 [
                     'role' => 'system',
@@ -128,6 +126,7 @@ class HomeController extends Controller
         Messages::query()->create([
             'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars($response2->json()['choices'][0]['message']['content']),
+            'user_message_with_context' => $promptWithContext,
             'prompt_tokens' => $response2->json()['usage']['prompt_tokens'],
             'completion_tokens' => $response2->json()['usage']['completion_tokens'],
             'conversation_id' => $conversation->id

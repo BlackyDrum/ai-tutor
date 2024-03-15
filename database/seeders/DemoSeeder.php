@@ -24,8 +24,6 @@ class DemoSeeder extends Seeder
         $module = Modules::query()->create([
             'name' => 'Demo',
             'ref_id' => 1214757,
-            'temperature' => 0.7,
-            'max_tokens' => 1000
         ]);
 
         $user = User::query()->create([
@@ -33,6 +31,8 @@ class DemoSeeder extends Seeder
             'password' => '$2y$12$/NMljmWG.5fUFtpGtFihiu4N49eIoU.CYMRtH7YG6tCqaGTlXrsvm',
             'admin' => true,
             'max_requests' => 100,
+            'temperature' => 0.7,
+            'max_tokens' => 1000,
             'module_id' => $module->id,
         ]);
 

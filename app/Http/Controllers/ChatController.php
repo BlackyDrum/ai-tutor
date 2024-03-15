@@ -157,7 +157,7 @@ class ChatController extends Controller
         foreach ($messages as $message) {
             $recentMessages[] = [
                 'role' => 'user',
-                'content' => $message->user_message,
+                'content' => $message->user_message_with_context,
             ];
 
             $recentMessages[] = [
@@ -168,8 +168,8 @@ class ChatController extends Controller
 
         $response = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
             'model' => 'gpt-3.5-turbo',
-            'temperature' => (int)$module->temperature,
-            'max_tokens' => (int)$module->max_tokens,
+            'temperature' => (int)Auth::user()->temperature,
+            'max_tokens' => (int)Auth::user()->max_tokens,
             'messages' => [
                 [
                     'role' => 'system',
@@ -197,6 +197,7 @@ class ChatController extends Controller
         $message = Messages::query()->create([
             'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars($response->json()['choices'][0]['message']['content']),
+            'user_message_with_context' => $promptWithContext,
             'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
             'completion_tokens' => $response->json()['usage']['completion_tokens'],
             'conversation_id' => $conversation->id,
