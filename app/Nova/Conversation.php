@@ -55,10 +55,6 @@ class Conversation extends Resource
 
             Text::make('api_id'),
 
-            Number::make('Max Tokens'),
-
-            Number::make('Temperature'),
-
             BelongsTo::make('Agent'),
 
             BelongsTo::make('Owner', 'user', User::class),
