@@ -5,7 +5,7 @@ return [
 
     'openai_language_model' => env('OPENAI_LANGUAGE_MODEL'),
 
-    'jina_language_model' => env('JINA_LANGUAGE_MODEL'),
+    'jina_embedding_model' => env('JINA_EMBEDDING_MODEL'),
 
     'jina_api_key' => env('JINA_API_KEY'),
 
