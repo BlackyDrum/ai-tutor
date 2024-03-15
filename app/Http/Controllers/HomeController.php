@@ -96,7 +96,7 @@ class HomeController extends Controller
 
         $token = config('chromadb.openai_api_key');
 
-        $response2 = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
+        $response = Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
             'model' => config('api.openai_language_model'),
             'temperature' => (int)Auth::user()->temperature,
             'max_tokens' => (int)Auth::user()->max_tokens,
@@ -112,23 +112,22 @@ class HomeController extends Controller
             ]
         ]);
 
-        if ($response2->failed()) {
+        if ($response->failed()) {
             Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
-                'reason' => $response2->reason(),
-                'status' => $response2->status(),
-                'conversation-id' => $conversationID,
+                'reason' => $response->reason(),
+                'status' => $response->status(),
             ]);
 
             $conversation->delete();
-            return response()->json($response2->reason(), $response2->status());
+            return response()->json($response->reason(), $response->status());
         }
 
         Messages::query()->create([
             'user_message' => $request->input('message'),
-            'agent_message' => htmlspecialchars($response2->json()['choices'][0]['message']['content']),
+            'agent_message' => htmlspecialchars($response->json()['choices'][0]['message']['content']),
             'user_message_with_context' => $promptWithContext,
-            'prompt_tokens' => $response2->json()['usage']['prompt_tokens'],
-            'completion_tokens' => $response2->json()['usage']['completion_tokens'],
+            'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
+            'completion_tokens' => $response->json()['usage']['completion_tokens'],
             'conversation_id' => $conversation->id
         ]);
 
