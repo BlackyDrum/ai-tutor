@@ -23,6 +23,8 @@ class User extends Authenticatable
         'terms_accepted_at',
         'max_requests',
         'module_id',
+        'temperature',
+        'max_tokens',
     ];
 
     /**

@@ -166,14 +166,19 @@ class AuthenticatedSessionController extends Controller
             return response()->json(['message' => 'Unprocessable Content'], 422);
         }
 
-        $user = User::updateOrCreate([
+        $user = User::firstOrCreate([
             'name' => $name,
         ], [
             'password' => Hash::make(Str::random(40)),
             'admin' => false,
             'module_id' => $module->id,
             'max_requests' => config('api.max_requests'),
+            'temperature' => config('api.temperature'),
+            'max_tokens' => config('api.max_tokens'),
         ]);
+
+        $user->module_id = $module->id;
+        $user->save();
 
         $authToken->delete();
 
