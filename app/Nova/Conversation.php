@@ -28,7 +28,7 @@ class Conversation extends Resource
      *
      * @var string
      */
-    public static $title = 'api_id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
