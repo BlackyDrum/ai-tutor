@@ -376,7 +376,7 @@ class ChromaController extends Controller
             ]);
 
             // this is handled by nova
-            throw new \Exception($exception->getMessage());
+            throw $exception;
         }
     }
 
