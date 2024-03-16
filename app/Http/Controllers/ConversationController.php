@@ -8,6 +8,7 @@ use App\Models\Conversations;
 use App\Models\Messages;
 use App\Models\Modules;
 use App\Models\SharedConversations;
+use App\Models\User;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -191,6 +192,7 @@ class ConversationController extends Controller
             'conversation_id' => $id,
             'conversation_name' => $name,
             'hasPrompt' => false,
+            'username' => null,
         ]);
     }
 
@@ -264,6 +266,7 @@ class ConversationController extends Controller
             'conversation_id' => $id,
             'conversation_name' => $conversation->name,
             'hasPrompt' => false,
+            'username' => User::query()->find($conversation->user_id)->name ?? null
         ]);
     }
 }

@@ -1,6 +1,6 @@
 <script setup>
 import { Head, usePage } from "@inertiajs/vue3";
-import { onBeforeMount, onMounted, ref } from "vue";
+import { computed, onBeforeMount, onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import showdown from "showdown";
@@ -84,8 +84,7 @@ const handleCreateConversation = (userMessage) => {
             conversation_id: page.props.conversation_id,
         })
         .then((result) => {
-            const lastMessage =
-                messages.value[messages.value.length - 1];
+            const lastMessage = messages.value[messages.value.length - 1];
 
             const { agent_message, created_at, id, updated_at } = result.data;
 
@@ -169,6 +168,18 @@ const processAgentMessage = (message) => {
 
     return element.innerHTML;
 };
+
+const userAvatarLabel = computed(() => {
+    if (page.props.hasPrompt) return undefined;
+    else if (page.props.username) return page.props.username[0].toUpperCase();
+    else return "A";
+});
+
+const displayName = computed(() => {
+    if (page.props.hasPrompt) return "You";
+    else if (page.props.username) return page.props.username;
+    else return "Anonymous";
+});
 </script>
 
 <template>
@@ -181,22 +192,14 @@ const processAgentMessage = (message) => {
                 ref="scrollContainer"
                 class="w-full flex flex-1 justify-center mb-6 px-4 overflow-y-auto"
             >
-                <div
-                    class="w-full max-w-[48rem]"
-                >
+                <div class="w-full max-w-[48rem]">
                     <div v-for="(message, index) in messages">
                         <div class="flex gap-3 mt-6">
                             <div>
-                                <UserAvatar :label="!$page.props.hasPrompt ? 'A' : undefined" />
+                                <UserAvatar :label="userAvatarLabel" />
                             </div>
                             <div class="flex flex-col min-w-0 w-full">
-                                <div class="font-bold">
-                                    {{
-                                        $page.props.hasPrompt
-                                            ? "You"
-                                            : "Anonymous"
-                                    }}
-                                </div>
+                                <div class="font-bold">{{ displayName }}</div>
                                 <div class="break-words whitespace-pre-wrap">
                                     {{ message.user_message }}
                                 </div>
