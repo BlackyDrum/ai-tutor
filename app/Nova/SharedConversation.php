@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class SharedConversation extends Resource
@@ -44,6 +45,9 @@ class SharedConversation extends Resource
     {
         return [
             ID::make()->sortable(),
+
+            URL::make('URL', fn() => "/share/{$this->shared_url_id}")
+                ->displayUsing(fn() => 'Visit'),
 
             Text::make('Shared URL ID', 'shared_url_id'),
 
