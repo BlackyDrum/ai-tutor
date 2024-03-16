@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="app-version" content="0.11.0">
+        <meta name="app-version" content="0.12.0">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
