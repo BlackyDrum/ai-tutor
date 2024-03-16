@@ -65,7 +65,7 @@ const deleteConversation = () => {
         acceptIcon: "pi pi-trash",
         accept: () => {
             window.axios
-                .delete("/chat/conversation", {
+                .delete("/conversation", {
                     data: {
                         conversation_id: selectedConversation.value.url_id,
                     },
@@ -134,7 +134,7 @@ const renameConversation = () => {
     isRenamingConversation.value = true;
 
     window.axios
-        .patch("/chat/conversation/name", {
+        .patch("/conversation/name", {
             name: selectedConversation.value.name,
             conversation_id: selectedConversation.value.url_id,
         })

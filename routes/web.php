@@ -33,14 +33,14 @@ Route::middleware(['auth'])->group(function() {
         Route::delete('/', [ChatController::class, 'deleteShare'])->name('delete');
     });
 
+    Route::prefix('conversation')->name('conversation.')->group(function() {
+        Route::delete('/', [HomeController::class, 'deleteConversation'])->name('delete');
+
+        Route::patch('/name', [HomeController::class, 'renameConversation'])->name('rename');
+    });
+
     Route::prefix('chat')->name('chat.')->group(function() {
         Route::get('/{id}', [ChatController::class, 'show'])->name('show');
-
-        Route::prefix('conversation')->name('conversation.')->group(function() {
-            Route::delete('/', [HomeController::class, 'deleteConversation'])->name('delete');
-
-            Route::patch('/name', [HomeController::class, 'renameConversation'])->name('rename');
-        });
 
         Route::middleware([ValidateRemainingRequests::class, CheckAcceptedTerms::class])->group(function() {
             Route::post('/create-conversation', [HomeController::class, 'createConversation'])->name('conversation.create');
