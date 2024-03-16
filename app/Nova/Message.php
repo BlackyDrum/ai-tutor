@@ -59,6 +59,8 @@ class Message extends Resource
 
             Textarea::make('Agent Message'),
 
+            Textarea::make('User Message with Context'),
+
             Number::make('Prompt Tokens')
                 ->hideWhenUpdating(),
 
