@@ -123,20 +123,6 @@ class ChatController extends Controller
         // 'ChromaController::createPromptWithContext()'
         DB::beginTransaction();
 
-        try {
-            $promptWithContext =
-                ChromaController::createPromptWithContext($collection->name, $request->input('message'), $request->input('conversation_id'));
-        } catch (\Exception $exception) {
-            Log::error('ChromaDB: Failed to create prompt with context. Reason: {message}', [
-                'message' => $exception->getMessage(),
-                'collection' => $collection->name,
-                'conversation-id' => $request->input('conversation_id')
-            ]);
-
-            DB::rollBack();
-            return response()->json(['message' => 'Internal Server Error'], 500);
-        }
-
         $conversation = Conversations::query()
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
@@ -170,6 +156,20 @@ class ChatController extends Controller
                 'role' => 'assistant',
                 'content' => htmlspecialchars_decode($message->agent_message),
             ];
+        }
+
+        try {
+            $promptWithContext =
+                ChromaController::createPromptWithContext($collection->name, $request->input('message'), $request->input('conversation_id'));
+        } catch (\Exception $exception) {
+            Log::error('ChromaDB: Failed to create prompt with context. Reason: {message}', [
+                'message' => $exception->getMessage(),
+                'collection' => $collection->name,
+                'conversation-id' => $request->input('conversation_id')
+            ]);
+
+            DB::rollBack();
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
         $response = HomeController::sendMessageToOpenAI($agent->instructions, $promptWithContext, $recentMessages);
