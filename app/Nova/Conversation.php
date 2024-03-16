@@ -12,6 +12,7 @@ use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Conversation extends Resource
@@ -52,6 +53,9 @@ class Conversation extends Resource
             ID::make()->sortable(),
 
             Text::make('Name'),
+
+            URL::make('Messages', fn() => "/peek/{$this->url_id}")
+                ->displayUsing(fn() => 'Show'),
 
             Text::make('url_id'),
 

@@ -243,4 +243,27 @@ class ConversationController extends Controller
             'conversation_id' => $conversation->id,
         ]);
     }
+
+    public function peek(string $id)
+    {
+        $conversation = Conversations::query()
+            ->where('url_id', $id)
+            ->first();
+
+        if (!$conversation) {
+            return redirect('/');
+        }
+
+        $messages = Messages::query()
+            ->where('conversation_id', '=', $conversation->id)
+            ->orderBy('created_at')
+            ->get();
+
+        return Inertia::render('Chat', [
+            'messages' => $messages,
+            'conversation_id' => $id,
+            'conversation_name' => $conversation->name,
+            'hasPrompt' => false,
+        ]);
+    }
 }

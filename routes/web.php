@@ -40,6 +40,8 @@ Route::middleware(['auth'])->group(function() {
         Route::patch('/name', [ConversationController::class, 'renameConversation'])->name('rename');
     });
 
+    Route::get('/peek/{id}', [ConversationController::class, 'peek'])->middleware(EnsureIsAdmin::class)->name('peek');
+
     Route::prefix('chat')->name('chat.')->group(function() {
         Route::get('/{id}', [ChatController::class, 'show'])->name('show');
 

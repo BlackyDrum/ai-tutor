@@ -46,8 +46,8 @@ class SharedConversation extends Resource
         return [
             ID::make()->sortable(),
 
-            URL::make('URL', fn() => "/share/{$this->shared_url_id}")
-                ->displayUsing(fn() => 'Visit'),
+            URL::make('Messages', fn() => "/share/{$this->shared_url_id}")
+                ->displayUsing(fn() => 'Show'),
 
             Text::make('Shared URL ID', 'shared_url_id'),
 
