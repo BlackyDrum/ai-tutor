@@ -4,11 +4,13 @@ namespace App\Nova;
 
 use App\Nova\Metrics\MessagesPerDay;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOneThrough;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Markdown;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -57,7 +59,18 @@ class Message extends Resource
 
             Textarea::make('User Message'),
 
-            Textarea::make('Agent Message'),
+            Markdown::make('Agent Message', function () {
+                return htmlspecialchars_decode($this->agent_message);
+            })->preset('github', new class implements Markdown\MarkdownPreset {
+
+                public function convert(string $content)
+                {
+                    return Str::of($content)->markdown([
+                        'html_input' => 'escape',
+                        'allow_unsafe_links' => false,
+                    ]);
+                }
+            }),
 
             Textarea::make('User Message with Context'),
 
