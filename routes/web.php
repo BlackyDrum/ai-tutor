@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ChromaController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Middleware\CheckAcceptedTerms;
 use App\Http\Middleware\EnsureIsAdmin;
@@ -26,24 +27,24 @@ Route::middleware(['auth'])->group(function() {
     Route::patch('/accept-terms', [HomeController::class, 'acceptTerms'])->name('terms');
 
     Route::prefix('share')->name('share.')->group(function() {
-        Route::get('/{id}', [ChatController::class, 'share'])->name('show');
+        Route::get('/{id}', [ConversationController::class, 'share'])->name('show');
 
-        Route::post('/', [ChatController::class, 'createShare'])->name('create');
+        Route::post('/', [ConversationController::class, 'createShare'])->name('create');
 
-        Route::delete('/', [ChatController::class, 'deleteShare'])->name('delete');
+        Route::delete('/', [ConversationController::class, 'deleteShare'])->name('delete');
     });
 
     Route::prefix('conversation')->name('conversation.')->group(function() {
-        Route::delete('/', [HomeController::class, 'deleteConversation'])->name('delete');
+        Route::delete('/', [ConversationController::class, 'deleteConversation'])->name('delete');
 
-        Route::patch('/name', [HomeController::class, 'renameConversation'])->name('rename');
+        Route::patch('/name', [ConversationController::class, 'renameConversation'])->name('rename');
     });
 
     Route::prefix('chat')->name('chat.')->group(function() {
         Route::get('/{id}', [ChatController::class, 'show'])->name('show');
 
         Route::middleware([ValidateRemainingRequests::class, CheckAcceptedTerms::class])->group(function() {
-            Route::post('/create-conversation', [HomeController::class, 'createConversation'])->name('conversation.create');
+            Route::post('/create-conversation', [ConversationController::class, 'createConversation'])->name('conversation.create');
 
             Route::post('/chat-agent', [ChatController::class, 'chat'])->name('agent.chat');
         });

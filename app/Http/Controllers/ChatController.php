@@ -48,42 +48,6 @@ class ChatController extends Controller
         ]);
     }
 
-    public function share(string $id) {
-        $shared = SharedConversations::query()
-            ->where('shared_conversations.shared_url_id', '=', $id)
-            ->first();
-
-        if (!$shared) {
-            Log::info('App: User with ID {user-id} tried to access an invalid, shared conversation', [
-                'shared-conversation-url-id' => $id
-            ]);
-
-            return redirect('/');
-        }
-
-        $name = Conversations::query()
-            ->find($shared->conversation_id)
-            ->name;
-
-        $messages = SharedConversations::query()
-            ->join('conversations', 'conversations.id', '=', 'shared_conversations.conversation_id')
-            ->join('messages', 'messages.conversation_id', '=', 'conversations.id')
-            ->where('shared_conversations.shared_url_id', '=', $id)
-            ->whereRaw('messages.created_at < shared_conversations.created_at')
-            ->select([
-                'messages.user_message',
-                'messages.agent_message',
-            ])
-            ->get();
-
-        return Inertia::render('Chat', [
-            'messages' => $messages,
-            'conversation_id' => $id,
-            'conversation_name' => $name,
-            'hasPrompt' => false,
-        ]);
-    }
-
     public function chat(Request $request)
     {
         $request->validate([
@@ -172,7 +136,7 @@ class ChatController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
-        $response = HomeController::sendMessageToOpenAI($agent->instructions, $promptWithContext, $recentMessages);
+        $response = self::sendMessageToOpenAI($agent->instructions, $promptWithContext, $recentMessages);
 
         if ($response->failed()) {
             Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
@@ -211,53 +175,28 @@ class ChatController extends Controller
         return response()->json($message);
     }
 
-    public function createShare(Request $request)
+    public static function sendMessageToOpenAI($systemMessage, $userMessage, $recentMessages = null)
     {
-        $request->validate([
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
-        ]);
+        $token = config('api.openai_api_key');
 
-        $conversation = Conversations::query()
-            ->where('url_id', '=', $request->input('conversation_id'))
-            ->first();
+        $messages = [
+            ['role' => 'system', 'content' => $systemMessage]
+        ];
 
-        $sharedConversation = SharedConversations::query()
-            ->where('conversation_id', '=', $conversation->id)
-            ->first();
-
-        if ($sharedConversation) {
-            return response()->json(['message' => 'You have shared this conversation already'], 409);
+        if ($recentMessages) {
+            $messages = array_merge($messages, $recentMessages);
         }
 
-        $sharedConversation = SharedConversations::query()->create([
-            'shared_url_id' => Str::random(40),
-            'conversation_id' => $conversation->id,
-        ]);
+        $userMessage =
+            "Use the context from this or from previous messages to answer the user's question.\n\n" . $userMessage;
 
-        Log::info('User with ID {user-id} shared a conversation', [
-            'shared_url_id' => $sharedConversation->shared_url_id,
-            'conversation_id' => $conversation->id,
-        ]);
+        $messages[] = ['role' => 'user', 'content' => $userMessage];
 
-        return response()->json(['shared_url_id' => $sharedConversation->shared_url_id]);
-    }
-
-    public function deleteShare(Request $request)
-    {
-        $request->validate([
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()]
-        ]);
-
-        $conversation = Conversations::query()
-            ->where('url_id', '=', $request->input('conversation_id'))
-            ->first();
-
-        SharedConversations::query()
-            ->where('conversation_id', '=', $conversation->id)
-            ->delete();
-
-        Log::info('User with ID {user-id} deleted a shared conversation', [
-            'conversation_id' => $conversation->id,
+        return Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
+            'model' => config('api.openai_language_model'),
+            'temperature' => (float)Auth::user()->temperature,
+            'max_tokens' => (int)Auth::user()->max_tokens,
+            'messages' => $messages
         ]);
     }
 
