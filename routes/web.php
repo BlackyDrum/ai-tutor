@@ -25,19 +25,21 @@ Route::middleware(['auth'])->group(function() {
 
     Route::patch('/accept-terms', [HomeController::class, 'acceptTerms'])->name('terms');
 
+    Route::prefix('share')->name('share.')->group(function() {
+        Route::get('/{id}', [ChatController::class, 'share'])->name('show');
+
+        Route::post('/', [ChatController::class, 'createShare'])->name('create');
+
+        Route::delete('/', [ChatController::class, 'deleteShare'])->name('delete');
+    });
+
     Route::prefix('chat')->name('chat.')->group(function() {
         Route::get('/{id}', [ChatController::class, 'show'])->name('show');
-
-        Route::get('/share/{id}', [ChatController::class, 'share'])->name('share');
 
         Route::prefix('conversation')->name('conversation.')->group(function() {
             Route::delete('/', [HomeController::class, 'deleteConversation'])->name('delete');
 
             Route::patch('/name', [HomeController::class, 'renameConversation'])->name('rename');
-
-            Route::post('/share/', [ChatController::class, 'createShare'])->name('share');
-
-            Route::delete('/share', [ChatController::class, 'deleteShare'])->name('share.delete');
         });
 
         Route::middleware([ValidateRemainingRequests::class, CheckAcceptedTerms::class])->group(function() {

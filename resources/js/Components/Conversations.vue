@@ -191,7 +191,7 @@ const createShareLink = () => {
     isSharingConversation.value = true;
 
     window.axios
-        .post("/chat/conversation/share", {
+        .post("/share", {
             conversation_id: selectedConversation.value.url_id,
         })
         .then((result) => {
@@ -202,7 +202,7 @@ const createShareLink = () => {
                     window.location.protocol +
                         "//" +
                         window.location.host +
-                        `/chat/share/${id}`,
+                        `/share/${id}`,
                 )
                 .then(() => {
                     toast.add({
@@ -241,7 +241,7 @@ const deleteSharedConversation = () => {
     isDeletingSharedConversation.value = true;
 
     window.axios
-        .delete("/chat/conversation/share", {
+        .delete("/share", {
             data: {
                 conversation_id: selectedConversation.value.url_id,
             },
@@ -278,7 +278,7 @@ const isSendingRequest = computed(() => {
 });
 
 const getSharedConversationLink = computed(() => {
-    return `${window.location.protocol}//${window.location.host}/chat/share/${selectedConversation.value.shared_url_id}`;
+    return `${window.location.protocol}//${window.location.host}/share/${selectedConversation.value.shared_url_id}`;
 });
 </script>
 
