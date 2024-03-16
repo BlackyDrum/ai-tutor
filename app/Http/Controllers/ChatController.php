@@ -118,9 +118,9 @@ class ChatController extends Controller
 
         $now = Carbon::now();
 
-        // We use a transaction here in case the following API requests
-        // fail, allowing us to rollback the rows created in
-        // 'ChromaController::createPromptWithContext()'
+        // We use a transaction here in case the following API request
+        // or ChromaDB item retrieval fails, allowing us to roll back
+        // the database changes
         DB::beginTransaction();
 
         $conversation = Conversations::query()
