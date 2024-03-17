@@ -10,10 +10,8 @@ use Laravel\Nova\Metrics\Partition;
 class gpt_4 extends Model
 {
     // Price in dollar per million tokens
-    public static float $input = 30.0;
-    public static float $output = 60.0;
-
-    public static string $modelName = 'gpt-4';
+    public float $input = 30.0;
+    public float $output = 60.0;
 
     public $name = 'gpt-4';
 

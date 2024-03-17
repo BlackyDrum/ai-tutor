@@ -25,25 +25,25 @@ class TotalCosts extends Value
     {
         $range = $request->input('range');
 
-        $modelClasses = [
-            'gpt-3.5-turbo-0125	' => gpt_3_5_turbo_0125::class,
-            'gpt-3.5-turbo-instruct' => gpt_3_5_turbo_1106::class,
-            'gpt-4' => gpt_4::class,
-            'gpt-4-32k' => gpt_4_32k::class,
-            'gpt-4-0125-preview' => gpt_4_0125_preview::class,
-            'gpt-4-1106-preview' => gpt_4_1106_preview::class,
-            'gpt-4-1106-vision-preview' => gpt_4_1106_vision_preview::class,
+        $models = [
+            'gpt-3.5-turbo-0125	' => new gpt_3_5_turbo_0125,
+            'gpt-3.5-turbo-instruct' => new gpt_3_5_turbo_1106,
+            'gpt-4' => new gpt_4,
+            'gpt-4-32k' => new gpt_4_32k,
+            'gpt-4-0125-preview' => new gpt_4_0125_preview,
+            'gpt-4-1106-preview' => new gpt_4_1106_preview,
+            'gpt-4-1106-vision-preview' => new gpt_4_1106_vision_preview,
         ];
 
         $totalPrice = 0;
 
-        foreach ($modelClasses as $class) {
-            $tokens = $this->getTokens($class::$modelName, $range);
+        foreach ($models as $model) {
+            $tokens = $this->getTokens($model->name, $range);
             $price = $this->calculatePrice(
                 $tokens['prompt_tokens'],
                 $tokens['completion_tokens'],
-                $class::$input,
-                $class::$output
+                $model->input,
+                $model->output
             );
             $totalPrice += $price;
         }

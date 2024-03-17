@@ -10,10 +10,8 @@ use Laravel\Nova\Metrics\Partition;
 abstract class Model extends Partition
 {
     // Price in dollar per million tokens
-    public static float $input;
-    public static float $output;
-
-    public static string $modelName;
+    public float $input;
+    public float $output;
 
     public function calculate(NovaRequest $request)
     {
