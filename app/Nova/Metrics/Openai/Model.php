@@ -13,6 +13,17 @@ abstract class Model extends Partition
     public float $input;
     public float $output;
 
+    public function __construct($component = null)
+    {
+        parent::__construct($component);
+
+        $tokens = TotalCosts::getTokens($this->name);
+
+        $costs = number_format(TotalCosts::calculatePrice($tokens['prompt_tokens'], $tokens['completion_tokens'], $this->input, $this->output), 2);
+
+        $this->helpText = "Total costs: \$$costs";
+    }
+
     public function calculate(NovaRequest $request)
     {
         $totalCompletionTokens = Messages::query()

@@ -38,8 +38,8 @@ class TotalCosts extends Value
         $totalPrice = 0;
 
         foreach ($models as $model) {
-            $tokens = $this->getTokens($model->name, $range);
-            $price = $this->calculatePrice(
+            $tokens = self::getTokens($model->name, $range);
+            $price = self::calculatePrice(
                 $tokens['prompt_tokens'],
                 $tokens['completion_tokens'],
                 $model->input,
@@ -53,12 +53,12 @@ class TotalCosts extends Value
         return $this->result($result)->prefix('$');
     }
 
-    public function calculatePrice($promptTokens, $completionTokens, $inputPrice, $outputPrice)
+    public static function calculatePrice($promptTokens, $completionTokens, $inputPrice, $outputPrice)
     {
         return (($promptTokens / 1e6) * $inputPrice) + (($completionTokens / 1e6) * $outputPrice);
     }
 
-    public function getTokens($modelName, $range)
+    public static function getTokens($modelName, $range = 'ALL')
     {
         $totalPromptTokens = Messages::query()
             ->where('openai_language_model', $modelName)
