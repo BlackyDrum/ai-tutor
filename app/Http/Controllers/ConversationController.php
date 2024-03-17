@@ -96,7 +96,7 @@ class ConversationController extends Controller
 
         if ($response->failed()) {
             Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
-                'reason' => $response->reason(),
+                'reason' => $response->json()['error']['message'],
                 'status' => $response->status(),
             ]);
 
@@ -117,7 +117,7 @@ class ConversationController extends Controller
 
         if ($response2->failed()) {
             Log::warning('OpenAI: Failed to create conversation title. Reason: {reason}. Status: {status}', [
-                'reason' => $response2->reason(),
+                'reason' => $response2->json()['error']['message'],
                 'status' => $response2->status(),
             ]);
             // The error is just logged to monitor and troubleshoot issues. However, the failure does not stop or return an error to the user.

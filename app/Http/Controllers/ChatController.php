@@ -141,7 +141,7 @@ class ChatController extends Controller
 
         if ($response->failed()) {
             Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
-                'reason' => $response->reason(),
+                'reason' => $response->json()['error']['message'],
                 'status' => $response->status(),
                 'conversation-id' => $request->input('conversation_id'),
             ]);
