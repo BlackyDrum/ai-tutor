@@ -59,8 +59,8 @@ class Message extends Resource
 
             Textarea::make('User Message'),
 
-            Markdown::make('Agent Message', function () {
-                return htmlspecialchars_decode($this->agent_message);
+            Markdown::make('Agent Message', 'agent_message', function () {
+                return htmlspecialchars_decode($this->resource->agent_message);
             })->preset('github', new class implements Markdown\MarkdownPreset {
 
                 public function convert(string $content)
