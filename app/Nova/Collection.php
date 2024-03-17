@@ -62,7 +62,8 @@ class Collection extends Resource
 
             Number::make('Max Results')
                 ->min(0)
-                ->rules('required', 'integer', 'gte:0'),
+                ->rules('required', 'integer', 'gte:0')
+                ->help('Specifies the maximum number of documents to embed per prompt'),
 
             BelongsTo::make('Module', 'module', Module::class)
                 ->nullable()

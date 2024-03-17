@@ -60,7 +60,8 @@ class Module extends Resource
                 ->sortable()
                 ->rules('required', 'integer')
                 ->creationRules('unique:modules,ref_id')
-                ->updateRules('unique:modules,ref_id,{{resourceId}}'),
+                ->updateRules('unique:modules,ref_id,{{resourceId}}')
+                ->help('Unique Ref ID for an ILIAS course'),
 
             HasMany::make('User', 'user', User::class),
 

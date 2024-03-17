@@ -96,7 +96,8 @@ class Agent extends Resource
                 ->rules('required','string'),
 
             BelongsTo::make('Module', 'module', Module::class)
-                ->readonly($this->resource->active && $this->resource->module_id),
+                ->readonly($this->resource->active && $this->resource->module_id)
+                ->nullable(),
 
             Boolean::make('Active')
                 ->readonly($this->resource->active && $this->resource->module_id),
