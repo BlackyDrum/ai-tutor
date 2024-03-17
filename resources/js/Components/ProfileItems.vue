@@ -3,6 +3,9 @@ import { Link, router } from "@inertiajs/vue3";
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
+import Tag from 'primevue/tag';
+
+
 const isCheckingStatus = ref(false);
 
 const toast = useToast();
@@ -28,10 +31,13 @@ const toast = useToast();
         <div
             class="flex gap-4 p-2 mb-1 cursor-not-allowed opacity-30 rounded-lg"
         >
-            <div>
+            <div class="self-center">
                 <span class="pi pi-cog"></span>
             </div>
-            <div>Settings</div>
+            <div class="flex w-full">
+                <div class="self-center">Settings</div>
+                <Tag class="ml-auto" value="Coming soon" severity="info"></Tag>
+            </div>
         </div>
         <hr class="border-0 h-px bg-gray-500/40" />
         <div
