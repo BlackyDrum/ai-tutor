@@ -9,6 +9,10 @@ use Laravel\Nova\Nova;
 
 class Users extends Value
 {
+    public $icon = 'user';
+
+    public $width = 'full';
+
     /**
      * Calculate the value of the metric.
      *
@@ -19,10 +23,6 @@ class Users extends Value
     {
         return $this->count($request, User::class);
     }
-
-    public $icon = 'user';
-
-    public $width = 'full';
 
     /**
      * Get the ranges available for the metric.

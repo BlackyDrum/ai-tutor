@@ -11,6 +11,10 @@ use Laravel\Nova\Nova;
 
 class TotalCosts extends Value
 {
+    public $width = 'full';
+
+    public $icon = 'currency-dollar';
+
     /**
      * Calculate the value of the metric.
      *
@@ -98,10 +102,6 @@ class TotalCosts extends Value
             'ALL' => Nova::__('All Time'),
         ];
     }
-
-    public $width = 'full';
-
-    public $icon = 'currency-dollar';
 
     /**
      * Determine the amount of time the results of the metric should be cached.

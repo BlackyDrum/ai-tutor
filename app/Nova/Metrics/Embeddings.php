@@ -9,6 +9,10 @@ use Laravel\Nova\Nova;
 
 class Embeddings extends Value
 {
+    public $width = '1/2';
+
+    public $icon = 'document-text';
+
     /**
      * Calculate the value of the metric.
      *
@@ -22,10 +26,6 @@ class Embeddings extends Value
             ->count()
         );
     }
-
-    public $width = '1/2';
-
-    public $icon = 'document-text';
 
     public function ranges()
     {

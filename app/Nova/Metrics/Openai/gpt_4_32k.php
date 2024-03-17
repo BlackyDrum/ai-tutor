@@ -15,6 +15,10 @@ class gpt_4_32k extends Partition
 
     public static string $modelName = 'gpt-4-32k';
 
+    public $name = 'gpt-4-32k';
+
+    public $width = '1/2';
+
     /**
      * Calculate the value of the metric.
      *
@@ -38,10 +42,6 @@ class gpt_4_32k extends Partition
             'Completion Tokens' => $totalCompletionTokens->total,
         ]);
     }
-
-    public $name = 'gpt-4-32k';
-
-    public $width = '1/2';
 
     /**
      * Determine the amount of time the results of the metric should be cached.

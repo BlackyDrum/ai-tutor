@@ -9,6 +9,10 @@ use Laravel\Nova\Nova;
 
 class ConversationsPerDay extends Trend
 {
+    public $width = '1/2';
+
+    public $name = 'Conversations';
+
     /**
      * Calculate the value of the metric.
      *
@@ -20,10 +24,6 @@ class ConversationsPerDay extends Trend
         return $this->countByDays($request, Conversations::class)
                     ->showSumValue();
     }
-
-    public $width = '1/2';
-
-    public $name = 'Conversations';
 
     /**
      * Get the ranges available for the metric.

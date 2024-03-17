@@ -8,6 +8,10 @@ use Laravel\Nova\Nova;
 
 class Collections extends Value
 {
+    public $width = '1/2';
+
+    public $icon = 'database';
+
     /**
      * Calculate the value of the metric.
      *
@@ -18,10 +22,6 @@ class Collections extends Value
     {
         return $this->count($request, \App\Models\Collections::class);
     }
-
-    public $width = '1/2';
-
-    public $icon = 'database';
 
     public function ranges()
     {

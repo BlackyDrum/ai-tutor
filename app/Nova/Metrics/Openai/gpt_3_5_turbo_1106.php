@@ -15,6 +15,10 @@ class gpt_3_5_turbo_1106 extends Partition
 
     public static string $modelName = 'gpt-3.5-turbo-1106';
 
+    public $name = 'gpt-3.5-turbo-1106';
+
+    public $width = '1/2';
+
     /**
      * Calculate the value of the metric.
      *
@@ -38,10 +42,6 @@ class gpt_3_5_turbo_1106 extends Partition
             'Completion Tokens' => $totalCompletionTokens->total,
         ]);
     }
-
-    public $name = 'gpt-3.5-turbo-1106';
-
-    public $width = '1/2';
 
     /**
      * Determine the amount of time the results of the metric should be cached.

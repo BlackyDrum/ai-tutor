@@ -15,6 +15,8 @@ class gpt_4_1106_vision_preview extends Partition
 
     public static string $modelName = 'gpt-4-1106-vision-preview';
 
+    public $name = 'gpt-4-1106-vision-preview';
+
     /**
      * Calculate the value of the metric.
      *
@@ -38,8 +40,6 @@ class gpt_4_1106_vision_preview extends Partition
             'Completion Tokens' => $totalCompletionTokens->total,
         ]);
     }
-
-    public $name = 'gpt-4-1106-vision-preview';
 
     /**
      * Determine the amount of time the results of the metric should be cached.
