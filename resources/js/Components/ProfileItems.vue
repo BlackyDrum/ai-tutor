@@ -1,15 +1,10 @@
 <script setup>
 import { Link, router } from "@inertiajs/vue3";
-import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
-import Tag from 'primevue/tag';
-
-
-const isCheckingStatus = ref(false);
+import Tag from "primevue/tag";
 
 const toast = useToast();
-
 </script>
 
 <template>
