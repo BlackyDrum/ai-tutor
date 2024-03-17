@@ -2,11 +2,6 @@
 
 namespace App\Nova\Metrics\Openai;
 
-use App\Models\Messages;
-use Illuminate\Support\Facades\DB;
-use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Metrics\Partition;
-
 class gpt_4_32k extends Model
 {
     // Price in dollar per million tokens
