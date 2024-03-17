@@ -104,6 +104,32 @@ class ConversationController extends Controller
             return response()->json($response->reason(), $response->status());
         }
 
+        $systemMessage = 'Create a concise and short title for the messages. Focus on identifying and condensing the primary elements or topics discussed.';
+
+        $agentResponse = [
+            [
+                'role' => 'assistant',
+                'content' => $response->json()['choices'][0]['message']['content']
+            ]
+        ];
+
+        $response2 = ChatController::sendMessageToOpenAI($systemMessage, $request->input('message'), $agentResponse, false);
+
+        if ($response2->failed()) {
+            Log::error('OpenAI: Failed to create conversation title. Reason: {reason}. Status: {status}', [
+                'reason' => $response2->reason(),
+                'status' => $response2->status(),
+            ]);
+            // The error is just logged to monitor and troubleshoot issues. However, the failure does not stop or return an error to the user.
+            // This decision is based on the assessment that this specific failure does not critically impact the overall functionality
+            // of the conversation feature.
+        }
+        else {
+            $conversation->update([
+                'name' => $response2->json()['choices'][0]['message']['content']
+            ]);
+        }
+
         Messages::query()->create([
             'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars($response->json()['choices'][0]['message']['content']),

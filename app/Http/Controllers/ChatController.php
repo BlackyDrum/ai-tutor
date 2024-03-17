@@ -176,7 +176,7 @@ class ChatController extends Controller
         return response()->json($message);
     }
 
-    public static function sendMessageToOpenAI($systemMessage, $userMessage, $recentMessages = null)
+    public static function sendMessageToOpenAI($systemMessage, $userMessage, $recentMessages = null, $usesContext = true)
     {
         $token = config('api.openai_api_key');
 
@@ -188,8 +188,10 @@ class ChatController extends Controller
             $messages = array_merge($messages, $recentMessages);
         }
 
-        $userMessage =
-            "Use the context from this or from previous messages to answer the user's question.\n\n" . $userMessage;
+        if ($usesContext) {
+            $userMessage =
+                "Use the context from this or from previous messages to answer the user's question.\n\n" . $userMessage;
+        }
 
         $messages[] = ['role' => 'user', 'content' => $userMessage];
 
