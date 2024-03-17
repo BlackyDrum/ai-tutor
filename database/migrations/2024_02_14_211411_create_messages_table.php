@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('user_message_with_context');
             $table->unsignedInteger('prompt_tokens');
             $table->unsignedInteger('completion_tokens');
+            $table->string('openai_language_model');
             $table->unsignedBigInteger('conversation_id');
             $table->timestamps();
 

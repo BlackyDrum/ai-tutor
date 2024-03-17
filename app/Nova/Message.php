@@ -12,6 +12,7 @@ use Laravel\Nova\Fields\HasOneThrough;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Markdown;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -75,10 +76,16 @@ class Message extends Resource
             Textarea::make('User Message with Context'),
 
             Number::make('Prompt Tokens')
-                ->hideWhenUpdating(),
+                ->hideWhenUpdating()
+                ->sortable(),
 
             Number::make('Completion Tokens')
-                ->hideWhenUpdating(),
+                ->hideWhenUpdating()
+                ->sortable(),
+
+            Text::make('OpenAI Language Model', 'openai_language_model')
+                ->hideWhenUpdating()
+                ->sortable(),
 
             DateTime::make('Created At')
                 ->hideWhenCreating()

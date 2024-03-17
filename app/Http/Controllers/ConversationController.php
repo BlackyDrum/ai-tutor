@@ -136,6 +136,7 @@ class ConversationController extends Controller
             'user_message_with_context' => $promptWithContext,
             'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
             'completion_tokens' => $response->json()['usage']['completion_tokens'],
+            'openai_language_model' => config('api.openai_language_model'),
             'conversation_id' => $conversation->id,
             'created_at' => $now
         ]);

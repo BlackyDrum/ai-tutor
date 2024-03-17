@@ -1,15 +1,20 @@
 <?php
 
-namespace App\Nova\Metrics;
+namespace App\Nova\Metrics\Openai;
 
 use App\Models\Messages;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Partition;
 
-class Tokens extends Partition
+class gpt_4_32k extends Partition
 {
+    // Price in dollar per million tokens
+    public static float $input = 60.0;
+    public static float $output = 120.0;
+
+    public static string $modelName = 'gpt-4-32k';
+
     /**
      * Calculate the value of the metric.
      *
@@ -19,10 +24,12 @@ class Tokens extends Partition
     public function calculate(NovaRequest $request)
     {
         $totalCompletionTokens = Messages::query()
+            ->where('openai_language_model', self::$modelName)
             ->select(DB::raw('SUM(completion_tokens) AS total'))
             ->first();
 
         $totalPromptTokens = Messages::query()
+            ->where('openai_language_model',self::$modelName)
             ->select(DB::raw('SUM(prompt_tokens) AS total'))
             ->first();
 
@@ -32,9 +39,9 @@ class Tokens extends Partition
         ]);
     }
 
-    public $width = '1/2';
+    public $name = 'gpt-4-32k';
 
-    public $helpText = 'Prompt tokens are the tokens that the user input into the model. This is the number of tokens in the prompt. Completion tokens are any tokens that the model generates in response to the input.';
+    public $width = '1/2';
 
     /**
      * Determine the amount of time the results of the metric should be cached.
@@ -53,6 +60,6 @@ class Tokens extends Partition
      */
     public function uriKey()
     {
-        return 'tokens';
+        return self::$modelName;
     }
 }

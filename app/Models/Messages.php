@@ -15,6 +15,7 @@ class Messages extends Model
         'user_message_with_context',
         'prompt_tokens',
         'completion_tokens',
+        'openai_language_model',
         'conversation_id',
         'created_at',
         'updated_at'

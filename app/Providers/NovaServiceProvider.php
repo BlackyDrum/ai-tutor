@@ -9,6 +9,8 @@ use App\Models\Messages;
 use App\Nova\Agent;
 use App\Nova\Collection;
 use App\Nova\Conversation;
+use App\Nova\Dashboards\Main;
+use App\Nova\Dashboards\OpenAI;
 use App\Nova\Embedding;
 use App\Nova\Message;
 use App\Nova\Module;
@@ -17,8 +19,6 @@ use App\Nova\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Nova\Badge;
-use Laravel\Nova\Dashboards\Main;
 use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
@@ -42,6 +42,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         Nova::mainMenu(function(Request $request) {
             return [
                 MenuSection::dashboard(Main::class)->icon('chart-bar'),
+
+                MenuSection::dashboard(OpenAI::class)->icon('chip'),
 
                 MenuSection::make('FH Aachen', [
                     MenuItem::resource(Module::class),
@@ -108,7 +110,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function dashboards()
     {
         return [
-            new \App\Nova\Dashboards\Main,
+            new Main,
+            new OpenAI,
         ];
     }
 
