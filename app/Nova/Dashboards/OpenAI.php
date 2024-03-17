@@ -34,6 +34,8 @@ class OpenAI extends Dashboard
         ];
     }
 
+    public $showRefreshButton = true;
+
     public function name()
     {
         return 'OpenAI';
