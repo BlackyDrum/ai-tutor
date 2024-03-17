@@ -304,6 +304,10 @@ const getSharedConversationLink = computed(() => {
                     selectedConversation &&
                     selectedConversation.url_id === conversation.url_id,
             }"
+            v-tooltip="{
+                value: conversation.name,
+                showDelay: 1000,
+            }"
         >
             <Link
                 :href="`/chat/${conversation.url_id}`"

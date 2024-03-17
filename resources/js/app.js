@@ -9,6 +9,7 @@ import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import PrimeVue from "primevue/config";
 import ToastService from "primevue/toastservice";
 import ConfirmationService from "primevue/confirmationservice";
+import Tooltip from 'primevue/tooltip';
 
 import "primevue/resources/themes/aura-light-green/theme.css";
 import "primeicons/primeicons.css";
@@ -32,6 +33,7 @@ createInertiaApp({
             .use(PrimeVue)
             .use(ToastService)
             .use(ConfirmationService)
+            .directive('tooltip', Tooltip)
             .mount(el);
     },
     progress: {
