@@ -75,13 +75,9 @@ class TotalCosts extends Value
                 ->where('created_at', '>=', Carbon::now()->subDays($range));
         }
 
-        $totalPromptTokens = $totalPromptTokens->first()->total;
-
-        $totalCompletionTokens = $totalCompletionTokens->first()->total;
-
         return [
-            'completion_tokens' => $totalCompletionTokens,
-            'prompt_tokens' => $totalPromptTokens,
+            'completion_tokens' => $totalCompletionTokens->first()->total,
+            'prompt_tokens' => $totalPromptTokens->first()->total,
         ];
     }
 
