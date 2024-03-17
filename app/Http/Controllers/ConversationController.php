@@ -116,7 +116,7 @@ class ConversationController extends Controller
         $response2 = ChatController::sendMessageToOpenAI($systemMessage, $request->input('message'), $agentResponse, false);
 
         if ($response2->failed()) {
-            Log::error('OpenAI: Failed to create conversation title. Reason: {reason}. Status: {status}', [
+            Log::warning('OpenAI: Failed to create conversation title. Reason: {reason}. Status: {status}', [
                 'reason' => $response2->reason(),
                 'status' => $response2->status(),
             ]);
