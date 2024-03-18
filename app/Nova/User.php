@@ -81,7 +81,7 @@ class User extends Resource
                 ->rules('required', 'numeric','between:0,1')
                 ->help('Specifies how deterministic the agent should answer. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic'),
 
-            Number::make('Max Tokens')
+            Number::make('Max Response Tokens')
                 ->default(1000)
                 ->min(0)
                 ->max(2048)

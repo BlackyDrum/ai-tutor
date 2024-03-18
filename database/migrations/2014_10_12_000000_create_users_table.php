@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('terms_accepted_at')->nullable();
             $table->unsignedInteger('max_requests');
             $table->float('temperature');
-            $table->unsignedBigInteger('max_tokens');
+            $table->unsignedBigInteger('max_response_tokens');
             $table->timestamps();
         });
     }

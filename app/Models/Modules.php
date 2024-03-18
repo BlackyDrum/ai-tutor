@@ -13,7 +13,6 @@ class Modules extends Model
         'name',
         'ref_id',
         'temperature',
-        'max_tokens',
     ];
 
     public function agent()

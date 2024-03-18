@@ -199,7 +199,7 @@ class ChatController extends Controller
         return Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
             'model' => config('api.openai_language_model'),
             'temperature' => (float)Auth::user()->temperature,
-            'max_tokens' => (int)Auth::user()->max_tokens,
+            'max_tokens' => (int)Auth::user()->max_response_tokens,
             'messages' => $messages
         ]);
     }

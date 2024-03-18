@@ -24,7 +24,7 @@ class User extends Authenticatable
         'max_requests',
         'module_id',
         'temperature',
-        'max_tokens',
+        'max_response_tokens',
     ];
 
     /**
@@ -39,7 +39,7 @@ class User extends Authenticatable
         'max_requests',
         'module_id',
         'temperature',
-        'max_tokens'
+        'max_response_tokens'
     ];
 
     /**

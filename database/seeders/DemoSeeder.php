@@ -34,7 +34,7 @@ class DemoSeeder extends Seeder
             'admin' => true,
             'max_requests' => 100,
             'temperature' => 0.7,
-            'max_tokens' => 1000,
+            'max_response_tokens' => 1000,
             'module_id' => $module->id,
         ]);
 

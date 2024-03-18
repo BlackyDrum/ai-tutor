@@ -174,7 +174,7 @@ class AuthenticatedSessionController extends Controller
             'module_id' => $module->id,
             'max_requests' => config('chat.max_requests'),
             'temperature' => config('chat.temperature'),
-            'max_tokens' => config('chat.max_tokens'),
+            'max_response_tokens' => config('chat.max_response_tokens'),
         ]);
 
         $user->module_id = $module->id;
