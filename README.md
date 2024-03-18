@@ -4,9 +4,8 @@
     <img src="https://github.com/BlackyDrum/chatbot/assets/111639941/94732ba5-7ee2-4a06-9843-5050953676fd" />
 </p>
 
-
 <p>
-    <img width="400" src="https://github.com/BlackyDrum/chatbot/assets/111639941/f49423e7-2e0d-4e26-93dd-3de2f9c5ef8e">
+    <img width="400" src="https://github.com/BlackyDrum/chatbot/assets/111639941/bf33ed0e-7334-463f-bb18-82e46c15be6d">
 </p>
 
 <p>
