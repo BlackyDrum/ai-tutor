@@ -54,12 +54,12 @@ $ php artisan serve
 12. **Visit http://localhost:8000 in your web browser to access the application.**
 
 ## Laravel Nova
-Our application leverages ``Laravel Nova`` for dashboard management functionalities. To use ``Nova``, a valid license key is required.
-1. **Provide License Key**: Insert your Nova license key into your ``.env`` file as follows:
+Our application leverages ``Laravel Nova`` for dashboard management functionalities. To use ``Nova``, a valid ``license key`` is required.
+1. **Provide License Key**: Insert your ``Nova license key`` into your ``.env`` file as follows:
 ```env
 NOVA_LICENSE_KEY=nova_license_key
 ```
-2. **Validate License Key**: After setting the license key, ensure its validity by executing the following command in your terminal:
+2. **Validate License Key**: After setting the ``license key``, ensure its validity by executing the following command in your terminal:
 ```
 $ php artisan nova:check-license
 ```
@@ -130,7 +130,7 @@ $ php artisan chroma:destroy
 
 ## OpenAI
 ### Setting up the API key
-Our application utilizes the ``OpenAI`` API to power conversation and chat functionalities. To enable these features, it is necessary to provide your ``OpenAI`` API key.
+Our application utilizes the ``OpenAI`` API to power the ``conversation`` functionalities. To enable these features, it is necessary to provide your ``OpenAI API key``.
 ```env
 OPENAI_API_KEY=openai_api_key
 ```
@@ -138,7 +138,7 @@ OPENAI_API_KEY=openai_api_key
 ### Registering New Language Models
 Our application supports a selection of default language models. If you need to integrate a new model, you can do so by adding a new model file in the specified directory within our application.<br><br>
 **How to add a new model**:
-1. **Create a New Model File**: Navigate to ``app/Nova/Metrics/Openai/Models`` and create a new PHP file for your model. Use a meaningful name that reflects the model's default name, for example, ``gpt_3_5_turbo_0125.php``.
+1. **Create a New Model File**: Navigate to ``app/Nova/Metrics/Openai/Models`` and create a new ``PHP`` file for your model. Use a name that reflects the model's default name, for example, ``gpt_3_5_turbo_0125.php``.
 2. **Define the Model Class**: Populate your new file with the following template, adjusting the properties to match the specifics of the new model you are registering:
 ```php
 <?php
@@ -160,7 +160,7 @@ class gpt_3_5_turbo_0125 extends Model
     public $width = '1/2';
 }
 ```
-Replace the ``class name``, properties (``$input``, ``$output``, ``$name``, and optionally ``$width``) with the appropriate values for the new model.
+Replace the ``class name`` and properties (``$input``, ``$output``, ``$name``, and optionally ``$width``) with the appropriate values for the new model.
 
 3. **Register the Model**: After you have created and set up your new model file, the next step is to register this model so it becomes available for use within our application. This is done by adding it to the list of models in the ``app/Nova/Dashboards/OpenAI.php`` file.
 ```php
@@ -174,18 +174,84 @@ public static function getAllModels()
 ```
 
 ### Selecting a Language Model
-To configure which language model is used for conversations within our application, you need to specify your choice in the ``.env`` file:
+To configure which language model is used for ``conversations`` within our application, you need to specify your choice in the ``.env`` file:
 ```env
 OPENAI_LANGUAGE_MODEL=gpt-3.5-turbo-0125
 ```
 
 ### Configuring Temperature and Max Response Tokens
-In our application, both the ``temperature`` and ``max_response_tokens`` settings can be customized for each user, allowing for personalized interaction experiences with the AI. These settings are adjustable directly in the database by modifying specific user columns.<br><br>
+In our application, both the ``temperature`` and ``max_response_tokens`` settings can be customized for each user, allowing for personalized interaction experiences with the ``AI``. These settings are adjustable directly in the database by modifying specific user columns.<br><br>
 **Temperature**
-- **What It Is**: The ``temperature`` setting controls the AI's creativity or randomness level when generating responses. A higher ``temperature`` results in more varied and creative responses, while a lower ``temperature`` produces more predictable and conservative outputs.
+- **What It Is**: The ``temperature`` setting controls the AI's ``creativity`` or ``randomness`` level when generating responses. A higher ``temperature`` results in more varied and creative responses, while a lower ``temperature`` produces more predictable and conservative outputs.
 - **How to Configure**: To adjust this setting for a user, locate the ``temperature`` column in the user's database record. This value should be a ``decimal`` between 0 and 1, where, for example, 0.5 represents a moderate level of creativity, and 0.9 indicates a high level of creativity.
 <br><br>
 
-**Max Tokens**
-- **What It Is**: The ``max_response_tokens`` setting determines the maximum length of the AI-generated response, measured in tokens. A token can be a word or part of a word, so this setting effectively controls how verbose or concise the responses will be.
-- **How to Configure**: To change this setting, find the ``max_response_tokens`` column in the user's database record. This value should be an ``integer``, reflecting the maximum number of tokens allowed in a response. For instance, setting this to 150 limits responses to approximately 150 tokens, which could equate to a few sentences or a short paragraph, depending on the language and content.
+**Max Response Tokens**
+- **What It Is**: The ``max_response_tokens`` setting determines the maximum length of the AI-generated ``response``, measured in ``tokens``. A ``token`` can be a word or part of a word, so this setting effectively controls how verbose or concise the responses will be.
+- **How to Configure**: To change this setting, find the ``max_response_tokens`` column in the user's database record. This value should be an ``integer``, reflecting the maximum number of ``tokens`` allowed in a response. For instance, setting this to 150 limits responses to approximately 150 ``tokens``, which could equate to a few sentences or a short paragraph, depending on the language and content.
+
+## Setting Up Application Usage
+To make the application fully operational, certain preliminary data entries are necessary.
+### Adding a Module to the Application
+``Modules`` in our application mirror the structure of courses at ``FH Aachen``. To add a module, you'll need to populate entries in the ``modules`` table with specific details:
+- **Name**: This is the ``name`` of the module or course as it is officially referred to at ``FH Aachen``.
+- **Ref ID**: Each course at ``FH Aachen`` has a unique ``reference ID``, often found in ``ILIAS``. This ID must be specified to create a clear linkage between the application module and its real-world counterpart in ``ILIAS``.
+
+### Adding a ChromaDB Collection
+In our application, each module should have an associated collection within ``ChromaDB``. Collections hold ``embeddings``, which are contextual representations of documents or data points. To ensure effective management and retrieval of these ``embeddings``, you'll need to create entries in the ``collections`` table for each module:
+- **Name**: The ``name`` of the collection. It's recommended to use a name that clearly identifies the associated module or the type of embeddings it contains.
+- **Max Results**: This value specifies the ``maximum number of documents`` that can be embedded for a single prompt within this collection.
+- **Module**: This field links the collection to its corresponding ``module``.
+
+### Adding embeddings to a Collection
+With the ``collections`` in place, the next step is to populate them with ``embeddings``. ``Embeddings`` are created by processing ``documents`` or ``files``, which can then be retrieved based on ``semantic similarity`` to queries. Our application supports uploading files in various formats including ``.pptx``, ``.json``, ``.md``, and ``.txt``. Special attention should be paid to ``.json`` and ``.md`` files, as they require a specific format to ensure successful embedding:
+- ``json``
+```json
+{
+  "success": true,
+  "content": {
+    "0": {
+      "0": "This is a title from the first slide",
+      "1": "This is a first paragraph on the first slide",
+      "2": "This is a second paragraph on the first slide",
+      "content": [
+        "This is a first paragraph on the first slide",
+        "This is a second paragraph on the first slide"
+      ],
+      "title": "This is a title from the first slide"
+    },
+    "1": {
+      "0": "This is a title from the second slide",
+      "1": "This is a first paragraph from the second slide",
+      "content": [
+        "This is a first paragraph from the second slide"
+      ],
+      "title": "This is a title from the second slide"
+    }
+  }
+}
+```
+- ``md``
+```md
+# This is a title from the first slide
+	
+This is a first paragraph on the first slide This is a second paragraph on the first slide
+---
+
+# This is a title from the second slide
+	
+This is a first paragraph from the second slide
+---
+```
+
+### Adding an agent to a Module
+In our application, ``agents`` are responsible for shaping how responses from ``OpenAI`` are structured and delivered for each ``module``. A ``module`` can have multiple ``agents``, but only one can be set as ``active`` at any given time. When adding an ``agent``, you'll need to provide information for the following columns:
+- **Name**: The ``identifier`` or ``title`` for the agent. Choose a name that clearly represents its role or the type of responses it's configured to provide.
+- **Instructions**: Detailed ``guidelines`` that the agent follows to generate responses. This should align with the module's content and objectives.
+- **Module**: The specific ``module`` this agent is associated with.
+- **Active**: A boolean value indicating whether the agent is currently active. Remember, within a module, only one agent can be active at any time.
+
+**Example Instructions**:
+```
+You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. Always explain the code snippets you send and try to provide sources where to learn more on that subject. If in doubt, do not answer with code and ask to clarify the prompt!
+```
