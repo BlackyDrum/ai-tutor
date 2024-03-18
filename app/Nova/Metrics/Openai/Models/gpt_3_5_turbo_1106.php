@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Nova\Metrics\Openai;
+namespace App\Nova\Metrics\Openai\Models;
+
+use App\Nova\Metrics\Openai\Model;
 
 class gpt_3_5_turbo_1106 extends Model
 {
