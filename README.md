@@ -1,18 +1,15 @@
-<img align="left" src="https://github.com/BlackyDrum/chatbot/assets/111639941/94732ba5-7ee2-4a06-9843-5050953676fd" />
+<p align="center"><img src="https://github.com/BlackyDrum/chatbot/assets/111639941/94732ba5-7ee2-4a06-9843-5050953676fd" /></p>
 
-<br>
 
-<img width="400" src="https://github.com/BlackyDrum/chatbot/assets/111639941/f49423e7-2e0d-4e26-93dd-3de2f9c5ef8e"><br />
 
-&nbsp;**Elevating Learning to New Heights**
+<p align="center">
+    <img width="400" src="https://github.com/BlackyDrum/chatbot/assets/111639941/f49423e7-2e0d-4e26-93dd-3de2f9c5ef8e">
+</p>
 
-<br>
+<p align="center"><b>Elevating Learning to New Heights</b></p>
 
-[![Generic badge](https://img.shields.io/badge/Status-Developing-orange.svg)](https://shields.io/) [![Generic badge](https://img.shields.io/badge/License-MIT-<COLOR>.svg)](https://shields.io/) 
- 
-<br />
+<p align="center"><img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white"> <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D"> <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white"> <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white"></p>
 
-<img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white"> <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D"> <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white"> <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white">
 
 ---
 
