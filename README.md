@@ -2,16 +2,17 @@
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Laravel Nova](#laravel-nova)
+  - [Setting up the Nova API Key](#setting-up-the-nova-api-key)
   - [Nova Access](#nova-access)
 - [ChromaDB](#chromadb)
   - [Connecting to ChromaDB](#connecting-to-chromadb)
   - [Authentication](#authentication)
-  - [Embedding function](#embedding-function)
+  - [Selecting an Embedding Function](#selecting-an-embedding-function)
   - [Validate ChromaDB Sync](#validate-chromadb-sync)
   - [Sync ChromaDB with relational database](#sync-chromadb-with-relational-database)
   - [Clearing ChromaDB Data](#clearing-chromadb-data)
 - [OpenAI](#openai)
-  - [Setting up the API key](#setting-up-the-api-key)
+  - [Setting up the OpenAI API key](#setting-up-the-openai-api-key)
   - [Registering New Language Models](#registering-new-language-models)
   - [Selecting a Language Model](#selecting-a-language-model)
   - [Configuring Temperature and Max Response Tokens](#configuring-temperature-and-max-response-tokens)
@@ -79,6 +80,7 @@ $ php artisan serve
 12. **Visit http://localhost:8000 in your web browser to access the application.**
 
 ## Laravel Nova
+### Setting up the Nova API Key
 Our application leverages ``Laravel Nova`` for dashboard management functionalities. To use ``Nova``, a valid ``license key`` is required.
 1. **Provide License Key**: Insert your ``Nova license key`` into your ``.env`` file as follows:
 ```env
@@ -116,7 +118,7 @@ CHROMA_SERVER_AUTH_CREDENTIALS="my-secret-token"
 ```
 Ensure that the secret token matches the one defined within the ``ChromaDB`` container environment. 
 
-### Embedding function
+### Selecting an Embedding Function
 Our app supports two embedding providers: ``OpenAI`` and ``Jina``. To select your preferred provider, set the following environment variable accordingly:
 ```env
 CHROMA_EMBEDDING_FUNCTION="jina" # jina or openai
@@ -154,7 +156,7 @@ $ php artisan chroma:destroy
 ```
 
 ## OpenAI
-### Setting up the API key
+### Setting up the OpenAI API key
 Our application utilizes the ``OpenAI`` API to power the ``conversation`` functionalities. To enable these features, it is necessary to provide your ``OpenAI API key``.
 ```env
 OPENAI_API_KEY=openai_api_key
