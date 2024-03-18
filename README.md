@@ -9,10 +9,10 @@
   - [Authentication](#authentication)
   - [Selecting an Embedding Function](#selecting-an-embedding-function)
   - [Validate ChromaDB Sync](#validate-chromadb-sync)
-  - [Sync ChromaDB with relational database](#sync-chromadb-with-relational-database)
+  - [Sync ChromaDB with Relational Ratabase](#sync-chromadb-with-relational-database)
   - [Clearing ChromaDB Data](#clearing-chromadb-data)
 - [OpenAI](#openai)
-  - [Setting up the OpenAI API key](#setting-up-the-openai-api-key)
+  - [Setting up the OpenAI API Key](#setting-up-the-openai-api-key)
   - [Registering New Language Models](#registering-new-language-models)
   - [Selecting a Language Model](#selecting-a-language-model)
   - [Configuring Temperature and Max Response Tokens](#configuring-temperature-and-max-response-tokens)
@@ -20,8 +20,8 @@
 - [Application Usage](#application-usage)
   - [Adding a Module to the Application](#adding-a-module-to-the-application)
   - [Adding a ChromaDB Collection](#adding-a-chromadb-collection)
-  - [Adding embeddings to a Collection](#adding-embeddings-to-a-collection)
-  - [Adding an agent to a Module](#adding-an-agent-to-a-module)
+  - [Adding Embeddings to a Collection](#adding-embeddings-to-a-collection)
+  - [Adding an Agent to a Module](#adding-an-agent-to-a-module)
 
 
 ## Requirements
@@ -142,7 +142,7 @@ $ php artisan chroma:check
 ```
 This command checks if ``ChromaDB's`` data is in sync with the relational database, helping maintain data integrity and consistency.
 
-### Sync ChromaDB with relational database
+### Sync ChromaDB with Relational Database
 Should the validation indicate a discrepancy, or if you wish to manually synchronize ``ChromaDB`` with the relational database, execute the command below:
 ```
 $ php artisan chroma:sync
@@ -156,7 +156,7 @@ $ php artisan chroma:destroy
 ```
 
 ## OpenAI
-### Setting up the OpenAI API key
+### Setting up the OpenAI API Key
 Our application utilizes the ``OpenAI`` API to power the ``conversation`` functionalities. To enable these features, it is necessary to provide your ``OpenAI API key``.
 ```env
 OPENAI_API_KEY=openai_api_key
@@ -236,7 +236,7 @@ In our application, each module should have an associated collection within ``Ch
 - **Max Results**: This value specifies the ``maximum number of documents`` that can be embedded for a single prompt within this collection.
 - **Module**: This field links the collection to its corresponding ``module``.
 
-### Adding embeddings to a Collection
+### Adding Embeddings to a Collection
 With the ``collections`` in place, the next step is to populate them with ``embeddings``. ``Embeddings`` are created by processing ``documents`` or ``files``, which can then be retrieved based on ``semantic similarity`` to queries. Our application supports uploading files in various formats including ``.pptx``, ``.json``, ``.md``, and ``.txt``. Special attention should be paid to ``.json`` and ``.md`` files, as they require a specific format to ensure successful embedding:
 - ``json``
 ```json
@@ -277,7 +277,7 @@ This is a first paragraph from the second slide
 ---
 ```
 
-### Adding an agent to a Module
+### Adding an Agent to a Module
 In our application, ``agents`` are responsible for shaping how responses from ``OpenAI`` are structured and delivered for each ``module``. A ``module`` can have multiple ``agents``, but only one can be set as ``active`` at any given time. When adding an ``agent``, you'll need to provide information for the following columns:
 - **Name**: The ``identifier`` or ``title`` for the agent. Choose a name that clearly represents its role or the type of responses it's configured to provide.
 - **Instructions**: Detailed ``guidelines`` that the agent follows to generate responses. This should align with the module's content and objectives.
