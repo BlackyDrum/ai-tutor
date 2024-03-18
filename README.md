@@ -1,3 +1,27 @@
+<img align="left" src="https://github.com/BlackyDrum/chatbot/assets/111639941/94732ba5-7ee2-4a06-9843-5050953676fd" />
+
+
+<img width="400" src="https://github.com/BlackyDrum/chatbot/assets/111639941/f49423e7-2e0d-4e26-93dd-3de2f9c5ef8e"><br />
+
+**Elevating Learning to New Heights**
+
+<br>
+
+[![Generic badge](https://img.shields.io/badge/Status-Developing-orange.svg)](https://shields.io/) [![Generic badge](https://img.shields.io/badge/License-MIT-<COLOR>.svg)](https://shields.io/) 
+ 
+<br />
+
+<img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white"> <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D"> <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white"> <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white">
+
+---
+
+## Description
+This project is the result of a bachelor thesis project at ``FH Aachen`` aimed at developing a ``chatbot/tutor`` to aid students in their studies. It leverages ``artificial intelligence`` to provide real-time ``assistance`` and ``tutoring``, making it easier for students to understand complex ``subjects``, prepare for ``exams``, and get instant help with their ``coursework``.
+<br><br>
+The chatbot is designed with the student's needs in mind, offering a range of functionalities from ``answering questions`` to ``providing explanations`` on various topics. Built on a robust technology stack, including ``Laravel`` and ``OpenAI's`` powerful language models, this project represents a significant step towards enhancing educational tools and resources available to students.
+
+
+
 ## Table of Contents
 - [Requirements](#requirements)
 - [Installation](#installation)
