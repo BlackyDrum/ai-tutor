@@ -1,5 +1,6 @@
 <img align="left" src="https://github.com/BlackyDrum/chatbot/assets/111639941/94732ba5-7ee2-4a06-9843-5050953676fd" />
 
+<br>
 
 <img width="400" src="https://github.com/BlackyDrum/chatbot/assets/111639941/f49423e7-2e0d-4e26-93dd-3de2f9c5ef8e"><br />
 
