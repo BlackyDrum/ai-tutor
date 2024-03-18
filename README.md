@@ -64,7 +64,7 @@ The chatbot is designed with the student's needs in mind, offering a range of fu
 **Follow these steps to get the Chatbot up and running on your local machine:**
 1. **Clone the repository:**
 ```
-$ git clone https://github.com/BlackyDrum/chatbot.git
+$ git clone https://github.com/BlackyDrum/ai-tutor.git
 ```
 2. **Navigate to the project directory:**
 ```
