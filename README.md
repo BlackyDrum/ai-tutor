@@ -1,3 +1,28 @@
+## Table of Contents
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Laravel Nova](#laravel-nova)
+  - [Nova Access](#nova-access)
+- [ChromaDB](#chromadb)
+  - [Connecting to ChromaDB](#connecting-to-chromadb)
+  - [Authentication](#authentication)
+  - [Embedding function](#embedding-function)
+  - [Validate ChromaDB Sync](#validate-chromadb-sync)
+  - [Sync ChromaDB with relational database](#sync-chromadb-with-relational-database)
+  - [Clearing ChromaDB Data](#clearing-chromadb-data)
+- [OpenAI](#openai)
+  - [Setting up the API key](#setting-up-the-api-key)
+  - [Registering New Language Models](#registering-new-language-models)
+  - [Selecting a Language Model](#selecting-a-language-model)
+  - [Configuring Temperature and Max Response Tokens](#configuring-temperature-and-max-response-tokens)
+  - [Understanding Pricing: Completion Tokens and Prompt Tokens](#understanding-pricing-completion-tokens-and-prompt-tokens)
+- [Setting Up Application Usage](#setting-up-application-usage)
+  - [Adding a Module to the Application](#adding-a-module-to-the-application)
+  - [Adding a ChromaDB Collection](#adding-a-chromadb-collection)
+  - [Adding embeddings to a Collection](#adding-embeddings-to-a-collection)
+  - [Adding an agent to a Module](#adding-an-agent-to-a-module)
+
+
 ## Requirements
 - **PHP: ^8.2**
 - **NPM: ^10.2**
