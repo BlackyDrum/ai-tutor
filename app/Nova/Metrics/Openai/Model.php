@@ -21,7 +21,7 @@ abstract class Model extends Partition
 
         $costs = number_format(TotalCosts::calculatePrice($tokens['prompt_tokens'], $tokens['completion_tokens'], $this->input, $this->output), 2);
 
-        $this->helpText = "Total costs: \$$costs";
+        $this->helpText = "Input: \${$this->input} / 1M tokens<br>Output: \${$this->output} / 1M tokens<br><b>Total costs: \$$costs</b>";
     }
 
     public function calculate(NovaRequest $request)
