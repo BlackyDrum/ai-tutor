@@ -33,11 +33,7 @@ class Module extends Resource
      *
      * @var array
      */
-    public static $search = [
-        'id',
-        'name',
-        'ref_id'
-    ];
+    public static $search = ['id', 'name', 'ref_id'];
 
     /**
      * Get the fields displayed by the resource.

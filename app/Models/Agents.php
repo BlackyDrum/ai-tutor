@@ -18,7 +18,7 @@ class Agents extends Model
         'instructions',
         'active',
         'user_id',
-        'module_id'
+        'module_id',
     ];
 
     public function user()

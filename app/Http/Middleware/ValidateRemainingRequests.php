@@ -29,14 +29,21 @@ class ValidateRemainingRequests
 
             $nextAvailableTime = Carbon::parse($firstMessageTime)->addDay();
 
-            $hoursUntilNextAvailableTime = (int)Carbon::now()->diffInHours($nextAvailableTime);
+            $hoursUntilNextAvailableTime = (int) Carbon::now()->diffInHours(
+                $nextAvailableTime
+            );
 
             Log::info('App: Daily limit reached for user with ID {user-id}', [
                 'next-available-message' => $nextAvailableTime,
                 'max_requests' => Auth::user()->max_requests,
             ]);
 
-            return response()->json(['message' => "Daily limit reached. Try again in $hoursUntilNextAvailableTime hours. ($nextAvailableTime)"], 429);
+            return response()->json(
+                [
+                    'message' => "Daily limit reached. Try again in $hoursUntilNextAvailableTime hours. ($nextAvailableTime)",
+                ],
+                429
+            );
         }
 
         return $next($request);

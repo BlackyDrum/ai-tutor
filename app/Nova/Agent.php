@@ -44,10 +44,7 @@ class Agent extends Resource
      *
      * @var array
      */
-    public static $search = [
-        'id',
-        'name'
-    ];
+    public static $search = ['id', 'name'];
 
     /**
      * Get the fields displayed by the resource.
@@ -61,7 +58,12 @@ class Agent extends Resource
             ID::make()->sortable(),
 
             Text::make('Name')
-                ->rules('required','string','max:255', Rule::unique('agents', 'name')->ignore($this->resource->id))
+                ->rules(
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('agents', 'name')->ignore($this->resource->id)
+                )
                 ->sortable(),
 
             /*
@@ -92,24 +94,28 @@ class Agent extends Resource
 
             */
 
-            Textarea::make('Instructions')
-                ->rules('required','string'),
+            Textarea::make('Instructions')->rules('required', 'string'),
 
             BelongsTo::make('Module', 'module', Module::class)
-                ->readonly($this->resource->active && $this->resource->module_id)
+                ->readonly(
+                    $this->resource->active && $this->resource->module_id
+                )
                 ->nullable(),
 
-            Boolean::make('Active')
-                ->readonly($this->resource->active && $this->resource->module_id),
+            Boolean::make('Active')->readonly(
+                $this->resource->active && $this->resource->module_id
+            ),
 
             BelongsTo::make('Creator', 'user', User::class)
                 ->default(Auth::id())
                 ->hideWhenUpdating()
                 ->hideWhenCreating()
                 ->sortable()
-                ->withMeta(['extraAttributes' => [
-                    'readonly' => true
-                ]]),
+                ->withMeta([
+                    'extraAttributes' => [
+                        'readonly' => true,
+                    ],
+                ]),
 
             DateTime::make('Created At')
                 ->hideWhenCreating()
@@ -210,8 +216,6 @@ class Agent extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [
-            ExportAsCsv::make()->nameable(),
-        ];
+        return [ExportAsCsv::make()->nameable()];
     }
 }

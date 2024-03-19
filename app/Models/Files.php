@@ -19,7 +19,7 @@ class Files extends Model
         'user_id',
         'collection_id',
         'embedding_id',
-        'content'
+        'content',
     ];
 
     public function collection()
@@ -31,5 +31,4 @@ class Files extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 }

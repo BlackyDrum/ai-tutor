@@ -9,11 +9,7 @@ class Modules extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'ref_id',
-        'temperature',
-    ];
+    protected $fillable = ['name', 'ref_id', 'temperature'];
 
     public function agent()
     {

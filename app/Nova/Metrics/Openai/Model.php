@@ -19,7 +19,15 @@ abstract class Model extends Partition
 
         $tokens = TotalCosts::getTokens($this->name);
 
-        $costs = number_format(TotalCosts::calculatePrice($tokens['prompt_tokens'], $tokens['completion_tokens'], $this->input, $this->output), 2);
+        $costs = number_format(
+            TotalCosts::calculatePrice(
+                $tokens['prompt_tokens'],
+                $tokens['completion_tokens'],
+                $this->input,
+                $this->output
+            ),
+            2
+        );
 
         $this->helpText = "Input: \${$this->input} / 1M tokens<br>Output: \${$this->output} / 1M tokens<br><b>Total costs: \$$costs</b>";
     }

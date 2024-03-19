@@ -22,7 +22,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Delete all expired auth tokens
-Schedule::call(function() {
+Schedule::call(function () {
     $expireAfter = config('api.token_expiration');
 
     AuthTokens::query()

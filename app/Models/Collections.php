@@ -12,15 +12,9 @@ class Collections extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'max_results',
-        'module_id'
-    ];
+    protected $fillable = ['name', 'max_results', 'module_id'];
 
-    protected $hidden = [
-        'deleted_at',
-    ];
+    protected $hidden = ['deleted_at'];
 
     public function embedding()
     {

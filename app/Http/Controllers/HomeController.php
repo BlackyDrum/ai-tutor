@@ -33,19 +33,24 @@ class HomeController extends Controller
         // throw exceptions on client or server errors (400 and 500 level responses from servers). Instead,
         // we have to determine if the request failed using $response->failed().
         try {
-            $response = Http::withoutVerifying()->asForm()->post(config('conversaition.url') . '/token', [
-                'username' => config('conversaition.username'),
-                'password' => config('conversaition.password'),
-                'grant_type' => config('conversaition.grant_type'),
-                'scope' => config('conversaition.scope'),
-                'client_id' => config('conversaition.client_id'),
-                'client_secret' => config('conversaition.client_secret'),
-            ]);
+            $response = Http::withoutVerifying()
+                ->asForm()
+                ->post(config('conversaition.url') . '/token', [
+                    'username' => config('conversaition.username'),
+                    'password' => config('conversaition.password'),
+                    'grant_type' => config('conversaition.grant_type'),
+                    'scope' => config('conversaition.scope'),
+                    'client_id' => config('conversaition.client_id'),
+                    'client_secret' => config('conversaition.client_secret'),
+                ]);
         } catch (\Exception $exception) {
-            Log::error('App/ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}', [
-                'reason' => $exception->getMessage(),
-                'status' => 500,
-            ]);
+            Log::error(
+                'App/ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}',
+                [
+                    'reason' => $exception->getMessage(),
+                    'status' => 500,
+                ]
+            );
 
             return [
                 'reason' => 'Internal Server Error',
@@ -54,10 +59,13 @@ class HomeController extends Controller
         }
 
         if ($response->failed()) {
-            Log::error('ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}', [
-                'reason' => $response->reason(),
-                'status' => $response->status(),
-            ]);
+            Log::error(
+                'ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}',
+                [
+                    'reason' => $response->reason(),
+                    'status' => $response->status(),
+                ]
+            );
 
             return [
                 'reason' => $response->reason(),
@@ -71,12 +79,14 @@ class HomeController extends Controller
     public function acceptTerms(Request $request)
     {
         $request->validate([
-            'terms_accepted' => 'required|accepted'
+            'terms_accepted' => 'required|accepted',
         ]);
 
-        User::query()->find(Auth::id())->update([
-            'terms_accepted_at' => date('Y-m-d H:i:s'),
-        ]);
+        User::query()
+            ->find(Auth::id())
+            ->update([
+                'terms_accepted_at' => date('Y-m-d H:i:s'),
+            ]);
 
         Log::info('App: User with ID {user-id} accepted the terms');
 

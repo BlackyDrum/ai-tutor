@@ -36,10 +36,7 @@ class Conversation extends Resource
      *
      * @var array
      */
-    public static $search = [
-        'id',
-        'url_id'
-    ];
+    public static $search = ['id', 'url_id'];
 
     /**
      * Get the fields displayed by the resource.
@@ -54,8 +51,10 @@ class Conversation extends Resource
 
             Text::make('Name'),
 
-            URL::make('Messages', fn() => "/peek/{$this->url_id}")
-                ->displayUsing(fn() => 'Show'),
+            URL::make(
+                'Messages',
+                fn() => "/peek/{$this->url_id}"
+            )->displayUsing(fn() => 'Show'),
 
             Text::make('url_id'),
 
@@ -97,9 +96,7 @@ class Conversation extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [
-            new ConversationsPerDay()
-        ];
+        return [new ConversationsPerDay()];
     }
 
     /**
@@ -132,8 +129,6 @@ class Conversation extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [
-            ExportAsCsv::make()->nameable(),
-        ];
+        return [ExportAsCsv::make()->nameable()];
     }
 }

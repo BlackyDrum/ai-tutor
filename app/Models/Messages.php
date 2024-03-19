@@ -18,7 +18,7 @@ class Messages extends Model
         'openai_language_model',
         'conversation_id',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     protected $hidden = [

@@ -39,7 +39,7 @@ class Users extends Value
             'MTD' => Nova::__('Month To Date'),
             'QTD' => Nova::__('Quarter To Date'),
             'YTD' => Nova::__('Year To Date'),
-            'ALL' => Nova::__('All Time')
+            'ALL' => Nova::__('All Time'),
         ];
     }
 

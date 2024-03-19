@@ -42,12 +42,7 @@ class Embedding extends Resource
      *
      * @var array
      */
-    public static $search = [
-        'id',
-        'name',
-        'embedding_id',
-        'content'
-    ];
+    public static $search = ['id', 'name', 'embedding_id', 'content'];
 
     /**
      * Get the fields displayed by the resource.
@@ -60,9 +55,7 @@ class Embedding extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('Embedding ID')
-                ->hideWhenCreating()
-                ->hideWhenUpdating(),
+            Text::make('Embedding ID')->hideWhenCreating()->hideWhenUpdating(),
 
             Text::make('Name')
                 ->hideWhenCreating()
@@ -78,15 +71,22 @@ class Embedding extends Resource
                 ->disableDownload()
                 ->hideFromDetail()
                 ->hideWhenUpdating()
-                ->rules('required', 'extensions:txt,pptx,json,md', function ($attribute, $value, $fail) {
-                    if (str_contains($value->getClientOriginalName(), '/') || str_contains($value->getClientOriginalName(), '\\')) {
+                ->rules('required', 'extensions:txt,pptx,json,md', function (
+                    $attribute,
+                    $value,
+                    $fail
+                ) {
+                    if (
+                        str_contains($value->getClientOriginalName(), '/') ||
+                        str_contains($value->getClientOriginalName(), '\\')
+                    ) {
                         $fail('The filename cannot contain the "/" character.');
                     }
                 })
                 ->storeOriginalName('name')
                 ->storeSize('size')
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
+                ->readonly(function () {
+                    return (bool) $this->resource->id;
                 })
                 ->disk('local'),
 
@@ -99,8 +99,8 @@ class Embedding extends Resource
                 ->sortable()
                 ->withoutTrashed()
                 ->hideWhenUpdating()
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
+                ->readonly(function () {
+                    return (bool) $this->resource->id;
                 }),
 
             BelongsTo::make('Creator', 'user', User::class)
@@ -188,9 +188,7 @@ class Embedding extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [
-            new Embeddings()
-        ];
+        return [new Embeddings()];
     }
 
     /**
@@ -223,9 +221,6 @@ class Embedding extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [
-            ExportAsCsv::make()->nameable(),
-            new ValidateChromaDBSync()
-        ];
+        return [ExportAsCsv::make()->nameable(), new ValidateChromaDBSync()];
     }
 }

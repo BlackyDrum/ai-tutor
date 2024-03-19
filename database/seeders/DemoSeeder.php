@@ -21,40 +21,52 @@ class DemoSeeder extends Seeder
      */
     public function run(): void
     {
-        $module = Modules::firstOrCreate([
-            'ref_id' => 1214757,
-        ], [
-            'name' => 'Demo',
-        ]);
+        $module = Modules::firstOrCreate(
+            [
+                'ref_id' => 1214757,
+            ],
+            [
+                'name' => 'Demo',
+            ]
+        );
 
-        $user = User::firstOrCreate([
-            'name' => 'admin',
-        ], [
-            'password' => '$2y$12$/NMljmWG.5fUFtpGtFihiu4N49eIoU.CYMRtH7YG6tCqaGTlXrsvm',
-            'admin' => true,
-            'max_requests' => 100,
-            'temperature' => 0.7,
-            'max_response_tokens' => 1000,
-            'module_id' => $module->id,
-        ]);
+        $user = User::firstOrCreate(
+            [
+                'name' => 'admin',
+            ],
+            [
+                'password' =>
+                    '$2y$12$/NMljmWG.5fUFtpGtFihiu4N49eIoU.CYMRtH7YG6tCqaGTlXrsvm',
+                'admin' => true,
+                'max_requests' => 100,
+                'temperature' => 0.7,
+                'max_response_tokens' => 1000,
+                'module_id' => $module->id,
+            ]
+        );
 
+        $agent = Agents::firstOrCreate(
+            [
+                'name' => 'DemoAgent',
+            ],
+            [
+                'instructions' =>
+                    'You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. always explain the code snippets you send and try to provide sources where to learn more on that subject. if in doubt, do not answer with code and ask to clarify the prompt!',
+                'active' => true,
+                'user_id' => $user->id,
+                'module_id' => $module->id,
+            ]
+        );
 
-        $agent = Agents::firstOrCreate([
-            'name' => 'DemoAgent',
-        ], [
-            'instructions' => 'You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. always explain the code snippets you send and try to provide sources where to learn more on that subject. if in doubt, do not answer with code and ask to clarify the prompt!',
-            'active' => true,
-            'user_id' => $user->id,
-            'module_id' => $module->id,
-        ]);
-
-        $collection = Collections::query()
-            ->firstOrCreate([
-            'name' => 'DemoCollection'
-            ], [
+        $collection = Collections::query()->firstOrCreate(
+            [
+                'name' => 'DemoCollection',
+            ],
+            [
                 'max_results' => 5,
                 'module_id' => $module->id,
-            ]);
+            ]
+        );
 
         if ($collection->wasRecentlyCreated) {
             $result = ChromaController::createCollection($collection->name);

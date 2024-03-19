@@ -26,7 +26,7 @@ class Collections extends Value
     public function ranges()
     {
         return [
-            'ALL' => 'All Time'
+            'ALL' => 'All Time',
         ];
     }
 

@@ -18,7 +18,9 @@ class EnsureIsAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check() || !$request->user()->admin) {
-            Log::warning('App: User with ID {user-id} tried to access the admin area');
+            Log::warning(
+                'App: User with ID {user-id} tried to access the admin area'
+            );
 
             return redirect('/');
         }

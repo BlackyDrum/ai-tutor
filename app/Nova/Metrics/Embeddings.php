@@ -21,16 +21,13 @@ class Embeddings extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->result(
-            Files::query()
-            ->count()
-        );
+        return $this->result(Files::query()->count());
     }
 
     public function ranges()
     {
         return [
-            'ALL' => 'All Time'
+            'ALL' => 'All Time',
         ];
     }
 

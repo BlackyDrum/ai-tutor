@@ -38,13 +38,15 @@ class SyncChromaDB extends Command
         $collectionNames = [];
 
         foreach ($chromaCollections as $chromaCollection) {
-            $collection =  Collections::query()
-                ->firstOrCreate([
-                    'name' => $chromaCollection->name
-                ], [
+            $collection = Collections::query()->firstOrCreate(
+                [
+                    'name' => $chromaCollection->name,
+                ],
+                [
                     'max_results' => 5,
                     'module_id' => null,
-                ]);
+                ]
+            );
 
             $collectionNames[] = $collection->name;
         }
@@ -56,9 +58,13 @@ class SyncChromaDB extends Command
         $relationalCollections = Collections::all();
 
         foreach ($relationalCollections as $relationalCollection) {
-            $collection = ChromaController::getCollection($relationalCollection->name);
+            $collection = ChromaController::getCollection(
+                $relationalCollection->name
+            );
 
-            $data = $collection->get(include: ['embeddings', 'metadatas', 'documents']);
+            $data = $collection->get(
+                include: ['embeddings', 'metadatas', 'documents']
+            );
 
             $documents = $data->documents;
             $metadata = $data->metadatas;
@@ -67,16 +73,18 @@ class SyncChromaDB extends Command
             $embeddingIds = [];
 
             foreach ($ids as $key => $id) {
-                $file = Files::query()
-                    ->firstOrCreate([
+                $file = Files::query()->firstOrCreate(
+                    [
                         'embedding_id' => $id,
-                    ], [
+                    ],
+                    [
                         'name' => $metadata[$key]['filename'],
                         'content' => $documents[$key],
                         'size' => $metadata[$key]['size'],
                         'user_id' => null,
                         'collection_id' => $relationalCollection->id,
-                    ]);
+                    ]
+                );
 
                 $embeddingIds[] = $file->embedding_id;
             }
@@ -87,6 +95,8 @@ class SyncChromaDB extends Command
                 ->forceDelete();
         }
 
-        $this->info('Synced ChromaDB with relational database. Run \'php artisan chroma:check\' to validate.');
+        $this->info(
+            'Synced ChromaDB with relational database. Run \'php artisan chroma:check\' to validate.'
+        );
     }
 }

@@ -20,32 +20,30 @@ use Illuminate\Support\Str;
 
 class ChromaController extends Controller
 {
-    public static function createPromptWithContext($collectionName, $message, $conversation_id)
-    {
+    public static function createPromptWithContext(
+        $collectionName,
+        $message,
+        $conversation_id
+    ) {
         $collection = self::getCollection($collectionName);
 
         $maxResults = Collections::query()
             ->where('name', '=', $collectionName)
-            ->first()
-            ->max_results;
+            ->first()->max_results;
 
         $queryResponse = $collection->query(
-            queryTexts: [
-                $message
-            ],
+            queryTexts: [$message],
             nResults: $maxResults
         );
 
-        $enhancedMessage = "";
+        $enhancedMessage = '';
 
         $conversation = Conversations::query()
             ->where('url_id', '=', $conversation_id)
             ->first();
 
         foreach ($queryResponse->ids[0] as $id) {
-            $file = Files::query()
-                ->where('embedding_id', '=', $id)
-                ->first();
+            $file = Files::query()->where('embedding_id', '=', $id)->first();
 
             $count = ConversationHasDocument::query()
                 ->where('conversation_id', '=', $conversation->id)
@@ -57,11 +55,10 @@ class ChromaController extends Controller
                 continue;
             }
 
-            ConversationHasDocument::query()
-                ->create([
-                    'conversation_id' => $conversation->id,
-                    'file_id' => $file->id
-                ]);
+            ConversationHasDocument::query()->create([
+                'conversation_id' => $conversation->id,
+                'file_id' => $file->id,
+            ]);
 
             $enhancedMessage .= "\n\"\"\"\n";
             $enhancedMessage .= "Context Document:\n" . $file->content . "\n";
@@ -113,9 +110,12 @@ class ChromaController extends Controller
                         ],
                     ]);
             } catch (\Exception $exception) {
-                Log::error('App/ConversAItion: Failed to convert pptx to json. Reason: {message}', [
-                    'message' => $exception->getMessage(),
-                ]);
+                Log::error(
+                    'App/ConversAItion: Failed to convert pptx to json. Reason: {message}',
+                    [
+                        'message' => $exception->getMessage(),
+                    ]
+                );
 
                 if (file_exists($pathToFile)) {
                     unlink($pathToFile);
@@ -132,10 +132,13 @@ class ChromaController extends Controller
             }
 
             if ($response->failed()) {
-                Log::error('ConversAItion: Failed to convert pptx to json. Reason: {reason}. Status: {status}', [
-                    'reason' => $response->reason(),
-                    'status' => $response->status(),
-                ]);
+                Log::error(
+                    'ConversAItion: Failed to convert pptx to json. Reason: {reason}. Status: {status}',
+                    [
+                        'reason' => $response->reason(),
+                        'status' => $response->status(),
+                    ]
+                );
 
                 return [
                     'status' => false,
@@ -150,9 +153,7 @@ class ChromaController extends Controller
             $ids = $result['ids'];
             $documents = $result['documents'];
             $metadata = $result['metadata'];
-
-        }
-        elseif (str_ends_with($filename, 'json')) {
+        } elseif (str_ends_with($filename, 'json')) {
             $json = json_decode(file_get_contents($pathToFile), true);
 
             if (file_exists($pathToFile)) {
@@ -166,8 +167,7 @@ class ChromaController extends Controller
             $ids = $result['ids'];
             $documents = $result['documents'];
             $metadata = $result['metadata'];
-        }
-        elseif (str_ends_with($filename, 'txt')) {
+        } elseif (str_ends_with($filename, 'txt')) {
             $text = file_get_contents($pathToFile);
 
             if (file_exists($pathToFile)) {
@@ -182,14 +182,13 @@ class ChromaController extends Controller
                 [
                     'filename' => $model->name,
                     'size' => $model->size,
-                ]
+                ],
             ];
 
             $model->user_id = Auth::id();
 
             $model->save();
-        }
-        elseif (str_ends_with($filename, 'md')) {
+        } elseif (str_ends_with($filename, 'md')) {
             $markdown = file_get_contents($pathToFile);
 
             if (file_exists($pathToFile)) {
@@ -203,11 +202,13 @@ class ChromaController extends Controller
             $ids = $result['ids'];
             $documents = $result['documents'];
             $metadata = $result['metadata'];
-        }
-        else {
-            Log::warning('App: Attempted to process a file with the wrong format', [
-                'name' => $model->name
-            ]);
+        } else {
+            Log::warning(
+                'App: Attempted to process a file with the wrong format',
+                [
+                    'name' => $model->name,
+                ]
+            );
 
             if (file_exists($pathToFile)) {
                 unlink($pathToFile);
@@ -229,12 +230,14 @@ class ChromaController extends Controller
                 metadatas: $metadata,
                 documents: $documents
             );
-
         } catch (\Exception $exception) {
-            Log::error('ChromaDB: Failed to add items to collection with ID {collection}. Reason: {reason}', [
-                'collection' => $collectionId,
-                'reason' => $exception->getMessage(),
-            ]);
+            Log::error(
+                'ChromaDB: Failed to add items to collection with ID {collection}. Reason: {reason}',
+                [
+                    'collection' => $collectionId,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
 
             return [
                 'status' => false,
@@ -285,15 +288,24 @@ class ChromaController extends Controller
         $index = 1;
 
         foreach ($slides as $key => $slide) {
-
             // Since we're splitting by '\n# ', all slides except the first will not have '# ' in front. Add it manually.
             if ($key > 0) {
-                $slide = "# " . $slide;
+                $slide = '# ' . $slide;
             }
 
-            $slide = array_values(array_filter(explode("\n", $slide), fn($element) => !empty(trim($element))));
+            $slide = array_values(
+                array_filter(
+                    explode("\n", $slide),
+                    fn($element) => !empty(trim($element))
+                )
+            );
 
-            $result = self::createAndStoreSlide($model, substr($slide[0], 1), $slide[1], $index);
+            $result = self::createAndStoreSlide(
+                $model,
+                substr($slide[0], 1), // title
+                $slide[1], // content
+                $index
+            );
 
             $ids[] = $result['id'];
             $documents[] = $result['document'];
@@ -305,7 +317,7 @@ class ChromaController extends Controller
         return [
             'ids' => $ids,
             'documents' => $documents,
-            'metadata' => $metadata
+            'metadata' => $metadata,
         ];
     }
 
@@ -332,7 +344,7 @@ class ChromaController extends Controller
         return [
             'ids' => $ids,
             'documents' => $documents,
-            'metadata' => $metadata
+            'metadata' => $metadata,
         ];
     }
 
@@ -348,18 +360,21 @@ class ChromaController extends Controller
                 metadatas: [
                     [
                         'filename' => $model->name,
-                        'size' => strlen($model->content)
-                    ]
+                        'size' => strlen($model->content),
+                    ],
                 ],
                 documents: [$model->content]
             );
 
             $model->size = strlen($model->content);
         } catch (\Exception $exception) {
-            Log::error('ChromaDB: Failed to update collection with ID {collection-id}. Reason: {reason}', [
-                'collection-id' => $model->collection_id,
-                'reason' => $exception->getMessage(),
-            ]);
+            Log::error(
+                'ChromaDB: Failed to update collection with ID {collection-id}. Reason: {reason}',
+                [
+                    'collection-id' => $model->collection_id,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
 
             return [
                 'status' => false,
@@ -381,10 +396,13 @@ class ChromaController extends Controller
 
             $collection->delete([$model->embedding_id]);
         } catch (\Exception $exception) {
-            Log::error('ChromaDB: Failed to delete items from collection with ID {collection-id}. Reason: {reason}', [
-                'collection-id' => $model->collection_id,
-                'reason' => $exception->getMessage(),
-            ]);
+            Log::error(
+                'ChromaDB: Failed to delete items from collection with ID {collection-id}. Reason: {reason}',
+                [
+                    'collection-id' => $model->collection_id,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
 
             return [
                 'status' => false,
@@ -404,12 +422,18 @@ class ChromaController extends Controller
 
             $embeddingFunction = self::getEmbeddingFunction();
 
-            $chromaDB->createCollection($name, embeddingFunction: $embeddingFunction);
+            $chromaDB->createCollection(
+                $name,
+                embeddingFunction: $embeddingFunction
+            );
         } catch (\Exception $exception) {
-            Log::error('ChromaDB: Failed to create new collection with name {collection}. Reason: {reason}', [
-                'collection' => $name,
-                'reason' => $exception->getMessage(),
-            ]);
+            Log::error(
+                'ChromaDB: Failed to create new collection with name {collection}. Reason: {reason}',
+                [
+                    'collection' => $name,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
 
             return [
                 'status' => false,
@@ -422,16 +446,20 @@ class ChromaController extends Controller
         ];
     }
 
-    public static function updateCollection($oldName, $newName) {
+    public static function updateCollection($oldName, $newName)
+    {
         try {
             $collection = self::getCollection($oldName);
 
             $collection->modify($newName, []);
         } catch (\Exception $exception) {
-            Log::error('ChromaDB: Failed to update collection with name {name}. Reason: {reason}', [
-                'name' => $oldName,
-                'reason' => $exception->getMessage(),
-            ]);
+            Log::error(
+                'ChromaDB: Failed to update collection with name {name}. Reason: {reason}',
+                [
+                    'name' => $oldName,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
 
             // this is handled by nova
             throw $exception;
@@ -445,10 +473,13 @@ class ChromaController extends Controller
 
             $chromaDB->deleteCollection($model->name);
         } catch (\Exception $exception) {
-            Log::error('ChromaDB: Failed to delete collection with ID {collection-id}. Reason: {reason}', [
-                'collection-id' => $model->id,
-                'reason' => $exception->getMessage(),
-            ]);
+            Log::error(
+                'ChromaDB: Failed to delete collection with ID {collection-id}. Reason: {reason}',
+                [
+                    'collection-id' => $model->id,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
 
             return [
                 'status' => false,
@@ -467,7 +498,10 @@ class ChromaController extends Controller
 
         $embeddingFunction = self::getEmbeddingFunction();
 
-        return $chromaDB->getCollection($collection, embeddingFunction: $embeddingFunction);
+        return $chromaDB->getCollection(
+            $collection,
+            embeddingFunction: $embeddingFunction
+        );
     }
 
     public static function getEmbeddingFunction()
@@ -475,10 +509,17 @@ class ChromaController extends Controller
         $embeddingFunction = config('chromadb.embedding_function');
 
         if ($embeddingFunction == 'openai') {
-            return new OpenAIEmbeddingFunction(config('api.openai_api_key'), '', config('api.openai_embedding_model'));
+            return new OpenAIEmbeddingFunction(
+                config('api.openai_api_key'),
+                '',
+                config('api.openai_embedding_model')
+            );
         }
 
-        return new JinaEmbeddingFunction(config('api.jina_api_key'), config('api.jina_embedding_model'));
+        return new JinaEmbeddingFunction(
+            config('api.jina_api_key'),
+            config('api.jina_embedding_model')
+        );
     }
 
     public static function getClient()

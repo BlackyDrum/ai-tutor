@@ -9,9 +9,5 @@ class AuthTokens extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'ref_id',
-        'token'
-    ];
+    protected $fillable = ['name', 'ref_id', 'token'];
 }

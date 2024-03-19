@@ -41,9 +41,9 @@ class ValidateChromaDBSync extends Action
         if ($exitCode == 1) {
             $message = 'Relational database is in sync with ChromaDB';
             return ActionResponse::message($message);
-        }
-        else {
-            $message = "Relational database is NOT in sync with ChromaDB. Use 'php artisan chroma:check' on a command line for more information";
+        } else {
+            $message =
+                "Relational database is NOT in sync with ChromaDB. Use 'php artisan chroma:check' on a command line for more information";
             return ActionResponse::danger($message);
         }
     }

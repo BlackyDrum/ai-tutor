@@ -21,8 +21,10 @@ class ConversationsPerDay extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByDays($request, Conversations::class)
-                    ->showSumValue();
+        return $this->countByDays(
+            $request,
+            Conversations::class
+        )->showSumValue();
     }
 
     /**

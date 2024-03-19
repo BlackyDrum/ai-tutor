@@ -1,3 +1,12 @@
 {
-    "plugins": ["prettier-plugin-tailwindcss"]
+    "plugins": ["prettier-plugin-tailwindcss", "@prettier/plugin-php"],
+    "singleQuote": false,
+    "overrides": [
+        {
+            "files": ["**/*.php"],
+            "options": {
+                "singleQuote": true
+            }
+        }
+    ]
 }

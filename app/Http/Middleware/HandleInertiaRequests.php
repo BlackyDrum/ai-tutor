@@ -37,11 +37,16 @@ class HandleInertiaRequests extends Middleware
         if (!str_starts_with($request->path(), 'admin') && Auth::check()) {
             $conversations = Conversations::query()
                 ->where('user_id', '=', Auth::id())
-                ->leftJoin('shared_conversations', 'shared_conversations.conversation_id', '=', 'conversations.id')
+                ->leftJoin(
+                    'shared_conversations',
+                    'shared_conversations.conversation_id',
+                    '=',
+                    'conversations.id'
+                )
                 ->orderBy('updated_at', 'desc')
                 ->select([
                     'conversations.*',
-                    'shared_conversations.shared_url_id'
+                    'shared_conversations.shared_url_id',
                 ])
                 ->get();
         }

@@ -22,7 +22,7 @@ class Main extends Dashboard
     {
         return [
             new Users(),
-            new ConversationsPerDay,
+            new ConversationsPerDay(),
             new MessagesPerDay(),
             new Collections(),
             new Embeddings(),

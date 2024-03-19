@@ -23,14 +23,15 @@ class ChatController extends Controller
 {
     public function show(string $id)
     {
-        $conversation = Conversations::query()
-            ->where('url_id', $id)
-            ->first();
+        $conversation = Conversations::query()->where('url_id', $id)->first();
 
         if (empty($conversation) || $conversation->user_id !== Auth::id()) {
-            Log::info('App: User with ID {user-id} tried to access an invalid conversation', [
-                'conversation-id' => $id
-            ]);
+            Log::info(
+                'App: User with ID {user-id} tried to access an invalid conversation',
+                [
+                    'conversation-id' => $id,
+                ]
+            );
 
             return redirect('/');
         }
@@ -52,14 +53,26 @@ class ChatController extends Controller
     public function chat(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:' . config('chat.max_message_length'),
-            'conversation_id' => ['bail', 'required', 'string', 'exists:conversations,url_id', new ValidateConversationOwner()],
+            'message' =>
+                'required|string|max:' . config('chat.max_message_length'),
+            'conversation_id' => [
+                'bail',
+                'required',
+                'string',
+                'exists:conversations,url_id',
+                new ValidateConversationOwner(),
+            ],
         ]);
 
         if (!Auth::user()->module_id) {
-            Log::warning('App: User with ID {user-id} is not associated with a module');
+            Log::warning(
+                'App: User with ID {user-id} is not associated with a module'
+            );
 
-            return response()->json('You are not associated with a module. Try to login again.',500);
+            return response()->json(
+                'You are not associated with a module. Try to login again.',
+                500
+            );
         }
 
         $module = Modules::query()->find(Auth::user()->module_id);
@@ -74,11 +87,14 @@ class ChatController extends Controller
             ->first();
 
         if (!$collection) {
-            Log::critical('App: Failed to find a collection for module with ID {module-id}', [
-                'module-id' => Auth::user()->module_id
-            ]);
+            Log::critical(
+                'App: Failed to find a collection for module with ID {module-id}',
+                [
+                    'module-id' => Auth::user()->module_id,
+                ]
+            );
 
-            return response()->json('Internal Server Error.',500);
+            return response()->json('Internal Server Error.', 500);
         }
 
         $now = Carbon::now();
@@ -124,27 +140,43 @@ class ChatController extends Controller
         }
 
         try {
-            $promptWithContext =
-                ChromaController::createPromptWithContext($collection->name, $request->input('message'), $request->input('conversation_id'));
+            $promptWithContext = ChromaController::createPromptWithContext(
+                $collection->name,
+                $request->input('message'),
+                $request->input('conversation_id')
+            );
         } catch (\Exception $exception) {
-            Log::error('ChromaDB: Failed to create prompt with context. Reason: {message}', [
-                'message' => $exception->getMessage(),
-                'collection' => $collection->name,
-                'conversation-id' => $request->input('conversation_id')
-            ]);
+            Log::error(
+                'ChromaDB: Failed to create prompt with context. Reason: {message}',
+                [
+                    'message' => $exception->getMessage(),
+                    'collection' => $collection->name,
+                    'conversation-id' => $request->input('conversation_id'),
+                ]
+            );
 
             DB::rollBack();
-            return response()->json(['message' => 'Internal Server Error'], 500);
+            return response()->json(
+                ['message' => 'Internal Server Error'],
+                500
+            );
         }
 
-        $response = self::sendMessageToOpenAI($agent->instructions, $promptWithContext, $recentMessages);
+        $response = self::sendMessageToOpenAI(
+            $agent->instructions,
+            $promptWithContext,
+            $recentMessages
+        );
 
         if ($response->failed()) {
-            Log::error('OpenAI: Failed to send message. Reason: {reason}. Status: {status}', [
-                'reason' => $response->json()['error']['message'],
-                'status' => $response->status(),
-                'conversation-id' => $request->input('conversation_id'),
-            ]);
+            Log::error(
+                'OpenAI: Failed to send message. Reason: {reason}. Status: {status}',
+                [
+                    'reason' => $response->json()['error']['message'],
+                    'status' => $response->status(),
+                    'conversation-id' => $request->input('conversation_id'),
+                ]
+            );
 
             DB::rollBack();
             return response()->json($response->reason(), $response->status());
@@ -152,38 +184,48 @@ class ChatController extends Controller
 
         $message = Messages::query()->create([
             'user_message' => $request->input('message'),
-            'agent_message' => htmlspecialchars($response->json()['choices'][0]['message']['content']),
+            'agent_message' => htmlspecialchars(
+                $response->json()['choices'][0]['message']['content']
+            ),
             'user_message_with_context' => $promptWithContext,
             'prompt_tokens' => $response->json()['usage']['prompt_tokens'],
-            'completion_tokens' => $response->json()['usage']['completion_tokens'],
+            'completion_tokens' => $response->json()['usage'][
+                'completion_tokens'
+            ],
             'openai_language_model' => config('api.openai_language_model'),
             'conversation_id' => $conversation->id,
-            'created_at' => $now
+            'created_at' => $now,
         ]);
 
         DB::commit();
 
         $maxRequests = Auth::user()->max_requests;
-        $remainingMessagesAlertLevels  = config('chat.remaining_requests_alert_levels');
+        $remainingMessagesAlertLevels = config(
+            'chat.remaining_requests_alert_levels'
+        );
 
         $messages = self::getUserMessagesFromLastDay();
 
         $remainingMessagesCount = $maxRequests - $messages->count();
 
         if (in_array($remainingMessagesCount, $remainingMessagesAlertLevels)) {
-            $message['info'] = "You have $remainingMessagesCount messages remaining for today.";
+            $message[
+                'info'
+            ] = "You have $remainingMessagesCount messages remaining for today.";
         }
 
         return response()->json($message);
     }
 
-    public static function sendMessageToOpenAI($systemMessage, $userMessage, $recentMessages = null, $usesContext = true)
-    {
+    public static function sendMessageToOpenAI(
+        $systemMessage,
+        $userMessage,
+        $recentMessages = null,
+        $usesContext = true
+    ) {
         $token = config('api.openai_api_key');
 
-        $messages = [
-            ['role' => 'system', 'content' => $systemMessage]
-        ];
+        $messages = [['role' => 'system', 'content' => $systemMessage]];
 
         if ($recentMessages) {
             $messages = array_merge($messages, $recentMessages);
@@ -191,17 +233,21 @@ class ChatController extends Controller
 
         if ($usesContext) {
             $userMessage =
-                "Use the context from this or from previous messages to answer the user's question.\n\n" . $userMessage;
+                "Use the context from this or from previous messages to answer the user's question.\n\n" .
+                $userMessage;
         }
 
         $messages[] = ['role' => 'user', 'content' => $userMessage];
 
-        return Http::withToken($token)->post('https://api.openai.com/v1/chat/completions', [
-            'model' => config('api.openai_language_model'),
-            'temperature' => (float)Auth::user()->temperature,
-            'max_tokens' => (int)Auth::user()->max_response_tokens,
-            'messages' => $messages
-        ]);
+        return Http::withToken($token)->post(
+            'https://api.openai.com/v1/chat/completions',
+            [
+                'model' => config('api.openai_language_model'),
+                'temperature' => (float) Auth::user()->temperature,
+                'max_tokens' => (int) Auth::user()->max_response_tokens,
+                'messages' => $messages,
+            ]
+        );
     }
 
     public static function getUserMessagesFromLastDay()
@@ -213,7 +259,12 @@ class ChatController extends Controller
         $maxRequests = Auth::user()->max_requests;
 
         return Messages::query()
-            ->join('conversations', 'messages.conversation_id', '=', 'conversations.id')
+            ->join(
+                'conversations',
+                'messages.conversation_id',
+                '=',
+                'conversations.id'
+            )
             ->where('conversations.user_id', '=', Auth::id())
             ->whereBetween('messages.created_at', [$oneDayAgo, $now])
             ->orderBy('messages.created_at', 'desc')

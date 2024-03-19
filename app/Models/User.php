@@ -39,7 +39,7 @@ class User extends Authenticatable
         'max_requests',
         'module_id',
         'temperature',
-        'max_response_tokens'
+        'max_response_tokens',
     ];
 
     /**
@@ -49,12 +49,17 @@ class User extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
-        'terms_accepted_at' => 'datetime'
+        'terms_accepted_at' => 'datetime',
     ];
 
     public function messages()
     {
-        return $this->hasManyThrough(Messages::class, Conversations::class, '', 'conversation_id');
+        return $this->hasManyThrough(
+            Messages::class,
+            Conversations::class,
+            '',
+            'conversation_id'
+        );
     }
 
     public function conversations()

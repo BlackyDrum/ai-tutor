@@ -21,8 +21,7 @@ class MessagesPerDay extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByDays($request, Messages::class)
-                    ->showSumValue();
+        return $this->countByDays($request, Messages::class)->showSumValue();
     }
 
     /**

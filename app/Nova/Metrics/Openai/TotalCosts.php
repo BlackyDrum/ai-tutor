@@ -46,9 +46,14 @@ class TotalCosts extends Value
         return $this->result($result)->prefix('$');
     }
 
-    public static function calculatePrice($promptTokens, $completionTokens, $inputPrice, $outputPrice)
-    {
-        return (($promptTokens / 1e6) * $inputPrice) + (($completionTokens / 1e6) * $outputPrice);
+    public static function calculatePrice(
+        $promptTokens,
+        $completionTokens,
+        $inputPrice,
+        $outputPrice
+    ) {
+        return ($promptTokens / 1e6) * $inputPrice +
+            ($completionTokens / 1e6) * $outputPrice;
     }
 
     public static function getTokens($modelName, $range = 'ALL')
@@ -62,10 +67,16 @@ class TotalCosts extends Value
             ->select(DB::raw('SUM(completion_tokens) AS total'));
 
         if ($range != 'ALL') {
-            $totalPromptTokens
-                ->where('created_at', '>=', Carbon::now()->subDays($range));
-            $totalCompletionTokens
-                ->where('created_at', '>=', Carbon::now()->subDays($range));
+            $totalPromptTokens->where(
+                'created_at',
+                '>=',
+                Carbon::now()->subDays($range)
+            );
+            $totalCompletionTokens->where(
+                'created_at',
+                '>=',
+                Carbon::now()->subDays($range)
+            );
         }
 
         return [

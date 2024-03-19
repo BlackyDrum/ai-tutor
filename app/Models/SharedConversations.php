@@ -9,10 +9,7 @@ class SharedConversations extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'shared_url_id',
-        'conversation_id'
-    ];
+    protected $fillable = ['shared_url_id', 'conversation_id'];
 
     public function conversation()
     {

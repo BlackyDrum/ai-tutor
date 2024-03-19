@@ -39,9 +39,7 @@ class User extends Resource
      *
      * @var array
      */
-    public static $search = [
-        'id', 'name',
-    ];
+    public static $search = ['id', 'name'];
 
     /**
      * Get the fields displayed by the resource.
@@ -68,7 +66,7 @@ class User extends Resource
             Number::make('Max Requests')
                 ->rules('required', 'min:0')
                 ->min(0)
-                ->default(function() {
+                ->default(function () {
                     return config('chat.max_requests');
                 })
                 ->help('Maximum number of requests per day'),
@@ -78,18 +76,21 @@ class User extends Resource
                 ->step(0.1)
                 ->min(0)
                 ->max(1)
-                ->rules('required', 'numeric','between:0,1')
-                ->help('Specifies how deterministic the agent should answer. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic'),
+                ->rules('required', 'numeric', 'between:0,1')
+                ->help(
+                    'Specifies how deterministic the agent should answer. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic'
+                ),
 
             Number::make('Max Response Tokens')
                 ->default(1000)
                 ->min(0)
                 ->max(4096)
                 ->rules('required', 'integer', 'between:0,4096')
-                ->help('The maximum number of tokens that can be generated in the chat completion'),
+                ->help(
+                    'The maximum number of tokens that can be generated in the chat completion'
+                ),
 
-            BelongsTo::make('Module', 'module', Module::class)
-                ->nullable(),
+            BelongsTo::make('Module', 'module', Module::class)->nullable(),
 
             Boolean::make('Admin'),
 
@@ -127,9 +128,7 @@ class User extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [
-            new Users()
-        ];
+        return [new Users()];
     }
 
     /**
@@ -162,8 +161,6 @@ class User extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [
-            ExportAsCsv::make()->nameable(),
-        ];
+        return [ExportAsCsv::make()->nameable()];
     }
 }

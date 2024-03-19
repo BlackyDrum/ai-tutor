@@ -21,10 +21,7 @@ class OpenAI extends Dashboard
      */
     public function cards()
     {
-        return [
-            new TotalCosts(),
-            ...self::models(),
-        ];
+        return [new TotalCosts(), ...self::models()];
     }
 
     public $showRefreshButton = true;

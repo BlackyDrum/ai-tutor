@@ -11,8 +11,5 @@ class ConversationHasDocument extends Model
 
     protected $table = 'conversation_has_document';
 
-    protected $fillable = [
-        'conversation_id',
-        'file_id'
-    ];
+    protected $fillable = ['conversation_id', 'file_id'];
 }

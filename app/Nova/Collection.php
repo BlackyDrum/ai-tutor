@@ -38,10 +38,7 @@ class Collection extends Resource
      *
      * @var array
      */
-    public static $search = [
-        'id',
-        'name'
-    ];
+    public static $search = ['id', 'name'];
 
     /**
      * Get the fields displayed by the resource.
@@ -63,7 +60,9 @@ class Collection extends Resource
             Number::make('Max Results')
                 ->min(0)
                 ->rules('required', 'integer', 'gte:0')
-                ->help('Specifies the maximum number of documents to embed per prompt'),
+                ->help(
+                    'Specifies the maximum number of documents to embed per prompt'
+                ),
 
             BelongsTo::make('Module', 'module', Module::class)
                 ->nullable()
@@ -78,7 +77,6 @@ class Collection extends Resource
                 ->sortable(),
         ];
     }
-
 
     public static function afterCreate(NovaRequest $request, Model $model)
     {
@@ -131,9 +129,7 @@ class Collection extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [
-            new Collections()
-        ];
+        return [new Collections()];
     }
 
     /**
@@ -166,9 +162,6 @@ class Collection extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [
-            ExportAsCsv::make()->nameable(),
-            new ValidateChromaDBSync()
-        ];
+        return [ExportAsCsv::make()->nameable(), new ValidateChromaDBSync()];
     }
 }

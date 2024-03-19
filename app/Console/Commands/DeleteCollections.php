@@ -39,7 +39,8 @@ class DeleteCollections extends Command
         Files::query()->forceDelete();
     }
 
-    private function deleteDirectory($dirPath) {
+    private function deleteDirectory($dirPath)
+    {
         if (!is_dir($dirPath)) {
             return;
         }

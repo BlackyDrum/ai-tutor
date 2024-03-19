@@ -37,11 +37,7 @@ class Message extends Resource
      *
      * @var array
      */
-    public static $search = [
-        'id',
-        'user_message',
-        'agent_message'
-    ];
+    public static $search = ['id', 'user_message', 'agent_message'];
 
     /**
      * Get the fields displayed by the resource.
@@ -54,34 +50,30 @@ class Message extends Resource
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('Conversation')
-                ->readonly()
-                ->hideWhenUpdating(),
+            BelongsTo::make('Conversation')->readonly()->hideWhenUpdating(),
 
             Textarea::make('User Message'),
 
             Markdown::make('Agent Message', 'agent_message', function () {
                 return htmlspecialchars_decode($this->resource->agent_message);
-            })->preset('github', new class implements Markdown\MarkdownPreset {
-
-                public function convert(string $content)
-                {
-                    return Str::of($content)->markdown([
-                        'html_input' => 'escape',
-                        'allow_unsafe_links' => false,
-                    ]);
+            })->preset(
+                'github',
+                new class implements Markdown\MarkdownPreset {
+                    public function convert(string $content)
+                    {
+                        return Str::of($content)->markdown([
+                            'html_input' => 'escape',
+                            'allow_unsafe_links' => false,
+                        ]);
+                    }
                 }
-            }),
+            ),
 
             Textarea::make('User Message with Context'),
 
-            Number::make('Prompt Tokens')
-                ->hideWhenUpdating()
-                ->sortable(),
+            Number::make('Prompt Tokens')->hideWhenUpdating()->sortable(),
 
-            Number::make('Completion Tokens')
-                ->hideWhenUpdating()
-                ->sortable(),
+            Number::make('Completion Tokens')->hideWhenUpdating()->sortable(),
 
             Text::make('OpenAI Language Model', 'openai_language_model')
                 ->hideWhenUpdating()
@@ -121,9 +113,7 @@ class Message extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [
-            new MessagesPerDay()
-        ];
+        return [new MessagesPerDay()];
     }
 
     /**
@@ -156,8 +146,6 @@ class Message extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [
-            ExportAsCsv::make()->nameable(),
-        ];
+        return [ExportAsCsv::make()->nameable()];
     }
 }

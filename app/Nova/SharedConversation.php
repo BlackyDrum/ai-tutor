@@ -30,10 +30,7 @@ class SharedConversation extends Resource
      *
      * @var array
      */
-    public static $search = [
-        'id',
-        'shared_url_id'
-    ];
+    public static $search = ['id', 'shared_url_id'];
 
     /**
      * Get the fields displayed by the resource.
@@ -46,12 +43,14 @@ class SharedConversation extends Resource
         return [
             ID::make()->sortable(),
 
-            URL::make('Messages', fn() => "/share/{$this->shared_url_id}")
-                ->displayUsing(fn() => 'Show'),
+            URL::make(
+                'Messages',
+                fn() => "/share/{$this->shared_url_id}"
+            )->displayUsing(fn() => 'Show'),
 
             Text::make('Shared URL ID', 'shared_url_id'),
 
-            BelongsTo::make('Conversation')
+            BelongsTo::make('Conversation'),
         ];
     }
 
