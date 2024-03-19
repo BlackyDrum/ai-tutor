@@ -84,8 +84,8 @@ class User extends Resource
             Number::make('Max Response Tokens')
                 ->default(1000)
                 ->min(0)
-                ->max(2048)
-                ->rules('required', 'integer', 'between:0,2048')
+                ->max(4096)
+                ->rules('required', 'integer', 'between:0,4096')
                 ->help('The maximum number of tokens that can be generated in the chat completion'),
 
             BelongsTo::make('Module', 'module', Module::class)
