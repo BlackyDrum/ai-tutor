@@ -1,15 +1,25 @@
 <?php
 
 return [
-    'max_requests' => 100, // Maximum number of messages per day per user (default value)
+    // Sets the daily limit of messages a user can send
+    'max_requests' => 100,
 
-    'temperature' => 0.7, // Determinacy of agent answers per user (default value)
+    // Controls the variability in agent responses. Lower values produce more predictable responses
+    'temperature' => 0.7,
 
-    'max_response_tokens' => 1000, // Maximum number of tokens for a generated response per user (default value)
+    // Defines the upper limit of tokens the AI can generate for each response
+    'max_response_tokens' => 1000,
 
-    'remaining_requests_alert_levels' => [10, 25, 50], // Show info when the user has n messages left for the day
+    // Alerts the user about their remaining message quota at these levels
+    'remaining_requests_alert_levels' => [10, 25, 50], // Alerts when remaining messages hit these numbers.
 
-    'max_message_length' => 4096, // Maximum number of characters for a single user message
+    // The maximum character count allowed per user message to maintain manageable conversation lengths
+    'max_message_length' => 4096,
 
-    'max_messages_included' => 15 // Specifies the maximum number of the latest messages that can be reconsidered in each conversation as context
+    // Limits the number of previous messages considered for context in an ongoing conversation,
+    // optimizing performance and keeping control over the size of the context window
+    'max_messages_included' => 15 // Include the last 15 messages for context.
+
+    // Note: The settings for 'max_requests', 'temperature', and 'max_response_tokens'
+    // can be adjusted on a per-user basis for greater personalization and control.
 ];
