@@ -1,9 +1,8 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
     <div
-        class="w-full h-dvh flex flex-col justify-center items-center dark:bg-app-light dark:text-white"
+        class="flex h-dvh w-full flex-col items-center justify-center dark:bg-app-light dark:text-white"
     >
         <slot />
     </div>

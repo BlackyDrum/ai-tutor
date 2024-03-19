@@ -75,14 +75,14 @@ const handleInput = () => {
                 @input="handleInput"
                 ref="input"
                 rows="1"
-                class="w-full lg:pr-20 pr-12 py-4 rounded-lg resize-none overflow-y-auto dark:text-white dark:bg-app-light"
+                class="w-full resize-none overflow-y-auto rounded-lg py-4 pr-12 lg:pr-20 dark:bg-app-light dark:text-white"
                 placeholder="Type your Message..."
             />
             <Button
                 type="button"
                 @click="handleSubmitButton"
                 :disabled="sending || userMessage.trim().length === 0"
-                class="absolute bottom-5 right-4 rounded-lg text-black border border-black bg-white p-0.5 disabled:opacity-10 dark:border-white"
+                class="absolute bottom-5 right-4 rounded-lg border border-black bg-white p-0.5 text-black disabled:opacity-10 dark:border-white"
                 data-testid="send-button"
             >
                 <span class="" data-state="closed"

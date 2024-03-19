@@ -10,12 +10,12 @@ const toast = useToast();
 <template>
     <div
         :class="$page.props.auth.user.admin ? '-top-[140px]' : '-top-[100px]'"
-        class="absolute w-full z-10 p-1 mb-2 rounded-lg bg-app-dark"
+        class="absolute z-10 mb-2 w-full rounded-lg bg-app-dark p-1"
     >
         <Link
             v-if="$page.props.auth.user.admin"
             href="/admin"
-            class="block flex gap-4 p-2 mb-1 cursor-pointer rounded-lg hover:bg-app-light"
+            class="mb-1 block flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-app-light"
         >
             <div>
                 <span class="pi pi-shield"></span>
@@ -24,7 +24,7 @@ const toast = useToast();
         </Link>
 
         <div
-            class="flex gap-4 p-2 mb-1 cursor-not-allowed opacity-30 rounded-lg"
+            class="mb-1 flex cursor-not-allowed gap-4 rounded-lg p-2 opacity-30"
         >
             <div class="self-center">
                 <span class="pi pi-cog"></span>
@@ -34,10 +34,10 @@ const toast = useToast();
                 <Tag class="ml-auto" value="Coming soon" severity="info"></Tag>
             </div>
         </div>
-        <hr class="border-0 h-px bg-gray-500/40" />
+        <hr class="h-px border-0 bg-gray-500/40" />
         <div
             @click="router.post('/logout')"
-            class="flex gap-4 p-2 mt-1 cursor-pointer rounded-lg hover:bg-app-light"
+            class="mt-1 flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-app-light"
         >
             <div>
                 <span class="pi pi-sign-out"></span>

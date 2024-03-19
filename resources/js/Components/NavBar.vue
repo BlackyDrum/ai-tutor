@@ -51,28 +51,28 @@ const handleResize = () => {
 <template>
     <div
         @click="showResponsiveNavBar = !showResponsiveNavBar"
-        class="fixed right-0 mr-3 z-50 mt-3 p-2 rounded-full cursor-pointer dark:text-white hover:bg-gray-800/50"
+        class="fixed right-0 z-50 mr-3 mt-3 cursor-pointer rounded-full p-2 hover:bg-gray-800/50 dark:text-white"
     >
         <span class="pi pi-bars"></span>
     </div>
 
     <div
-        class="h-dvh w-[260px] z-20 flex-shrink-0 bg-black text-white max-md:fixed"
+        class="z-20 h-dvh w-[260px] flex-shrink-0 bg-black text-white max-md:fixed"
         :class="{ hidden: !showResponsiveNavBar }"
     >
         <nav class="h-full w-full p-2">
-            <div class="h-full w-full flex flex-col">
+            <div class="flex h-full w-full flex-col">
                 <Link
                     href="/"
-                    class="block flex p-2 rounded-lg cursor-pointer hover:bg-app-light"
+                    class="block flex cursor-pointer rounded-lg p-2 hover:bg-app-light"
                 >
                     <div>
                         <ApplicationLogo class="w-8" />
                     </div>
-                    <div class="self-center ml-3">
+                    <div class="ml-3 self-center">
                         {{ appName }}
                     </div>
-                    <div class="self-center ml-auto">
+                    <div class="ml-auto self-center">
                         <svg
                             width="22"
                             height="22"
@@ -88,17 +88,17 @@ const handleResize = () => {
                     </div>
                 </Link>
                 <div class="min-h-0 flex-1">
-                    <ScrollPanel ref="scrollPanel" class="w-full h-full p-2">
+                    <ScrollPanel ref="scrollPanel" class="h-full w-full p-2">
                         <Conversations />
                     </ScrollPanel>
                 </div>
-                <div class="w-full relative text-sm">
+                <div class="relative w-full text-sm">
                     <ProfileItems v-if="showProfileOP" />
                 </div>
                 <div
                     @click="showProfileOP = !showProfileOP"
                     :class="{ 'bg-app-light': showProfileOP }"
-                    class="flex gap-4 p-2 cursor-pointer rounded-lg hover:bg-app-light"
+                    class="flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-app-light"
                 >
                     <UserAvatar />
 

@@ -50,12 +50,18 @@ const handleCreateConversation = (userMessage) => {
 
         <Main ref="mainComponent">
             <div
-                class="w-full flex flex-col flex-1 items-center justify-center"
+                class="flex w-full flex-1 flex-col items-center justify-center"
             >
-                <div v-if="!isSendingRequest" class="mb-4 border dark:border-none rounded-full">
+                <div
+                    v-if="!isSendingRequest"
+                    class="mb-4 rounded-full border dark:border-none"
+                >
                     <ApplicationLogo class="w-16" />
                 </div>
-                <div v-if="!isSendingRequest" class="text-2xl text-center font-bold">
+                <div
+                    v-if="!isSendingRequest"
+                    class="text-center text-2xl font-bold"
+                >
                     How can I help you?
                 </div>
                 <LoadingDots v-if="isSendingRequest" />

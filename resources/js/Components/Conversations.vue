@@ -294,7 +294,7 @@ const getSharedConversationLink = computed(() => {
                 (selectedConversation &&
                     selectedConversation.url_id !== conversation.url_id)
             "
-            class="relative flex group rounded-lg hover:bg-app-dark"
+            class="group relative flex rounded-lg hover:bg-app-dark"
             :class="{
                 'bg-[#343537]':
                     conversation.url_id ===
@@ -311,13 +311,13 @@ const getSharedConversationLink = computed(() => {
         >
             <Link
                 :href="`/chat/${conversation.url_id}`"
-                class="block flex-1 my-1 px-2 py-1 whitespace-nowrap truncate rounded-lg cursor-pointer"
+                class="my-1 block flex-1 cursor-pointer truncate whitespace-nowrap rounded-lg px-2 py-1"
             >
                 {{ conversation.name }}
             </Link>
             <button
                 @click="toggleConversationOverlayPanel($event, conversation)"
-                class="block absolute right-2 top-1 p-1 pl-2 rounded-lg hidden bg-app-dark group-hover:block"
+                class="absolute right-2 top-1 block hidden rounded-lg bg-app-dark p-1 pl-2 group-hover:block"
             >
                 <span
                     :class="
@@ -329,12 +329,12 @@ const getSharedConversationLink = computed(() => {
             </button>
         </div>
 
-        <div v-else class="block flex-1 my-1 py-2 rounded-lg">
+        <div v-else class="my-1 block flex-1 rounded-lg py-2">
             <InputText
                 v-model="selectedConversation.name"
                 @keydown.enter="renameConversation"
                 ref="renameInput"
-                class="w-full rounded-lg text-white bg-black"
+                class="w-full rounded-lg bg-black text-white"
             />
         </div>
     </div>
@@ -342,12 +342,12 @@ const getSharedConversationLink = computed(() => {
     <!-- Conversations Overlay Panel -->
     <OverlayPanel
         ref="conversationOverlayPanel"
-        class="font-semibold bg-app-dark border-none z-50"
+        class="z-50 border-none bg-app-dark font-semibold"
         @hide="handleConversationOverlayPanelHiding"
     >
         <div
             @click="handleConversationShare"
-            class="flex gap-4 p-2 text-sm text-white cursor-pointer rounded-lg hover:bg-gray-700/20"
+            class="flex cursor-pointer gap-4 rounded-lg p-2 text-sm text-white hover:bg-gray-700/20"
         >
             <div>
                 <span class="pi pi-share-alt"></span>
@@ -356,7 +356,7 @@ const getSharedConversationLink = computed(() => {
         </div>
         <div
             @click="handleRenameConversation"
-            class="flex gap-4 p-2 text-sm text-white cursor-pointer rounded-lg hover:bg-gray-700/20"
+            class="flex cursor-pointer gap-4 rounded-lg p-2 text-sm text-white hover:bg-gray-700/20"
         >
             <div>
                 <span class="pi pi-pencil"></span>
@@ -365,7 +365,7 @@ const getSharedConversationLink = computed(() => {
         </div>
         <div
             @click="deleteConversation"
-            class="flex gap-4 p-2 text-sm text-red-600 cursor-pointer rounded-lg hover:bg-gray-700/20"
+            class="flex cursor-pointer gap-4 rounded-lg p-2 text-sm text-red-600 hover:bg-gray-700/20"
         >
             <div>
                 <span class="pi pi-trash"></span>
@@ -381,18 +381,18 @@ const getSharedConversationLink = computed(() => {
         :draggable="false"
         modal
         header="Share link to conversation"
-        class="xl:max-w-[35%] max-w-[95%]"
+        class="max-w-[95%] xl:max-w-[35%]"
     >
         <p v-if="selectedConversation.shared_url_id">
             You have shared this chat
             <Link
                 :href="getSharedConversationLink"
-                class="underline cursor-pointer"
+                class="cursor-pointer underline"
                 >before</Link
             >. If you want to update the shared chat content,
             <span
                 @click="deleteSharedConversation"
-                class="underline cursor-pointer"
+                class="cursor-pointer underline"
                 >delete this link</span
             >
             and create a new shared link.
@@ -401,7 +401,7 @@ const getSharedConversationLink = computed(() => {
             Messages you send after creating your link won't be shared. Anyone
             with the URL will be able to view the shared chat.
         </p>
-        <div class="flex justify-end gap-2 mt-3">
+        <div class="mt-3 flex justify-end gap-2">
             <Button
                 @click="createShareLink"
                 :icon="

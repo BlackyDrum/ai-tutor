@@ -2,8 +2,8 @@
 import Avatar from "primevue/avatar";
 
 defineProps({
-    label: String
-})
+    label: String,
+});
 </script>
 
 <template>

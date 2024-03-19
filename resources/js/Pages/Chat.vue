@@ -190,29 +190,29 @@ const displayName = computed(() => {
             <div
                 id="scroll-container"
                 ref="scrollContainer"
-                class="w-full flex flex-1 justify-center mb-6 px-4 overflow-y-auto"
+                class="mb-6 flex w-full flex-1 justify-center overflow-y-auto px-4"
             >
                 <div class="w-full max-w-[48rem]">
                     <div v-for="(message, index) in messages">
-                        <div class="flex gap-3 mt-6">
+                        <div class="mt-6 flex gap-3">
                             <div>
                                 <UserAvatar :label="userAvatarLabel" />
                             </div>
-                            <div class="flex flex-col min-w-0 w-full">
+                            <div class="flex w-full min-w-0 flex-col">
                                 <div class="font-bold">{{ displayName }}</div>
-                                <div class="break-words whitespace-pre-wrap">
+                                <div class="whitespace-pre-wrap break-words">
                                     {{ message.user_message }}
                                 </div>
                             </div>
                         </div>
-                        <div class="flex gap-3 mt-6">
+                        <div class="mt-6 flex gap-3">
                             <div>
                                 <Avatar
                                     image="/static/img/app-logo.png"
                                     shape="circle"
                                 />
                             </div>
-                            <div class="flex flex-col min-w-0 w-full">
+                            <div class="flex w-full min-w-0 flex-col">
                                 <div class="font-bold">
                                     {{ appName }}
                                 </div>

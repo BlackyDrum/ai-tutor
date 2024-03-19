@@ -41,7 +41,7 @@ const acceptTerms = () => {
 
 <template>
     <Dialog
-        class="w-[90%] lg:w-1/2 break-words"
+        class="w-[90%] break-words lg:w-1/2"
         :visible="!$page.props.auth.user.terms_accepted_at"
         :closable="false"
         :draggable="false"
@@ -134,7 +134,7 @@ const acceptTerms = () => {
 
         <br />
 
-        <div class="flex flex-wrap gap-3 justify-center">
+        <div class="flex flex-wrap justify-center gap-3">
             <div>
                 <Button
                     @click="router.post('/logout')"
