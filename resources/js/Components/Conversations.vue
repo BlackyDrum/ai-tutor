@@ -306,7 +306,6 @@ const getSharedConversationLink = computed(() => {
             }"
             v-tooltip="{
                 value: conversation.name,
-                showDelay: 50,
             }"
         >
             <Link
