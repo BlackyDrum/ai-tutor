@@ -51,6 +51,7 @@ The chatbot is designed with the student's needs in mind, offering a range of fu
   - [Adding a ChromaDB Collection](#adding-a-chromadb-collection)
   - [Adding Embeddings to a Collection](#adding-embeddings-to-a-collection)
   - [Adding an Agent to a Module](#adding-an-agent-to-a-module)
+- [Application Config Variables](#application-config-variables)
 
 
 ## Requirements
@@ -318,7 +319,7 @@ In our application, ``agents`` are responsible for shaping how responses from ``
 You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. Always explain the code snippets you send and try to provide sources where to learn more on that subject. If in doubt, do not answer with code and ask to clarify the prompt!
 ```
 
-## Application config variables
+## Application Config Variables
 In the ``config/chat.php`` file, various configuration variables allow you to customize the ``chat`` functionality:
 ```php
 <?php
