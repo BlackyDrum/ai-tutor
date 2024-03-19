@@ -221,7 +221,7 @@ Replace the ``class name`` and properties (``$input``, ``$output``, ``$name``, a
 
 3. **Register the Model**: After you have created and set up your new model file, the next step is to register this model so it becomes available for use within our application. This is done by adding it to the list of models in the ``app/Nova/Dashboards/OpenAI.php`` file.
 ```php
-public static function getAllModels()
+public static function models()
 {
     return [
         new gpt_3_5_turbo_0125(),

@@ -26,7 +26,7 @@ class TotalCosts extends Value
     {
         $range = $request->input('range');
 
-        $models = OpenAI::getAllModels();
+        $models = OpenAI::models();
 
         $totalPrice = 0;
 

@@ -23,7 +23,7 @@ class OpenAI extends Dashboard
     {
         return [
             new TotalCosts(),
-            ...self::getAllModels(),
+            ...self::models(),
         ];
     }
 
@@ -34,7 +34,7 @@ class OpenAI extends Dashboard
         return 'OpenAI';
     }
 
-    public static function getAllModels()
+    public static function models()
     {
         return [
             new gpt_4_0125_preview(),
