@@ -59,21 +59,33 @@ class TotalCosts extends Value
     public static function getTokens($modelName, $range = 'ALL')
     {
         $totalPromptTokens = Messages::query()
-            ->where('openai_language_model', $modelName)
-            ->select(DB::raw('SUM(prompt_tokens) AS total'));
+            ->join(
+                'conversations',
+                'conversations.id',
+                '=',
+                'messages.conversation_id'
+            )
+            ->where('conversations.openai_language_model', $modelName)
+            ->select(DB::raw('SUM(messages.prompt_tokens) AS total'));
 
         $totalCompletionTokens = Messages::query()
-            ->where('openai_language_model', $modelName)
-            ->select(DB::raw('SUM(completion_tokens) AS total'));
+            ->join(
+                'conversations',
+                'conversations.id',
+                '=',
+                'messages.conversation_id'
+            )
+            ->where('conversations.openai_language_model', $modelName)
+            ->select(DB::raw('SUM(messages.completion_tokens) AS total'));
 
         if ($range != 'ALL') {
             $totalPromptTokens->where(
-                'created_at',
+                'messages.created_at',
                 '>=',
                 Carbon::now()->subDays($range)
             );
             $totalCompletionTokens->where(
-                'created_at',
+                'messages.created_at',
                 '>=',
                 Carbon::now()->subDays($range)
             );

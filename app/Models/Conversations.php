@@ -11,7 +11,7 @@ class Conversations extends Model
 
     protected $fillable = [
         'agent_id',
-        'temperature',
+        'openai_language_model',
         'url_id',
         'user_id',
         'name',

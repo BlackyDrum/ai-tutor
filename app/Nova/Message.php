@@ -75,10 +75,6 @@ class Message extends Resource
 
             Number::make('Completion Tokens')->hideWhenUpdating()->sortable(),
 
-            Text::make('OpenAI Language Model', 'openai_language_model')
-                ->hideWhenUpdating()
-                ->sortable(),
-
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()

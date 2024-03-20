@@ -55,6 +55,8 @@ class ConversationController extends Controller
             return response()->json('Internal Server Error', 500);
         }
 
+        $languageModel = config('api.openai_language_model');
+
         $count = Conversations::query()
             ->where('user_id', '=', Auth::id())
             ->count();
@@ -62,6 +64,7 @@ class ConversationController extends Controller
         $conversation = Conversations::query()->create([
             'name' => 'Chat #' . ($count + 1),
             'url_id' => Str::random(40),
+            'openai_language_model' => $languageModel,
             'agent_id' => $agent->id,
             'user_id' => Auth::id(),
         ]);
@@ -118,7 +121,8 @@ class ConversationController extends Controller
 
         $response = ChatController::sendMessageToOpenAI(
             $agent->instructions,
-            $promptWithContext
+            $promptWithContext,
+            $languageModel
         );
 
         if ($response->failed()) {
@@ -135,7 +139,7 @@ class ConversationController extends Controller
         }
 
         $systemMessage =
-            'Create a concise and short title for the messages. Focus on identifying and condensing the primary elements or topics discussed.';
+            'Create a concise and short title for the messages with a maximum of 64 characters. Focus on identifying and condensing the primary elements or topics discussed.';
 
         $agentResponse = [
             [
@@ -149,6 +153,7 @@ class ConversationController extends Controller
         $response2 = ChatController::sendMessageToOpenAI(
             $systemMessage,
             $request->input('message'),
+            $languageModel,
             $agentResponse,
             false
         );
@@ -182,7 +187,6 @@ class ConversationController extends Controller
             'completion_tokens' => $response->json()['usage'][
                 'completion_tokens'
             ],
-            'openai_language_model' => config('api.openai_language_model'),
             'conversation_id' => $conversation->id,
             'created_at' => $now,
         ]);

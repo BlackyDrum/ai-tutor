@@ -49,14 +49,17 @@ class Conversation extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('Name'),
+            Text::make('Name')->sortable(),
 
-            URL::make(
-                'URL',
-                fn() => "/peek/{$this->url_id}"
-            )->displayUsing(fn() => 'Show'),
+            URL::make('URL', fn() => "/peek/{$this->url_id}")->displayUsing(
+                fn() => 'Show'
+            ),
 
-            Text::make('url_id'),
+            Text::make('url_id')->onlyOnDetail(),
+
+            Text::make('OpenAI Language Model', 'openai_language_model')
+                ->hideWhenUpdating()
+                ->sortable(),
 
             BelongsTo::make('Agent'),
 

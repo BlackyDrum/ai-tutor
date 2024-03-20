@@ -165,6 +165,7 @@ class ChatController extends Controller
         $response = self::sendMessageToOpenAI(
             $agent->instructions,
             $promptWithContext,
+            $conversation->openai_language_model,
             $recentMessages
         );
 
@@ -192,7 +193,6 @@ class ChatController extends Controller
             'completion_tokens' => $response->json()['usage'][
                 'completion_tokens'
             ],
-            'openai_language_model' => config('api.openai_language_model'),
             'conversation_id' => $conversation->id,
             'created_at' => $now,
         ]);
@@ -220,6 +220,7 @@ class ChatController extends Controller
     public static function sendMessageToOpenAI(
         $systemMessage,
         $userMessage,
+        $languageModel,
         $recentMessages = null,
         $usesContext = true
     ) {
@@ -233,7 +234,7 @@ class ChatController extends Controller
 
         if ($usesContext) {
             $userMessage =
-                "Use the context from this or from previous messages to answer the user's question.\n\n" .
+                "Use the context (if useful) from this or from previous messages to answer the user's question.\n\n" .
                 $userMessage;
         }
 
@@ -242,7 +243,7 @@ class ChatController extends Controller
         return Http::withToken($token)->post(
             'https://api.openai.com/v1/chat/completions',
             [
-                'model' => config('api.openai_language_model'),
+                'model' => $languageModel,
                 'temperature' => (float) Auth::user()->temperature,
                 'max_tokens' => (int) Auth::user()->max_response_tokens,
                 'messages' => $messages,
