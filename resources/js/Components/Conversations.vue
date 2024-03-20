@@ -55,7 +55,7 @@ const deleteConversation = () => {
     conversationOverlayPanel.value.visible = false;
 
     confirm.require({
-        message: `This will delete ${selectedConversation.value.name}`,
+        message: `This will delete '${selectedConversation.value.name}'`,
         header: "Delete conversation?",
         icon: "pi pi-info-circle",
         rejectLabel: "Cancel",
