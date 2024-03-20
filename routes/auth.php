@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\LtiController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')
@@ -32,3 +33,5 @@ Route::middleware('auth')->group(function () {
         'destroy',
     ])->name('logout');
 });
+
+Route::post('/lti', [LtiController::class, 'ltiMessage']);
