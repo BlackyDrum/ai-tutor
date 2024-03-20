@@ -60,53 +60,53 @@ The chatbot is designed with the student's needs in mind, offering a range of fu
 ## Installation
 
 Follow these steps to get the Chatbot up and running on your local machine:
-1. Clone the repository:
+1. Clone the ``repository``:
 ```
 $ git clone https://github.com/BlackyDrum/ai-tutor.git
 ```
-2. Navigate to the project directory:
+2. Navigate to the ``project directory``:
 ```
 $ cd chatbot
 ```
-3. Install the dependencies. You will be asked to provide a valid Nova Username and License Key. More information [here](https://nova.laravel.com/docs/installation.html):
+3. Install the ``dependencies``. You will be asked to provide a valid ``Nova Username`` and ``License Key``. More information [here](https://nova.laravel.com/docs/installation.html):
 ```
 $ composer install
 ```
-4. Create a copy of the .env.example file and rename it to .env. Update the necessary configuration values:
+4. Create a copy of the ``.env.example`` file and rename it to ``.env``. Update the necessary configuration values:
 ```
 $ cp .env.example .env
 ```
-5. Generate an application key:
+5. Generate an ``application key``:
 ```
 $ php artisan key:generate
 ```
-6. Run the database migrations:
+6. Run the database ``migrations``:
 ```
 $ php artisan migrate
 ```
-7. Install JavaScript dependencies:
+7. Install JavaScript ``dependencies``:
 ```
 $ npm install
 ```
-8. Build the assets:
+8. Build the ``assets``:
 ```
 $ npm run build
 ```
-9. Run the ChromaDB Docker container:
+9. Run the ``ChromaDB`` Docker container:
 ```
 $ docker-compose up -d
 ```
-10. (Optional) Seed the database with demo data:
+10. (Optional) Seed the database with ``demo`` data:
 ```
 $ php artisan db:seed --class=DemoSeeder
 ```
 Username: ``admin`` Password: ``P3X8MYcd2BwE7qa3``
 > **Note:** Make sure to not use this user in production!
-11. Start the development server:
+11. Start the ``development server``:
 ```
 $ php artisan serve
 ```
-12. Visit http://localhost:8000 in your web browser to access the application.
+12. Visit ``http://localhost:8000`` in your web browser to access the application.
 
 ## How It Works
 Here's a brief overview of the steps involved in processing a ``user query``:
