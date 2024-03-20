@@ -36,7 +36,7 @@ class DemoSeeder extends Seeder
             ],
             [
                 'password' =>
-                    '$2y$12$/NMljmWG.5fUFtpGtFihiu4N49eIoU.CYMRtH7YG6tCqaGTlXrsvm',
+                    '$2y$12$mxS/dfJ.88hUXOLH30dOWO1udNMKse2zrPrRMrNpH1ixrkdlngltu',
                 'admin' => true,
                 'max_requests' => 100,
                 'temperature' => 0.7,
