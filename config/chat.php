@@ -18,7 +18,7 @@ return [
 
     // Limits the number of previous messages considered for context in an ongoing conversation,
     // optimizing performance and keeping control over the size of the context window
-    'max_messages_included' => 15 // Include the last 15 messages for context.
+    'max_messages_included' => 12 // Include the last n messages for context.
 
     // Note: The settings for 'max_requests', 'temperature', and 'max_response_tokens'
     // can be adjusted on a per-user basis for greater personalization and control.
