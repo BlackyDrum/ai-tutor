@@ -26,6 +26,7 @@ The chatbot is designed with the student's needs in mind, offering a range of fu
 ## Table of Contents
 - [Requirements](#requirements)
 - [Installation](#installation)
+- [How It Works](#how-it-works)
 - [Laravel Nova](#laravel-nova)
   - [Setting up the Nova API Key](#setting-up-the-nova-api-key)
   - [Nova Access](#nova-access)
@@ -104,6 +105,16 @@ $ php artisan db:seed --class=DemoSeeder
 $ php artisan serve
 ```
 12. **Visit http://localhost:8000 in your web browser to access the application.**
+
+## How It Works
+Here's a brief overview of the steps involved in processing a ``user query``:
+1. First, the application takes the question the user asked
+2. It then uses ``ChromaDB`` (our vector database) to search for ``information``/``documents`` that match or are relevant to the question
+3. Once it finds the relevant information, the application organizes it into a format that is easier to understand for ``GPT``
+4. This formatted message, along with the user's original message, is sent to ``GPT``, which then generates an answer based on the data it received
+5. Finally, the application returns the answer back to the user
+
+To see a more detailed explanation with examples, click [here](https://cookbook.openai.com/examples/question_answering_using_embeddings).
 
 ## Laravel Nova
 ### Setting up the Nova API Key
