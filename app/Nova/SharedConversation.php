@@ -44,7 +44,7 @@ class SharedConversation extends Resource
             ID::make()->sortable(),
 
             URL::make(
-                'Messages',
+                'URL',
                 fn() => "/share/{$this->shared_url_id}"
             )->displayUsing(fn() => 'Show'),
 

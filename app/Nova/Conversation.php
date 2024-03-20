@@ -52,7 +52,7 @@ class Conversation extends Resource
             Text::make('Name'),
 
             URL::make(
-                'Messages',
+                'URL',
                 fn() => "/peek/{$this->url_id}"
             )->displayUsing(fn() => 'Show'),
 
