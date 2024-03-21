@@ -88,6 +88,7 @@ class ValidateChromaDBSync extends Command
             }
         }
 
+        // At this stage, we've confirmed that the collections in both databases are identical
         foreach ($names as $collectionName) {
             $collectionError = false;
 
@@ -118,6 +119,10 @@ class ValidateChromaDBSync extends Command
             }
 
             $this->info("Validating embeddings for $collectionName...");
+
+            // Check if all embeddings in our relational database
+            // have a corresponding embedding in ChromaDB. If found,
+            // we additionally check the metadata, e.g size, content...
             foreach ($relationalDB as $relationalEmbedding) {
                 $embedding = $collection->get(
                     ids: [$relationalEmbedding->embedding_id],
@@ -166,6 +171,10 @@ class ValidateChromaDBSync extends Command
 
             $embeddings = $collection->get();
 
+            // Check if all embeddings in ChromaDB have a corresponding
+            // embedding in the relational database. We just need to check
+            // they exist because we've already confirmed the metadata matches
+            // if they exist in both databases
             foreach ($embeddings->ids as $embedding) {
                 $f = Files::query()
                     ->where('embedding_id', '=', $embedding)
