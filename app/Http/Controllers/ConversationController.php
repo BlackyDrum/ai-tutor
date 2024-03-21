@@ -139,7 +139,7 @@ class ConversationController extends Controller
         }
 
         $systemMessage =
-            'Create a concise and short title for the messages with a maximum of 64 characters. Focus on identifying and condensing the primary elements or topics discussed.';
+            'Create a concise and short title for the messages. Focus on identifying and condensing the primary elements or topics discussed.';
 
         $agentResponse = [
             [

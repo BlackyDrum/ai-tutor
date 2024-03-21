@@ -49,7 +49,12 @@ class Conversation extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('Name')->sortable(),
+            Text::make('Name')
+                ->resolveUsing(function ($title) {
+                    return substr($title, 0, 64) .
+                        (strlen($title) > 64 ? '...' : '');
+                })
+                ->sortable(),
 
             URL::make('URL', fn() => "/peek/{$this->url_id}")->displayUsing(
                 fn() => 'Show'
