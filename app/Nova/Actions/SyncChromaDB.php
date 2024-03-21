@@ -8,6 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Actions\ActionResponse;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -17,7 +18,7 @@ class SyncChromaDB extends Action
 
     public $name = 'Synchronize';
 
-    public $confirmText = 'This action will synchronize ChromaDB with the relational database';
+    public $confirmText = 'This action will synchronize ChromaDB with the relational database. This will assume that the data in ChromaDB is correct and replicate its contents into the relational database';
 
     public $standalone = true;
 
@@ -33,6 +34,8 @@ class SyncChromaDB extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         Artisan::call('chroma:sync');
+
+        return ActionResponse::message('Synced ChromaDB with the relational database');
     }
 
     /**
