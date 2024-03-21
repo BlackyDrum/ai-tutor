@@ -101,7 +101,6 @@ class ValidateChromaDBSync extends Command
 
             $relationalDB = Files::query()
                 ->where('collection_id', '=', $collectionId)
-                ->whereNotNull('content')
                 ->get();
 
             $relationalDBCount = $relationalDB->count();
