@@ -266,7 +266,7 @@ const displayName = computed(() => {
                                     >
                                 </div>
                                 <div
-                                    v-if="message.agent_message"
+                                    v-if="message.agent_message && $page.props.hasPrompt"
                                     class="mt-2 flex gap-4"
                                 >
                                     <button
