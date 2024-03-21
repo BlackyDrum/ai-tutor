@@ -169,6 +169,35 @@ const processAgentMessage = (message) => {
     return element.innerHTML;
 };
 
+const updateRating = (id, helpful) => {
+    // We update the 'helpful' status of a message locally for immediate user feedback,
+    // before the server response confirms the update for better user experience by
+    // avoiding the network delay. We also save the current value in case the
+    // request fails.
+    const message = messages.value.find((message) => message.id === id);
+    const tmp = message.helpful;
+    message.helpful = helpful;
+
+    window.axios
+        .patch("/chat/rating", {
+            helpful: helpful,
+            message_id: id,
+        })
+        .then((result) => {
+            // ...
+        })
+        .catch((error) => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
+
+            message.helpful = tmp;
+        });
+};
+
 const userAvatarLabel = computed(() => {
     if (page.props.hasPrompt) return undefined;
     else if (page.props.username) return page.props.username[0].toUpperCase();
@@ -235,6 +264,29 @@ const displayName = computed(() => {
                                         :closable="false"
                                         >{{ message.error }}</Message
                                     >
+                                </div>
+                                <div
+                                    v-if="message.agent_message"
+                                    class="mt-2 flex gap-4"
+                                >
+                                    <button
+                                        @click="updateRating(message.id, true)"
+                                        v-tooltip.bottom="'Good Response'"
+                                        :class="
+                                            message.helpful
+                                                ? 'pi pi-thumbs-up-fill'
+                                                : 'pi pi-thumbs-up'
+                                        "
+                                    />
+                                    <button
+                                        @click="updateRating(message.id, false)"
+                                        v-tooltip.bottom="'Bad Response'"
+                                        :class="
+                                            message.helpful === false
+                                                ? 'pi pi-thumbs-down-fill'
+                                                : 'pi pi-thumbs-down'
+                                        "
+                                    />
                                 </div>
                             </div>
                         </div>

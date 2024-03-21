@@ -255,6 +255,45 @@ class ChatController extends Controller
         );
     }
 
+    public function updateRating(Request $request)
+    {
+        $request->validate([
+            'helpful' => 'required|boolean',
+            'message_id' => 'required|integer|exists:messages,id',
+        ]);
+
+        $message = Messages::query()
+            ->where('messages.id', '=', $request->input('message_id'))
+            ->join(
+
+                'conversations',
+                'conversations.id',
+                '=',
+                'messages.conversation_id'
+            )
+            ->where('conversations.user_id', '=', Auth::id())
+            ->select([
+                'messages.*'
+            ])
+            ->first();
+
+        if (!$message) {
+            return response()->json(
+                ['message' => 'The selected message id is invalid'],
+                404
+            );
+        }
+
+        $message->update([
+            'helpful' => $request->input('helpful'),
+        ]);
+
+        return response()->json([
+            'id' => $request->input('message_id'),
+            'helpful' => $request->input('helpful'),
+        ]);
+    }
+
     public static function getUserMessagesFromLastDay()
     {
         $now = Carbon::now();

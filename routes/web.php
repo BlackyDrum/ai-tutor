@@ -69,6 +69,11 @@ Route::middleware(['auth'])->group(function () {
         ->group(function () {
             Route::get('/{id}', [ChatController::class, 'show'])->name('show');
 
+            Route::patch('/rating', [
+                ChatController::class,
+                'updateRating',
+            ])->name('rate');
+
             Route::middleware([
                 ValidateRemainingRequests::class,
                 CheckAcceptedTerms::class,

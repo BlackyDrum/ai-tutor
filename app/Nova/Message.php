@@ -6,7 +6,9 @@ use App\Nova\Metrics\MessagesPerDay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Nova\Actions\ExportAsCsv;
+use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOneThrough;
 use Laravel\Nova\Fields\ID;
@@ -74,6 +76,15 @@ class Message extends Resource
             Number::make('Prompt Tokens')->hideWhenUpdating()->sortable(),
 
             Number::make('Completion Tokens')->hideWhenUpdating()->sortable(),
+
+            Badge::make('Helpful')
+                ->map([
+                    false => 'danger',
+                    true => 'success',
+                ])
+                ->addTypes([
+                    null => 'invisible',
+                ]),
 
             DateTime::make('Created At')
                 ->hideWhenCreating()

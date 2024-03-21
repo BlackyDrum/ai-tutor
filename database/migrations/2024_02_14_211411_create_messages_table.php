@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->text('user_message_with_context');
             $table->unsignedInteger('prompt_tokens');
             $table->unsignedInteger('completion_tokens');
+            $table->boolean('helpful')->nullable();
             $table->unsignedBigInteger('conversation_id');
             $table->timestamps();
 
