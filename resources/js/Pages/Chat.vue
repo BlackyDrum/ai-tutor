@@ -170,6 +170,8 @@ const processAgentMessage = (message) => {
 };
 
 const updateRating = (id, helpful) => {
+    if (!page.props.hasPrompt) return;
+
     // We update the 'helpful' status of a message locally for immediate user feedback,
     // before the server response confirms the update for better user experience by
     // avoiding the network delay. We also save the current value in case the
@@ -266,7 +268,10 @@ const displayName = computed(() => {
                                     >
                                 </div>
                                 <div
-                                    v-if="message.agent_message && $page.props.hasPrompt"
+                                    v-if="
+                                        message.agent_message &&
+                                        $page.props.showRating
+                                    "
                                     class="mt-2 flex gap-4"
                                 >
                                     <button

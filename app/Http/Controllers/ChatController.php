@@ -46,6 +46,7 @@ class ChatController extends Controller
             'conversation_id' => $id,
             'conversation_name' => $conversation->name,
             'hasPrompt' => true,
+            'showRating' => true,
             'username' => null,
         ]);
     }
@@ -265,16 +266,13 @@ class ChatController extends Controller
         $message = Messages::query()
             ->where('messages.id', '=', $request->input('message_id'))
             ->join(
-
                 'conversations',
                 'conversations.id',
                 '=',
                 'messages.conversation_id'
             )
             ->where('conversations.user_id', '=', Auth::id())
-            ->select([
-                'messages.*'
-            ])
+            ->select(['messages.*'])
             ->first();
 
         if (!$message) {
