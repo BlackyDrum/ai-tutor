@@ -155,7 +155,8 @@ class ConversationController extends Controller
             $request->input('message'),
             $languageModel,
             $agentResponse,
-            false
+            false,
+            64
         );
 
         if ($response2->failed()) {

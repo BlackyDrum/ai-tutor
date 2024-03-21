@@ -222,7 +222,9 @@ class ChatController extends Controller
         $userMessage,
         $languageModel,
         $recentMessages = null,
-        $usesContext = true
+        $usesContext = true,
+        $max_tokens = null,
+        $temperature = null
     ) {
         $token = config('api.openai_api_key');
 
@@ -244,8 +246,10 @@ class ChatController extends Controller
             'https://api.openai.com/v1/chat/completions',
             [
                 'model' => $languageModel,
-                'temperature' => (float) Auth::user()->temperature,
-                'max_tokens' => (int) Auth::user()->max_response_tokens,
+                'temperature' =>
+                    $temperature ?? (float) Auth::user()->temperature,
+                'max_tokens' =>
+                    $max_tokens ?? (int) Auth::user()->max_response_tokens,
                 'messages' => $messages,
             ]
         );
