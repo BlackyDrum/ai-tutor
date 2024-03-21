@@ -297,7 +297,7 @@ const displayName = computed(() => {
                                 <div
                                     v-if="
                                         message.agent_message &&
-                                        $page.props.showRating
+                                        $page.props.showOptions
                                     "
                                     class="mt-2 flex gap-4"
                                 >

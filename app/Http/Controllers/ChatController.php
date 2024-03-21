@@ -46,7 +46,7 @@ class ChatController extends Controller
             'conversation_id' => $id,
             'conversation_name' => $conversation->name,
             'hasPrompt' => true,
-            'showRating' => true,
+            'showOptions' => true,
             'username' => null,
         ]);
     }

@@ -300,7 +300,7 @@ class ConversationController extends Controller
             'conversation_id' => $id,
             'conversation_name' => $name,
             'hasPrompt' => false,
-            'showRating' => false,
+            'showOptions' => false,
             'username' => null,
         ]);
     }
@@ -390,7 +390,7 @@ class ConversationController extends Controller
             'conversation_id' => $id,
             'conversation_name' => $conversation->name,
             'hasPrompt' => false,
-            'showRating' => true,
+            'showOptions' => true,
             'username' =>
                 User::query()->find($conversation->user_id)->name ?? null,
         ]);
