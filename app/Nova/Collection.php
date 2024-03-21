@@ -52,7 +52,17 @@ class Collection extends Resource
             ID::make()->sortable(),
 
             Text::make('Name')
-                ->rules('required', 'string')
+                ->rules('required', 'string', function (
+                    $attribute,
+                    $value,
+                    $fail
+                ) {
+                    if (!ctype_alnum($value)) {
+                        $fail(
+                            "The $attribute field must only contain alphanumeric characters"
+                        );
+                    }
+                })
                 ->creationRules('unique:collections,name')
                 ->updateRules('unique:collections,name,{{resourceId}}')
                 ->sortable(),
