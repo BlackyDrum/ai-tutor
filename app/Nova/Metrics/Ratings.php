@@ -3,15 +3,15 @@
 namespace App\Nova\Metrics;
 
 use App\Models\Messages;
+use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Metrics\Trend;
-use Laravel\Nova\Nova;
+use Laravel\Nova\Metrics\Partition;
 
-class MessagesPerDay extends Trend
+class Ratings extends Partition
 {
     public $width = '1/3';
 
-    public $name = 'Messages';
+    public $helpText = 'Helpful vs. non-helpful message ratio among all rated messages';
 
     /**
      * Calculate the value of the metric.
@@ -21,23 +21,17 @@ class MessagesPerDay extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByDays($request, Messages::class)->showSumValue();
-    }
+        $positive = Messages::query()->where('helpful', true)->count();
 
-    /**
-     * Get the ranges available for the metric.
-     *
-     * @return array
-     */
-    public function ranges()
-    {
-        return [
-            7 => Nova::__('7 Days'),
-            14 => Nova::__('14 Days'),
-            30 => Nova::__('30 Days'),
-            60 => Nova::__('60 Days'),
-            90 => Nova::__('90 Days'),
-        ];
+        $negative = Messages::query()->where('helpful', false)->count();
+
+        return $this->result([
+            'Helpful' => $positive,
+            'Not Helpful' => $negative,
+        ])->colors([
+            'Helpful' => '#66ff66',
+            'Not Helpful' => '#ff6666',
+        ]);
     }
 
     /**
@@ -57,6 +51,6 @@ class MessagesPerDay extends Trend
      */
     public function uriKey()
     {
-        return 'messages-per-day';
+        return 'ratings';
     }
 }

@@ -9,7 +9,7 @@ use Laravel\Nova\Nova;
 
 class ConversationsPerDay extends Trend
 {
-    public $width = '1/2';
+    public $width = '1/3';
 
     public $name = 'Conversations';
 
