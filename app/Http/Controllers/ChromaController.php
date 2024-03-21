@@ -36,7 +36,7 @@ class ChromaController extends Controller
             nResults: $maxResults
         );
 
-        $enhancedMessage = '';
+        $enhancedMessage = "\nUser Message:\n" . $message . "\n\n";
 
         $conversation = Conversations::query()
             ->where('url_id', '=', $conversation_id)
@@ -64,8 +64,6 @@ class ChromaController extends Controller
             $enhancedMessage .= "Context Document:\n" . $file->content . "\n";
             $enhancedMessage .= "\"\"\"\n";
         }
-
-        $enhancedMessage .= "\n\nUser Message:\n" . $message . "\n";
 
         return $enhancedMessage;
     }
