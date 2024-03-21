@@ -44,7 +44,6 @@ class SyncChromaDB extends Command
                 ],
                 [
                     'max_results' => $chromaCollection->metadata['max_results'],
-                    'module_id' => null,
                 ]
             );
 
