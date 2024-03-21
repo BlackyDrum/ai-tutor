@@ -71,6 +71,14 @@ class ValidateChromaDBSync extends Command
                 return -1;
             }
 
+            if ($relationalCollection->max_results != $collection->metadata['max_results']) {
+                $this->error(
+                    "'Max Results' doesn't match for collection {$collection->name}"
+                );
+
+                $error = true;
+            }
+
             $names[] = $collection->name;
         }
 
