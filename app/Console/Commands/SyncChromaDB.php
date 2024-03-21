@@ -38,7 +38,7 @@ class SyncChromaDB extends Command
         $collectionNames = [];
 
         foreach ($chromaCollections as $chromaCollection) {
-            $collection = Collections::query()->firstOrCreate(
+            $collection = Collections::query()->updateOrCreate(
                 [
                     'name' => $chromaCollection->name,
                 ],
@@ -73,7 +73,7 @@ class SyncChromaDB extends Command
             $embeddingIds = [];
 
             foreach ($ids as $key => $id) {
-                $file = Files::query()->firstOrCreate(
+                $file = Files::query()->updateOrCreate(
                     [
                         'embedding_id' => $id,
                     ],
@@ -81,7 +81,6 @@ class SyncChromaDB extends Command
                         'name' => $metadata[$key]['filename'],
                         'content' => $documents[$key],
                         'size' => $metadata[$key]['size'],
-                        'user_id' => null,
                         'collection_id' => $relationalCollection->id,
                     ]
                 );

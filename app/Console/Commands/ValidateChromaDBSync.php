@@ -32,6 +32,9 @@ class ValidateChromaDBSync extends Command
 
         $error = false;
 
+        $failMessage =
+            "Relational Database is NOT in sync with ChromaDB.\nConsider running 'php artisan chroma:sync' to sync the databases. This will assume that the data in ChromaDB is correct and replicate its contents into the relational database";
+
         $client = ChromaController::getClient();
 
         $this->info("ChromaDB Version: {$client->version()}");
@@ -68,10 +71,15 @@ class ValidateChromaDBSync extends Command
                     "Cannot find RelationalDB Collection for {$collection->name}"
                 );
 
+                $this->error($failMessage);
+
                 return -1;
             }
 
-            if ($relationalCollection->max_results != $collection->metadata['max_results']) {
+            if (
+                $relationalCollection->max_results !=
+                $collection->metadata['max_results']
+            ) {
                 $this->error(
                     "'Max Results' doesn't match for collection {$collection->name}"
                 );
@@ -91,6 +99,8 @@ class ValidateChromaDBSync extends Command
                 $this->error(
                     "Cannot find ChromaDB Collection for {$collection->name}"
                 );
+
+                $this->error($failMessage);
 
                 return -1;
             }
@@ -209,12 +219,7 @@ class ValidateChromaDBSync extends Command
                 "All tests passed. Relational Database is in sync with ChromaDB \u{2713}"
             );
         } else {
-            $this->error(
-                "Relational Database is NOT in sync with ChromaDB.\nShould there be an overabundance of records or missing embeddings, consider running 'php artisan chroma:sync' to sync the databases."
-            );
-            $this->error(
-                "Alternatively, you may delete all entries from the 'collection' and/or 'files' table and run 'php artisan:chroma:sync' to repopulate the data from ChromaDB"
-            );
+            $this->error($failMessage);
 
             return -1;
         }
