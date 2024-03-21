@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
 use App\Models\Files;
+use App\Nova\Actions\SyncChromaDB;
 use App\Nova\Actions\ValidateChromaDBSync;
 use App\Nova\Metrics\Embeddings;
 use Illuminate\Database\Eloquent\Model;
@@ -221,6 +222,10 @@ class Embedding extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [ExportAsCsv::make()->nameable(), new ValidateChromaDBSync()];
+        return [
+            ExportAsCsv::make()->nameable(),
+            new ValidateChromaDBSync(),
+            new SyncChromaDB(),
+        ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
+use App\Nova\Actions\SyncChromaDB;
 use App\Nova\Actions\ValidateChromaDBSync;
 use App\Nova\Metrics\Collections;
 use Illuminate\Database\Eloquent\Model;
@@ -172,6 +173,10 @@ class Collection extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [ExportAsCsv::make()->nameable(), new ValidateChromaDBSync()];
+        return [
+            ExportAsCsv::make()->nameable(),
+            new ValidateChromaDBSync(),
+            new SyncChromaDB(),
+        ];
     }
 }
