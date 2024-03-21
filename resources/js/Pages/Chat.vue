@@ -52,7 +52,7 @@ onMounted(() => {
     scroll();
 });
 
-const handleCreateConversation = (userMessage) => {
+const handleMessageSubmission = (userMessage) => {
     if (
         userMessage.length === 0 ||
         isSendingRequest.value ||
@@ -337,7 +337,7 @@ const displayName = computed(() => {
             <Prompt
                 v-if="$page.props.hasPrompt"
                 :sending="isSendingRequest"
-                @is-submitting="handleCreateConversation"
+                @is-submitting="handleMessageSubmission"
                 ref="promptComponent"
             />
         </Main>
