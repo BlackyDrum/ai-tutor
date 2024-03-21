@@ -177,6 +177,9 @@ const updateRating = (id, helpful) => {
     // avoiding the network delay. We also save the current value in case the
     // request fails.
     const message = messages.value.find((message) => message.id === id);
+
+    if (message.helpful === helpful) return;
+
     const tmp = message.helpful;
     message.helpful = helpful;
 
