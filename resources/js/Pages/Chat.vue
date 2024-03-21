@@ -29,6 +29,7 @@ const toast = useToast();
 let converter = new showdown.Converter();
 const forbidTags = ["a", "img"];
 
+const copiedMessages = ref([]);
 const isSendingRequest = ref(false);
 const promptComponent = ref();
 const mainComponent = ref();
@@ -125,16 +126,16 @@ const scroll = () => {
     scrollContainer.value.scrollTo(0, scrollContainer.value.scrollHeight);
 };
 
+const decodeHtml = (str) => {
+    const textarea = document.createElement("textarea");
+    textarea.innerHTML = str;
+    return textarea.value;
+};
+
 // Decode all HTML entities inside a code tag
 const decodeHtmlEntitiesInCodeBlocks = (htmlString) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlString, "text/html");
-
-    const decodeHtml = (str) => {
-        const textarea = document.createElement("textarea");
-        textarea.innerHTML = str;
-        return textarea.value;
-    };
 
     const codeElements = doc.querySelectorAll("code");
     codeElements.forEach((code) => {
@@ -200,6 +201,29 @@ const updateRating = (id, helpful) => {
             });
 
             message.helpful = tmp;
+        });
+};
+
+const copyMessage = (id) => {
+    if (copiedMessages.value.includes(id)) return;
+
+    // Accessing the messages property is necessary since the markdown
+    // content in our messages ref variable is already parsed.
+    const message = page.props.messages.find((message) => message.id === id);
+
+    navigator.clipboard
+        .writeText(decodeHtml(message.agent_message))
+        .then(() => {
+            copiedMessages.value.push(id);
+
+            setTimeout(() => {
+                const index = copiedMessages.value.findIndex(
+                    (messageId) => messageId === id,
+                );
+                if (index !== -1) {
+                    copiedMessages.value.splice(index, 1);
+                }
+            }, 3000);
         });
 };
 
@@ -277,6 +301,15 @@ const displayName = computed(() => {
                                     "
                                     class="mt-2 flex gap-4"
                                 >
+                                    <button
+                                        @click="copyMessage(message.id)"
+                                        v-tooltip.bottom="'Copy'"
+                                        :class="
+                                            copiedMessages.includes(message.id)
+                                                ? 'pi pi-check'
+                                                : 'pi pi-copy'
+                                        "
+                                    />
                                     <button
                                         @click="updateRating(message.id, true)"
                                         v-tooltip.bottom="'Good Response'"
