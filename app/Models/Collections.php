@@ -32,9 +32,8 @@ class Collections extends Model
 
         static::updating(function (Model $model) {
             $oldName = $model->getOriginal('name');
-            $newName = $model->name;
 
-            ChromaController::updateCollection($oldName, $newName);
+            ChromaController::updateCollection($oldName, $model);
         });
     }
 }

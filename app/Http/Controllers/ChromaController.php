@@ -413,22 +413,25 @@ class ChromaController extends Controller
         ];
     }
 
-    public static function createCollection($name)
+    public static function createCollection($model)
     {
         try {
             $chromaDB = self::getClient();
 
             $embeddingFunction = self::getEmbeddingFunction();
 
+            $metadata = ['max_results' => $model->max_results];
+
             $chromaDB->createCollection(
-                $name,
+                $model->name,
+                $metadata,
                 embeddingFunction: $embeddingFunction
             );
         } catch (\Exception $exception) {
             Log::error(
                 'ChromaDB: Failed to create new collection with name {collection}. Reason: {reason}',
                 [
-                    'collection' => $name,
+                    'collection' => $model->name,
                     'reason' => $exception->getMessage(),
                 ]
             );
@@ -444,12 +447,14 @@ class ChromaController extends Controller
         ];
     }
 
-    public static function updateCollection($oldName, $newName)
+    public static function updateCollection($oldName, $model)
     {
         try {
             $collection = self::getCollection($oldName);
 
-            $collection->modify($newName, []);
+            $metadata = ['max_results' => $model->max_results];
+
+            $collection->modify($model->name, $metadata);
         } catch (\Exception $exception) {
             Log::error(
                 'ChromaDB: Failed to update collection with name {name}. Reason: {reason}',

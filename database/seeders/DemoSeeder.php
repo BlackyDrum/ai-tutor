@@ -63,13 +63,13 @@ class DemoSeeder extends Seeder
                 'name' => 'DemoCollection',
             ],
             [
-                'max_results' => 5,
+                'max_results' => 2,
                 'module_id' => $module->id,
             ]
         );
 
         if ($collection->wasRecentlyCreated) {
-            $result = ChromaController::createCollection($collection->name);
+            $result = ChromaController::createCollection($collection);
 
             if (!$result['status']) {
                 $collection->forceDelete();

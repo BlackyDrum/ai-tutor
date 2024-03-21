@@ -80,7 +80,7 @@ class Collection extends Resource
 
     public static function afterCreate(NovaRequest $request, Model $model)
     {
-        $result = ChromaController::createCollection($model->name);
+        $result = ChromaController::createCollection($model);
 
         if (!$result['status']) {
             $model->forceDelete();
