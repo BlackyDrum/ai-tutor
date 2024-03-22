@@ -222,10 +222,6 @@ class Embedding extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [
-            ExportAsCsv::make()->nameable(),
-            new ValidateChromaDBSync(),
-            new SyncChromaDB(),
-        ];
+        return [ExportAsCsv::make()->nameable()];
     }
 }

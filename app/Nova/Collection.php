@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
+use App\Nova\Actions\DestroyChromaDB;
 use App\Nova\Actions\SyncChromaDB;
 use App\Nova\Actions\ValidateChromaDBSync;
 use App\Nova\Metrics\Collections;
@@ -177,6 +178,7 @@ class Collection extends Resource
             ExportAsCsv::make()->nameable(),
             new ValidateChromaDBSync(),
             new SyncChromaDB(),
+            new DestroyChromaDB(),
         ];
     }
 }
