@@ -234,7 +234,7 @@ public static function models()
 {
     return [
         new gpt_3_5_turbo_0125(),
-         ...
+        ...
     ];
 }
 ```
