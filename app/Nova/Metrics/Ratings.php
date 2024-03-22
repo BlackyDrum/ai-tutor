@@ -11,8 +11,6 @@ class Ratings extends Partition
 {
     public $width = '1/3';
 
-    public $helpText = 'Helpful vs. non-helpful message ratio among all rated messages';
-
     /**
      * Calculate the value of the metric.
      *
@@ -25,12 +23,16 @@ class Ratings extends Partition
 
         $negative = Messages::query()->where('helpful', false)->count();
 
+        $neutral = Messages::query()->whereNull('helpful')->count();
+
         return $this->result([
             'Helpful' => $positive,
             'Not Helpful' => $negative,
+            'Not Rated' => $neutral
         ])->colors([
             'Helpful' => '#66ff66',
             'Not Helpful' => '#ff6666',
+            'Not Rated' => '#ffffff'
         ]);
     }
 
