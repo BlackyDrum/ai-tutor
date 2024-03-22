@@ -15,7 +15,7 @@ class LtiController extends Controller
 
         if ($tool->getLaunchType() === $tool::LAUNCH_TYPE_LAUNCH) {
             die(
-                "LTI Launch successfull. Full name: {$tool->userResult->fullname}, Abbreviation: {$tool->userResult->ltiUserId}, Ref ID: {$tool->context->ltiContextId}"
+                "LTI Launch successfull. Full name: {$tool->userResult->fullname}, Abbreviation: {$tool->userResult->ltiUserId}, Ref ID: {$tool->resourceLink->getId()}"
             );
         }
 
