@@ -105,6 +105,15 @@ const handleMessageSubmission = (userMessage) => {
                     life: 5000,
                 });
             }
+
+            page.props.messages.push({
+                agent_message: agent_message,
+                conversation_id: page.props.conversation_id,
+                created_at: created_at,
+                id: id,
+                updated_at: updated_at,
+                user_message: userMessage,
+            });
         })
         .then(() => {
             scroll();
