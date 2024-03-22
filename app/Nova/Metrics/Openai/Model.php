@@ -34,31 +34,11 @@ abstract class Model extends Partition
 
     public function calculate(NovaRequest $request)
     {
-        $totalCompletionTokens = Messages::query()
-            ->join(
-                'conversations',
-                'conversations.id',
-                '=',
-                'messages.conversation_id'
-            )
-            ->where('conversations.openai_language_model', $this->name)
-            ->select(DB::raw('SUM(messages.completion_tokens) AS total'))
-            ->first();
-
-        $totalPromptTokens = Messages::query()
-            ->join(
-                'conversations',
-                'conversations.id',
-                '=',
-                'messages.conversation_id'
-            )
-            ->where('conversations.openai_language_model', $this->name)
-            ->select(DB::raw('SUM(messages.prompt_tokens) AS total'))
-            ->first();
+        $tokens = TotalCosts::getTokens($this->name);
 
         return $this->result([
-            'Prompt Tokens' => $totalPromptTokens->total,
-            'Completion Tokens' => $totalCompletionTokens->total,
+            'Prompt Tokens' => $tokens['prompt_tokens'],
+            'Completion Tokens' => $tokens['completion_tokens'],
         ]);
     }
 
