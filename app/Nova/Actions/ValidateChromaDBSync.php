@@ -19,7 +19,7 @@ class ValidateChromaDBSync extends Action
 {
     use InteractsWithQueue, Queueable;
 
-    public $name = 'Check sync';
+    public $name = 'Check Synchronization';
 
     public $confirmText = 'This action will verify the synchronization of collections and embeddings between our relational database and ChromaDB';
 

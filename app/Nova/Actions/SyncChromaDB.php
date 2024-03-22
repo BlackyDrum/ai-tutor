@@ -16,7 +16,7 @@ class SyncChromaDB extends Action
 {
     use InteractsWithQueue, Queueable;
 
-    public $name = 'Synchronize';
+    public $name = 'Synchronize Databases';
 
     public $confirmText = 'This action will synchronize ChromaDB with the relational database. This will assume that the data in ChromaDB is correct and replicate its contents into the relational database';
 
