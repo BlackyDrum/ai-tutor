@@ -94,7 +94,11 @@ class Agent extends Resource
 
             */
 
-            Textarea::make('Instructions')->rules('required', 'string'),
+            Textarea::make('Instructions')
+                ->rules('required', 'string')
+                ->help(
+                    'Guidelines that the agent follows to generate responses'
+                ),
 
             BelongsTo::make('Module', 'module', Module::class)
                 ->readonly(
