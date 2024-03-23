@@ -13,6 +13,7 @@ class Conversations extends Model
         'openai_language_model',
         'url_id',
         'user_id',
+        'module_id',
         'name',
     ];
 

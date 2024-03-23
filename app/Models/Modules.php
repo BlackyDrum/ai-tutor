@@ -23,11 +23,6 @@ class Modules extends Model
 
     public function conversations()
     {
-        return $this->hasManyThrough(
-            Conversations::class,
-            User::class,
-            'module_id',
-            'user_id'
-        );
+        return $this->hasMany(Conversations::class, 'module_id');
     }
 }

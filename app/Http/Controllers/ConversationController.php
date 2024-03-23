@@ -37,6 +37,7 @@ class ConversationController extends Controller
 
         $agent = $appCheckResults['agent'];
         $collection = $appCheckResults['collection'];
+        $module = Modules::query()->find(Auth::user()->module_id);
 
         $languageModel = config('api.openai_language_model');
 
@@ -49,6 +50,7 @@ class ConversationController extends Controller
             'url_id' => Str::random(40),
             'openai_language_model' => $languageModel,
             'user_id' => Auth::id(),
+            'module_id' => $module->id,
         ]);
 
         $conversationID = $conversation->url_id;
