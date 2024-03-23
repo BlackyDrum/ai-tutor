@@ -169,6 +169,12 @@ class ConversationController extends Controller
 
         DB::commit();
 
+        $remaining = ChatController::checkRemainingMessages();
+
+        if ($remaining) {
+            session()->put('info_message_remaining_messages', $remaining);
+        }
+
         Log::info('App: User with ID {user-id} created a new conversation', [
             'conversation-id' => $conversationID,
         ]);
@@ -279,6 +285,7 @@ class ConversationController extends Controller
             'hasPrompt' => false,
             'showOptions' => false,
             'username' => null,
+            'info' => null,
         ]);
     }
 
@@ -370,6 +377,7 @@ class ConversationController extends Controller
             'showOptions' => true,
             'username' =>
                 User::query()->find($conversation->user_id)->name ?? null,
+            'info' => null,
         ]);
     }
 }

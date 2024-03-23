@@ -48,6 +48,7 @@ class ChatController extends Controller
             'hasPrompt' => true,
             'showOptions' => true,
             'username' => null,
+            'info' => session()->pull('info_message_remaining_messages'),
         ]);
     }
 
@@ -69,7 +70,9 @@ class ChatController extends Controller
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
-        $appCheckResults = HomeController::validateAppFunctionality($conversation);
+        $appCheckResults = HomeController::validateAppFunctionality(
+            $conversation
+        );
 
         if (!$appCheckResults) {
             return response()->json(
@@ -179,6 +182,17 @@ class ChatController extends Controller
 
         DB::commit();
 
+        $remaining = self::checkRemainingMessages();
+
+        if ($remaining) {
+            $message['info'] = $remaining;
+        }
+
+        return response()->json($message);
+    }
+
+    public static function checkRemainingMessages()
+    {
         $maxRequests = Auth::user()->max_requests;
         $remainingMessagesAlertLevels = config(
             'chat.remaining_requests_alert_levels'
@@ -189,12 +203,10 @@ class ChatController extends Controller
         $remainingMessagesCount = $maxRequests - $messages->count();
 
         if (in_array($remainingMessagesCount, $remainingMessagesAlertLevels)) {
-            $message[
-                'info'
-            ] = "You have $remainingMessagesCount messages remaining for today.";
+            return "You have $remainingMessagesCount messages remaining for today.";
         }
 
-        return response()->json($message);
+        return false;
     }
 
     public static function sendMessageToOpenAI(

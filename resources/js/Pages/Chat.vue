@@ -1,6 +1,6 @@
 <script setup>
 import { Head, usePage } from "@inertiajs/vue3";
-import { computed, onBeforeMount, onMounted, ref } from "vue";
+import { computed, onBeforeMount, onMounted, onUnmounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import showdown from "showdown";
@@ -36,6 +36,8 @@ const mainComponent = ref();
 const scrollContainer = ref();
 const messages = ref([]);
 
+const timeoutId = ref();
+
 onBeforeMount(() => {
     messages.value = JSON.parse(JSON.stringify(page.props.messages));
 
@@ -49,7 +51,24 @@ onMounted(() => {
         promptComponent.value.focusInput();
     }
 
+    if (page.props.info) {
+        timeoutId.value = setTimeout(() => {
+            toast.add({
+                severity: "info",
+                summary: "Info",
+                detail: page.props.info,
+                life: 5000,
+            });
+        }, 500);
+    }
+
     scroll();
+});
+
+onUnmounted(() => {
+    if (timeoutId.value) {
+        clearTimeout(timeoutId.value);
+    }
 });
 
 const handleMessageSubmission = (userMessage) => {
