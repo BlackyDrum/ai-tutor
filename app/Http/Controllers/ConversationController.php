@@ -62,10 +62,13 @@ class ConversationController extends Controller
 
         $conversationID = $conversation->url_id;
 
-        // Capture the current timestamp here before adding entries to the 'conversation_has_document'
-        // table within 'createPromptWithContext'. This step is crucial for accurately identifying
-        // and deleting these entries once they fall outside the context window, ensuring they are
-        // correctly timed in relation to the conversation's flow.
+        // Get the current time and save it in the 'created_at' field for messages.
+        // This is done before we add records to the 'conversation_has_document'
+        // table in the 'createPromptWithContext' function. It's important because
+        // it helps us know which message added which documents to the context window.
+        // Later, if a message falls outside the context window, we can remove
+        // the associated documents, too, so that they can potentially
+        // be embedded in the context once again.
         $now = Carbon::now();
 
         try {
