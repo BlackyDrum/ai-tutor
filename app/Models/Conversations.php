@@ -20,6 +20,8 @@ class Conversations extends Model
 
     protected $hidden = [
         'id',
+        'openai_language_model',
+        'module_id',
         'agent_id',
         'temperature',
         'user_id',
