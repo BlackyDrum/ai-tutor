@@ -25,6 +25,56 @@ class HomeController extends Controller
         return Inertia::render('Home');
     }
 
+    public static function validateAppFunctionality()
+    {
+        if (!Auth::user()->module_id) {
+            Log::warning(
+                'App: User with ID {user-id} is not associated with a module'
+            );
+
+            return false;
+        }
+
+        $module = Modules::query()->find(Auth::user()->module_id);
+
+        $agent = Agents::query()
+            ->where('module_id', '=', $module->id)
+            ->where('active', '=', true)
+            ->first();
+
+        if (!$agent) {
+            Log::critical(
+                'App: Failed to find active agent for module with ID {module-id}',
+                [
+                    'module-id' => $module->id,
+                ]
+            );
+
+            return false;
+        }
+
+        $collection = Collections::query()
+            ->where('module_id', '=', Auth::user()->module_id)
+            ->first();
+
+        if (!$collection) {
+            Log::critical(
+                'App: Failed to find a collection for module with ID {module-id}',
+                [
+                    'module-id' => Auth::user()->module_id,
+                ]
+            );
+
+            return false;
+        }
+
+        return [
+            'module' => $module,
+            'agent' => $agent,
+            'collection' => $collection,
+        ];
+    }
+
     public static function getBearerToken()
     {
         // To gracefully handle potential errors such as network issues, we encapsulate ALL Guzzle

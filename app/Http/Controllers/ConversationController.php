@@ -26,34 +26,17 @@ class ConversationController extends Controller
                 'required|string|max:' . config('chat.max_message_length'),
         ]);
 
-        if (!Auth::user()->module_id) {
-            Log::warning(
-                'App: User with ID {user-id} is not associated with a module'
-            );
+        $appCheckResults = HomeController::validateAppFunctionality();
 
+        if (!$appCheckResults) {
             return response()->json(
-                'You are not associated with a module. Try to login again.',
+                ['message' => 'Internal Server Error'],
                 500
             );
         }
 
-        $module = Modules::query()->find(Auth::user()->module_id);
-
-        $agent = Agents::query()
-            ->where('module_id', '=', $module->id)
-            ->where('active', '=', true)
-            ->first();
-
-        if (!$agent) {
-            Log::critical(
-                'App: Failed to find active agent for module with ID {module-id}',
-                [
-                    'module-id' => $module->id,
-                ]
-            );
-
-            return response()->json('Internal Server Error', 500);
-        }
+        $agent = $appCheckResults['agent'];
+        $collection = $appCheckResults['collection'];
 
         $languageModel = config('api.openai_language_model');
 
@@ -70,25 +53,6 @@ class ConversationController extends Controller
         ]);
 
         $conversationID = $conversation->url_id;
-
-        $collection = Collections::query()
-            ->where('module_id', '=', $module->id)
-            ->first();
-
-        if (!$collection) {
-            Log::critical(
-                'App: Failed to find a collection for module with ID {module-id}',
-                [
-                    'module-id' => $module->id,
-                ]
-            );
-
-            $conversation->delete();
-            return response()->json(
-                ['message' => 'Internal Server Error'],
-                500
-            );
-        }
 
         // Capture the current timestamp here before adding entries to the 'conversation_has_document'
         // table within 'createPromptWithContext'. This step is crucial for accurately identifying

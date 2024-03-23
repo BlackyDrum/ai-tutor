@@ -65,38 +65,17 @@ class ChatController extends Controller
             ],
         ]);
 
-        if (!Auth::user()->module_id) {
-            Log::warning(
-                'App: User with ID {user-id} is not associated with a module'
-            );
+        $appCheckResults = HomeController::validateAppFunctionality();
 
+        if (!$appCheckResults) {
             return response()->json(
-                'You are not associated with a module. Try to login again.',
+                ['message' => 'Internal Server Error'],
                 500
             );
         }
 
-        $module = Modules::query()->find(Auth::user()->module_id);
-
-        $agent = Agents::query()
-            ->where('module_id', '=', $module->id)
-            ->where('active', '=', true)
-            ->first();
-
-        $collection = Collections::query()
-            ->where('module_id', '=', Auth::user()->module_id)
-            ->first();
-
-        if (!$collection) {
-            Log::critical(
-                'App: Failed to find a collection for module with ID {module-id}',
-                [
-                    'module-id' => Auth::user()->module_id,
-                ]
-            );
-
-            return response()->json('Internal Server Error.', 500);
-        }
+        $agent = $appCheckResults['agent'];
+        $collection = $appCheckResults['collection'];
 
         $now = Carbon::now();
 
