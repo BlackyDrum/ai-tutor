@@ -68,6 +68,8 @@ class Conversation extends Resource
 
             BelongsTo::make('Owner', 'user', User::class),
 
+            BelongsTo::make('Module'),
+
             HasMany::make('Messages'),
 
             DateTime::make('Created At')

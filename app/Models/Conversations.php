@@ -30,6 +30,11 @@ class Conversations extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function module()
+    {
+        return $this->belongsTo(Modules::class, 'module_id');
+    }
+
     public function messages()
     {
         return $this->hasMany(Messages::class, 'conversation_id');
