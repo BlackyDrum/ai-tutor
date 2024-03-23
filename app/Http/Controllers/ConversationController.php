@@ -13,6 +13,7 @@ use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -44,6 +45,11 @@ class ConversationController extends Controller
         $count = Conversations::query()
             ->where('user_id', '=', Auth::id())
             ->count();
+
+        // We use a transaction here in case something fails
+        // to prevent us from having en empty conversation with
+        // no messages
+        DB::beginTransaction();
 
         $conversation = Conversations::query()->create([
             'name' => 'Chat #' . ($count + 1),
@@ -78,7 +84,7 @@ class ConversationController extends Controller
                 ]
             );
 
-            $conversation->delete();
+            DB::rollBack();
             return response()->json(
                 ['message' => 'Internal Server Error'],
                 500
@@ -100,7 +106,7 @@ class ConversationController extends Controller
                 ]
             );
 
-            $conversation->delete();
+            DB::rollBack();
             return response()->json($response->reason(), $response->status());
         }
 
@@ -157,6 +163,8 @@ class ConversationController extends Controller
             'conversation_id' => $conversation->id,
             'created_at' => $now,
         ]);
+
+        DB::commit();
 
         Log::info('App: User with ID {user-id} created a new conversation', [
             'conversation-id' => $conversationID,
