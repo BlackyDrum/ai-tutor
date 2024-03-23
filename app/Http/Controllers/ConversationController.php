@@ -245,7 +245,7 @@ class ConversationController extends Controller
             ]);
 
         Log::info(
-            'User with ID {user-id} renamed a conversation with ID {conversation-id}',
+            'App: User with ID {user-id} renamed a conversation with ID {conversation-id}',
             [
                 'new-name' => $request->input('name'),
                 'conversation-id' => $request->input('conversation_id'),
@@ -337,7 +337,7 @@ class ConversationController extends Controller
             'conversation_id' => $conversation->id,
         ]);
 
-        Log::info('User with ID {user-id} shared a conversation', [
+        Log::info('App: User with ID {user-id} shared a conversation', [
             'shared_url_id' => $sharedConversation->shared_url_id,
             'conversation_id' => $conversation->id,
         ]);
@@ -367,7 +367,7 @@ class ConversationController extends Controller
             ->where('conversation_id', '=', $conversation->id)
             ->delete();
 
-        Log::info('User with ID {user-id} deleted a shared conversation', [
+        Log::info('App: User with ID {user-id} deleted a shared conversation', [
             'conversation_id' => $conversation->id,
         ]);
     }
