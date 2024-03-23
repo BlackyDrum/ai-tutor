@@ -141,11 +141,21 @@ class Agent extends Resource
         $model->save();
 
         self::changeActiveStatus($model);
+
+        Log::info('App: User with ID {user-id} created an agent', [
+            'id' => $model->id,
+            'name' => $model->name,
+        ]);
     }
 
     public static function afterUpdate(NovaRequest $request, Model $model)
     {
         self::changeActiveStatus($model);
+
+        Log::info('App: User with ID {user-id} updated an agent', [
+            'id' => $model->id,
+            'name' => $model->name,
+        ]);
     }
 
     public static function afterDelete(NovaRequest $request, Model $model)

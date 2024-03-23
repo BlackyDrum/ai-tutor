@@ -100,36 +100,67 @@ class Collection extends Resource
 
     public static function afterCreate(NovaRequest $request, Model $model)
     {
-        $result = ChromaController::createCollection($model);
+        try {
+            ChromaController::createCollection($model);
 
-        if (!$result['status']) {
+            self::changeActiveStatus($model);
+
+            Log::info('App: User with ID {user-id} created a collection', [
+                'id' => $model->id,
+                'name' => $model->name,
+            ]);
+        } catch (\Exception $exception) {
+            Log::error(
+                'ChromaDB: Failed to create new collection with name {collection}. Reason: {reason}',
+                [
+                    'collection' => $model->name,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
+
             $model->forceDelete();
-            abort(500, $result['message']);
-        }
 
-        self::changeActiveStatus($model);
+            abort(500, $exception->getMessage());
+        }
     }
 
     public static function afterUpdate(NovaRequest $request, Model $model)
     {
+        // Since Nova doesn't offer a direct way to work with the previous model state after an update,
+        // we update the ChromaDB instance related to this collection in the 'Collections' model's boot method.
+
         self::changeActiveStatus($model);
+
+        Log::info('App: User with ID {user-id} updated a collection', [
+            'id' => $model->id,
+            'name' => $model->name,
+        ]);
     }
 
     public static function afterDelete(NovaRequest $request, Model $model)
     {
-        $result = ChromaController::deleteCollection($model);
+        try {
+            ChromaController::deleteCollection($model);
 
-        if (!$result['status']) {
+            $model->forceDelete();
+        } catch (\Exception $exception) {
+            Log::error(
+                'ChromaDB: Failed to delete collection with name {name}. Reason: {reason}',
+                [
+                    'name' => $model->name,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
+
             $model->restore();
-            abort(500, $result['message']);
+
+            abort(500, $exception->getMessage());
         }
 
         Log::info('App: User with ID {user-id} deleted a collection', [
             'id' => $model->id,
             'name' => $model->name,
         ]);
-
-        $model->forceDelete();
     }
 
     public function authorizedToDelete(Request $request)
@@ -187,7 +218,7 @@ class Collection extends Resource
             new ValidateChromaDBSync(),
             new SyncChromaDB(),
             new DestroyChromaDB(),
-            new ReplicateCollection()
+            new ReplicateCollection(),
         ];
     }
 }

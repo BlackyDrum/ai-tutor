@@ -69,14 +69,15 @@ class DemoSeeder extends Seeder
         );
 
         if ($collection->wasRecentlyCreated) {
-            $result = ChromaController::createCollection($collection);
-
-            if (!$result['status']) {
+            try {
+                ChromaController::createCollection($collection);
+            } catch (\Exception $exception) {
                 $collection->forceDelete();
                 $user->delete();
                 $module->delete();
                 $agent->delete();
-                abort(500, $result['message']);
+
+                throw $exception;
             }
         }
     }

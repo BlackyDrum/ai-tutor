@@ -65,6 +65,24 @@ class Module extends Resource
         ];
     }
 
+    public static function afterCreate(NovaRequest $request, Model $model)
+    {
+        Log::info('App: User with ID {user-id} created a module', [
+            'id' => $model->id,
+            'name' => $model->name,
+            'ref-id' => $model->ref_id,
+        ]);
+    }
+
+    public static function afterUpdate(NovaRequest $request, Model $model)
+    {
+        Log::info('App: User with ID {user-id} updated a module', [
+            'id' => $model->id,
+            'name' => $model->name,
+            'ref-id' => $model->ref_id,
+        ]);
+    }
+
     public static function afterDelete(NovaRequest $request, Model $model)
     {
         Log::info('App: User with ID {user-id} deleted a module', [

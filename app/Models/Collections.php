@@ -33,7 +33,20 @@ class Collections extends Model
         static::updating(function (Model $model) {
             $oldName = $model->getOriginal('name');
 
-            ChromaController::updateCollection($oldName, $model);
+            try {
+                ChromaController::updateCollection($oldName, $model);
+            } catch (\Exception $exception) {
+                Log::error(
+                    'ChromaDB: Failed to update collection with name {name}. Reason: {reason}',
+                    [
+                        'name' => $oldName,
+                        'reason' => $exception->getMessage(),
+                    ]
+                );
+
+                // This in handled by Nova
+                throw $exception;
+            }
         });
     }
 }

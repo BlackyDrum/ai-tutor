@@ -127,41 +127,71 @@ class Embedding extends Resource
 
     public static function afterCreate(NovaRequest $request, Model $model)
     {
-        $result = ChromaController::createEmbedding($model);
+        try {
+            ChromaController::createEmbedding($model);
 
-        if (!$result['status']) {
+            Log::info('App: User with ID {user-id} created an embedding', [
+                'id' => $model->id,
+                'name' => $model->name,
+                'embedding-id' => $model->embedding_id,
+            ]);
+        } catch (\Exception $exception) {
             $model->forceDelete();
-            abort(500, $result['message']);
+
+            abort(500, $exception->getMessage());
         }
     }
 
     public static function afterUpdate(NovaRequest $request, Model $model)
     {
-        $result = ChromaController::updateEmbedding($model);
+        try {
+            ChromaController::updateEmbedding($model);
 
-        if (!$result['status']) {
-            abort(500, $result['message']);
+            Log::info('App: User with ID {user-id} updated an embedding', [
+                'id' => $model->id,
+                'name' => $model->name,
+                'embedding-id' => $model->embedding_id,
+            ]);
+        } catch (\Exception $exception) {
+            Log::error(
+                'ChromaDB: Failed to update embedding with ID {embedding-id}. Reason: {reason}',
+                [
+                    'embedding-id' => $model->embedding_id,
+                    'collection-id' => $model->collection_id,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
+
+            abort(500, $exception->getMessage());
         }
-
-        $model->save();
     }
 
     public static function afterDelete(NovaRequest $request, Model $model)
     {
-        $result = ChromaController::deleteEmbedding($model);
+        try {
+            ChromaController::deleteEmbedding($model);
 
-        if (!$result['status']) {
+            Log::info('App: User with ID {user-id} deleted an embedding', [
+                'id' => $model->id,
+                'name' => $model->name,
+                'embedding-id' => $model->embedding_id,
+            ]);
+
+            $model->forceDelete();
+        } catch (\Exception $exception) {
+            Log::error(
+                'ChromaDB: Failed to delete embedding with ID {embedding-id}. Reason: {reason}',
+                [
+                    'embedding-id' => $model->embedding_id,
+                    'collection-id' => $model->collection_id,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
+
             $model->restore();
-            abort(500, $result['message']);
+
+            abort(500, $exception->getMessage());
         }
-
-        Log::info('App: User with ID {user-id} deleted an embedding', [
-            'id' => $model->id,
-            'name' => $model->name,
-            'embedding-id' => $model->embedding_id,
-        ]);
-
-        $model->forceDelete();
     }
 
     public function authorizedToForceDelete(Request $request)

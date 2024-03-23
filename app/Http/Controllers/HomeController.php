@@ -87,36 +87,16 @@ class HomeController extends Controller
 
     public static function getBearerToken()
     {
-        // To gracefully handle potential errors such as network issues, we encapsulate ALL Guzzle
-        // HTTP requests in a try-catch block. This approach ensures better error handling by capturing
-        // exceptions such as 'RequestException' or 'ConnectionException'. Laravel's HTTP client wrapper does not
-        // throw exceptions on client or server errors (400 and 500 level responses from servers). Instead,
-        // we have to determine if the request failed using $response->failed().
-        try {
-            $response = Http::withoutVerifying()
-                ->asForm()
-                ->post(config('conversaition.url') . '/token', [
-                    'username' => config('conversaition.username'),
-                    'password' => config('conversaition.password'),
-                    'grant_type' => config('conversaition.grant_type'),
-                    'scope' => config('conversaition.scope'),
-                    'client_id' => config('conversaition.client_id'),
-                    'client_secret' => config('conversaition.client_secret'),
-                ]);
-        } catch (\Exception $exception) {
-            Log::error(
-                'App/ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}',
-                [
-                    'reason' => $exception->getMessage(),
-                    'status' => 500,
-                ]
-            );
-
-            return [
-                'reason' => 'Internal Server Error',
-                'status' => 500,
-            ];
-        }
+        $response = Http::withoutVerifying()
+            ->asForm()
+            ->post(config('conversaition.url') . '/token', [
+                'username' => config('conversaition.username'),
+                'password' => config('conversaition.password'),
+                'grant_type' => config('conversaition.grant_type'),
+                'scope' => config('conversaition.scope'),
+                'client_id' => config('conversaition.client_id'),
+                'client_secret' => config('conversaition.client_secret'),
+            ]);
 
         if ($response->failed()) {
             Log::error(
@@ -127,10 +107,7 @@ class HomeController extends Controller
                 ]
             );
 
-            return [
-                'reason' => $response->reason(),
-                'status' => $response->status(),
-            ];
+            throw new \Exception("Failed to get bearer token from ConversAItion backend");
         }
 
         return $response->json()['access_token'];

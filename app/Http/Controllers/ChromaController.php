@@ -81,67 +81,35 @@ class ChromaController extends Controller
         // the whole pptx file, but rather these small artifacts. Each artifact
         // represents a slide, and each slide represents an embedding.
         if (str_ends_with($filename, 'pptx')) {
-            $token = HomeController::getBearerToken();
-
-            if (is_array($token)) {
-                if (file_exists($pathToFile)) {
-                    unlink($pathToFile);
-                }
-
-                return [
-                    'status' => false,
-                    'message' => $token['reason'],
-                ];
-            }
-
             try {
-                $response = Http::withToken($token)
-                    ->withoutVerifying()
-                    ->asMultipart()
-                    ->post(config('conversaition.url') . '/data/pptx-to-md', [
-                        [
-                            'name' => 'pptxfile',
-                            'contents' => fopen($pathToFile, 'r'),
-                            'headers' => [
-                                'Content-Type' => 'application/octet-stream',
-                            ],
-                        ],
-                    ]);
+                $token = HomeController::getBearerToken();
             } catch (\Exception $exception) {
-                Log::error(
-                    'App/ConversAItion: Failed to convert pptx to json. Reason: {message}',
-                    [
-                        'message' => $exception->getMessage(),
-                    ]
-                );
-
                 if (file_exists($pathToFile)) {
                     unlink($pathToFile);
                 }
 
-                return [
-                    'status' => false,
-                    'message' => $exception->getMessage(),
-                ];
+                throw $exception;
             }
+
+            $response = Http::withToken($token)
+                ->withoutVerifying()
+                ->asMultipart()
+                ->post(config('conversaition.url') . '/data/pptx-to-md', [
+                    [
+                        'name' => 'pptxfile',
+                        'contents' => fopen($pathToFile, 'r'),
+                        'headers' => [
+                            'Content-Type' => 'application/octet-stream',
+                        ],
+                    ],
+                ]);
 
             if (file_exists($pathToFile)) {
                 unlink($pathToFile);
             }
 
             if ($response->failed()) {
-                Log::error(
-                    'ConversAItion: Failed to convert pptx to json. Reason: {reason}. Status: {status}',
-                    [
-                        'reason' => $response->reason(),
-                        'status' => $response->status(),
-                    ]
-                );
-
-                return [
-                    'status' => false,
-                    'message' => $response->reason(),
-                ];
+                throw new \Exception('Failed to convert pptx to json');
             }
 
             $result = self::createEmbeddingFromJson($response->json(), $model);
@@ -201,51 +169,24 @@ class ChromaController extends Controller
             $documents = $result['documents'];
             $metadata = $result['metadata'];
         } else {
-            Log::warning(
-                'App: Attempted to process a file with the wrong format',
-                [
-                    'name' => $model->name,
-                ]
-            );
-
             if (file_exists($pathToFile)) {
                 unlink($pathToFile);
             }
 
-            return [
-                'status' => false,
-                'message' => 'Wrong file format',
-            ];
+            throw new \Exception(
+                'Attempted to process a file with the wrong format'
+            );
         }
 
-        try {
-            $collection = Collections::query()->find($collectionId)->name;
+        $collection = Collections::query()->find($collectionId)->name;
 
-            $collection = self::getCollection($collection);
+        $collection = self::getCollection($collection);
 
-            $collection->add(
-                ids: $ids,
-                metadatas: $metadata,
-                documents: $documents
-            );
-        } catch (\Exception $exception) {
-            Log::error(
-                'ChromaDB: Failed to add items to collection with ID {collection}. Reason: {reason}',
-                [
-                    'collection' => $collectionId,
-                    'reason' => $exception->getMessage(),
-                ]
-            );
-
-            return [
-                'status' => false,
-                'message' => $exception->getMessage(),
-            ];
-        }
-
-        return [
-            'status' => true,
-        ];
+        $collection->add(
+            ids: $ids,
+            metadatas: $metadata,
+            documents: $documents
+        );
     }
 
     private static function createAndStoreSlide($model, $title, $body, $index)
@@ -350,123 +291,65 @@ class ChromaController extends Controller
     {
         $collection = Collections::query()->find($model->collection_id)->name;
 
-        try {
-            $collection = self::getCollection($collection);
+        $collection = self::getCollection($collection);
 
-            $collection->update(
-                ids: [$model->embedding_id],
-                metadatas: [
-                    [
-                        'filename' => $model->name,
-                        'size' => strlen($model->content),
-                    ],
-                ],
-                documents: [$model->content]
-            );
-
-            $model->size = strlen($model->content);
-        } catch (\Exception $exception) {
-            Log::error(
-                'ChromaDB: Failed to update collection with ID {collection-id}. Reason: {reason}',
+        $collection->update(
+            ids: [$model->embedding_id],
+            metadatas: [
                 [
-                    'collection-id' => $model->collection_id,
-                    'reason' => $exception->getMessage(),
-                ]
-            );
+                    'filename' => $model->name,
+                    'size' => strlen($model->content),
+                ],
+            ],
+            documents: [$model->content]
+        );
 
-            return [
-                'status' => false,
-                'message' => $exception->getMessage(),
-            ];
-        }
+        $model->size = strlen($model->content);
 
-        return [
-            'status' => true,
-        ];
+        $model->save();
     }
 
     public static function deleteEmbedding($model)
     {
         $collection = Collections::query()->find($model->collection_id)->name;
 
-        try {
-            $collection = self::getCollection($collection);
+        $collection = self::getCollection($collection);
 
-            $collection->delete([$model->embedding_id]);
-        } catch (\Exception $exception) {
-            Log::error(
-                'ChromaDB: Failed to delete items from collection with ID {collection-id}. Reason: {reason}',
-                [
-                    'collection-id' => $model->collection_id,
-                    'reason' => $exception->getMessage(),
-                ]
+        $embedding = $collection->get(ids: [$model->embedding_id]);
+
+        // We need to throw an exception here by ourselves, because the
+        // ChromaDB PHP adapter we are using doesn't do that
+        if (!$embedding->ids) {
+            throw new \Exception(
+                "Trying to delete non-existing embedding: {$model->embedding_id}"
             );
-
-            return [
-                'status' => false,
-                'message' => $exception->getMessage(),
-            ];
         }
 
-        return [
-            'status' => true,
-        ];
+        $collection->delete([$model->embedding_id]);
     }
 
     public static function createCollection($model)
     {
-        try {
-            $chromaDB = self::getClient();
+        $chromaDB = self::getClient();
 
-            $embeddingFunction = self::getEmbeddingFunction();
+        $embeddingFunction = self::getEmbeddingFunction();
 
-            $metadata = ['max_results' => $model->max_results];
+        $metadata = ['max_results' => $model->max_results];
 
-            $chromaDB->createCollection(
-                $model->name,
-                $metadata,
-                embeddingFunction: $embeddingFunction
-            );
-        } catch (\Exception $exception) {
-            Log::error(
-                'ChromaDB: Failed to create new collection with name {collection}. Reason: {reason}',
-                [
-                    'collection' => $model->name,
-                    'reason' => $exception->getMessage(),
-                ]
-            );
-
-            return [
-                'status' => false,
-                'message' => $exception->getMessage(),
-            ];
-        }
-
-        return [
-            'status' => true,
-        ];
+        $chromaDB->createCollection(
+            $model->name,
+            $metadata,
+            embeddingFunction: $embeddingFunction
+        );
     }
 
     public static function updateCollection($oldName, $model)
     {
-        try {
-            $collection = self::getCollection($oldName);
+        $collection = self::getCollection($oldName);
 
-            $metadata = ['max_results' => $model->max_results];
+        $metadata = ['max_results' => $model->max_results];
 
-            $collection->modify($model->name, $metadata);
-        } catch (\Exception $exception) {
-            Log::error(
-                'ChromaDB: Failed to update collection with name {name}. Reason: {reason}',
-                [
-                    'name' => $oldName,
-                    'reason' => $exception->getMessage(),
-                ]
-            );
-
-            // this is handled by nova
-            throw $exception;
-        }
+        $collection->modify($model->name, $metadata);
     }
 
     public static function replicateCollection($original, $copy)
@@ -475,84 +358,42 @@ class ChromaController extends Controller
             ->where('collection_id', '=', $original->id)
             ->get();
 
-        $result = self::createCollection($copy);
-
-        if (!$result['status']) {
-            return $result;
-        }
+        self::createCollection($copy);
 
         $ids = [];
         $metadata = [];
         $documents = [];
 
         foreach ($embeddings as $embedding) {
-            $e = $embedding->replicate(['created_at', 'updated_at'])->fill([
+            $replicate = $embedding->replicate(['created_at', 'updated_at'])->fill([
                 'embedding_id' => Str::random(40),
                 'collection_id' => $copy->id,
             ]);
 
-            $ids[] = $e->embedding_id;
+            $ids[] = $replicate->embedding_id;
             $metadata[] = [
-                'filename' => $e->name,
-                'size' => strlen($e->content),
+                'filename' => $replicate->name,
+                'size' => strlen($replicate->content),
             ];
-            $documents[] = $e->content;
+            $documents[] = $replicate->content;
 
-            $e->save();
+            $replicate->save();
         }
 
-        try {
-            $collection = self::getCollection($copy->name);
+        $collection = self::getCollection($copy->name);
 
-            $collection->add(
-                ids: $ids,
-                metadatas: $metadata,
-                documents: $documents
-            );
-        } catch (\Exception $exception) {
-            Log::error(
-                'ChromaDB: Failed to replicate collection with name {name}. Reason: {reason}',
-                [
-                    'name' => $original->name,
-                    'reason' => $exception->getMessage(),
-                ]
-            );
-
-            return [
-                'status' => false,
-                'message' => $exception->getMessage(),
-            ];
-        }
-
-        return [
-            'status' => true,
-        ];
+        $collection->add(
+            ids: $ids,
+            metadatas: $metadata,
+            documents: $documents
+        );
     }
 
     public static function deleteCollection($model)
     {
-        try {
-            $chromaDB = self::getClient();
+        $chromaDB = self::getClient();
 
-            $chromaDB->deleteCollection($model->name);
-        } catch (\Exception $exception) {
-            Log::error(
-                'ChromaDB: Failed to delete collection with ID {collection-id}. Reason: {reason}',
-                [
-                    'collection-id' => $model->id,
-                    'reason' => $exception->getMessage(),
-                ]
-            );
-
-            return [
-                'status' => false,
-                'message' => $exception->getMessage(),
-            ];
-        }
-
-        return [
-            'status' => true,
-        ];
+        $chromaDB->deleteCollection($model->name);
     }
 
     public static function getCollection($collection)

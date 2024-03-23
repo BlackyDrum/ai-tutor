@@ -37,17 +37,33 @@ class ReplicateCollection extends Action
             'module_id' => $model->module_id,
         ]);
 
-        $result = ChromaController::replicateCollection($model, $replication);
+        try {
+            ChromaController::replicateCollection($model, $replication);
 
-        if (!$result['status']) {
+            Log::info(
+                'User with ID {user-id} replicated a collection with name {name}',
+                [
+                    'name' => $model->name,
+                ]
+            );
+
+            return ActionResponse::message(
+                "Collection replicated as {$replication->name}"
+            );
+        } catch (\Exception $exception) {
+            Log::error(
+                'ChromaDB: Failed to replicate collection with name {name}. Reason: {reason}',
+                [
+                    'name' => $model->name,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
+
             $replication->forceDelete();
+
             return ActionResponse::danger(
-                "Failed to replicate collection. Reason: {$result['message']}"
+                "Failed to replicate collection. Reason: {$exception->getMessage()}"
             );
         }
-
-        return ActionResponse::message(
-            "Collection replicated as {$replication->name}"
-        );
     }
 }
