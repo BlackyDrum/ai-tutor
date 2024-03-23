@@ -27,7 +27,7 @@ const page = usePage();
 const toast = useToast();
 
 let converter = new showdown.Converter();
-const forbidTags = ["a", "img"];
+const forbidTags = ["img"];
 
 const copiedMessages = ref([]);
 const isSendingRequest = ref(false);
