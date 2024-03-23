@@ -354,18 +354,21 @@ class ChromaController extends Controller
 
     public static function replicateCollection($original, $copy)
     {
-        $embeddings = Files::query()
+        $files = Files::query()
             ->where('collection_id', '=', $original->id)
             ->get();
 
         self::createCollection($copy);
 
+        $originalCollection = self::getCollection($original->name);
+
         $ids = [];
+        $embeddings = [];
         $metadata = [];
         $documents = [];
 
-        foreach ($embeddings as $embedding) {
-            $replicate = $embedding->replicate(['created_at', 'updated_at'])->fill([
+        foreach ($files as $file) {
+            $replicate = $file->replicate(['created_at', 'updated_at'])->fill([
                 'embedding_id' => Str::random(40),
                 'collection_id' => $copy->id,
             ]);
@@ -378,12 +381,17 @@ class ChromaController extends Controller
             $documents[] = $replicate->content;
 
             $replicate->save();
+
+            $embedding = $originalCollection->get(ids: [$file->embedding_id]);
+
+            $embeddings[] = $embedding->embeddings[0];
         }
 
         $collection = self::getCollection($copy->name);
 
         $collection->add(
             ids: $ids,
+            embeddings: $embeddings,
             metadatas: $metadata,
             documents: $documents
         );
