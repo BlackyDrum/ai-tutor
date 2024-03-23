@@ -90,9 +90,9 @@ class User extends Resource
                     'The maximum number of tokens that can be generated in the chat completion'
                 ),
 
-            BelongsTo::make('Module', 'module', Module::class)->nullable(),
-
             Boolean::make('Admin'),
+
+            BelongsTo::make('Module', 'module', Module::class)->nullable(),
 
             DateTime::make('Terms Accepted At')
                 ->hideWhenCreating()
@@ -107,6 +107,7 @@ class User extends Resource
             DateTime::make('Updated At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
+                ->hideFromIndex()
                 ->sortable(),
 
             HasMany::make('Conversations'),

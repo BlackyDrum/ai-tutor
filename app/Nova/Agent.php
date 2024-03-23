@@ -100,15 +100,15 @@ class Agent extends Resource
                     'Guidelines that the agent follows to generate responses'
                 ),
 
+            Boolean::make('Active')->readonly(
+                $this->resource->active && $this->resource->module_id
+            ),
+
             BelongsTo::make('Module', 'module', Module::class)
                 ->readonly(
                     $this->resource->active && $this->resource->module_id
                 )
                 ->nullable(),
-
-            Boolean::make('Active')->readonly(
-                $this->resource->active && $this->resource->module_id
-            ),
 
             BelongsTo::make('Creator', 'user', User::class)
                 ->default(Auth::id())
