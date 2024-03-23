@@ -20,4 +20,14 @@ class Modules extends Model
     {
         return $this->hasMany(User::class, 'module_id');
     }
+
+    public function conversations()
+    {
+        return $this->hasManyThrough(
+            Conversations::class,
+            User::class,
+            'module_id',
+            'user_id'
+        );
+    }
 }

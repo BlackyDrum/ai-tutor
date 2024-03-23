@@ -59,9 +59,9 @@ class Module extends Resource
                 ->updateRules('unique:modules,ref_id,{{resourceId}}')
                 ->help('Unique Ref ID for an ILIAS course'),
 
-            HasMany::make('User', 'user', User::class),
+            HasManyThrough::make('Conversations'),
 
-            HasMany::make('Agent', 'agent', Agent::class),
+            HasMany::make('User', 'user', User::class),
         ];
     }
 
