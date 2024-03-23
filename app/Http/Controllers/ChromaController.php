@@ -250,7 +250,7 @@ class ChromaController extends Controller
 
     private static function createAndStoreSlide($model, $title, $body, $index)
     {
-        $embedding_id = Str::random(40) . '.slide';
+        $embedding_id = Str::random(40);
         $contentOnSlide = "Title: $title\n$body";
 
         Files::query()->create([
@@ -467,6 +467,66 @@ class ChromaController extends Controller
             // this is handled by nova
             throw $exception;
         }
+    }
+
+    public static function replicateCollection($original, $copy)
+    {
+        $embeddings = Files::query()
+            ->where('collection_id', '=', $original->id)
+            ->get();
+
+        $result = self::createCollection($copy);
+
+        if (!$result['status']) {
+            return $result;
+        }
+
+        $ids = [];
+        $metadata = [];
+        $documents = [];
+
+        foreach ($embeddings as $embedding) {
+            $e = $embedding->replicate(['created_at', 'updated_at'])->fill([
+                'embedding_id' => Str::random(40),
+                'collection_id' => $copy->id,
+            ]);
+
+            $ids[] = $e->embedding_id;
+            $metadata[] = [
+                'filename' => $e->name,
+                'size' => strlen($e->content),
+            ];
+            $documents[] = $e->content;
+
+            $e->save();
+        }
+
+        try {
+            $collection = self::getCollection($copy->name);
+
+            $collection->add(
+                ids: $ids,
+                metadatas: $metadata,
+                documents: $documents
+            );
+        } catch (\Exception $exception) {
+            Log::error(
+                'ChromaDB: Failed to replicate collection with name {name}. Reason: {reason}',
+                [
+                    'name' => $original->name,
+                    'reason' => $exception->getMessage(),
+                ]
+            );
+
+            return [
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ];
+        }
+
+        return [
+            'status' => true,
+        ];
     }
 
     public static function deleteCollection($model)

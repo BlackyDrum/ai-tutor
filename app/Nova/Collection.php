@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Http\Controllers\ChromaController;
 use App\Models\Agents;
 use App\Nova\Actions\DestroyChromaDB;
+use App\Nova\Actions\ReplicateCollection;
 use App\Nova\Actions\SyncChromaDB;
 use App\Nova\Actions\ValidateChromaDBSync;
 use App\Nova\Metrics\Collections;
@@ -186,6 +187,7 @@ class Collection extends Resource
             new ValidateChromaDBSync(),
             new SyncChromaDB(),
             new DestroyChromaDB(),
+            new ReplicateCollection()
         ];
     }
 }
