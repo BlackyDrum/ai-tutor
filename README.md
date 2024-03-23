@@ -274,6 +274,7 @@ In our application, each module should have an associated collection within ``Ch
 - **Name**: The ``name`` of the collection. It's recommended to use a name that clearly identifies the associated module or the type of embeddings it contains.
 - **Max Results**: This value specifies the ``maximum number of documents`` that can be embedded for a single prompt within this collection.
 - **Module**: This field links the collection to its corresponding ``module``.
+- **Active**: A boolean value indicating whether the collection is currently used to ``retrieve`` documents for a specific module. Within a module, only one collection can be ``active`` at any time.
 
 ### Adding Embeddings to a Collection
 With the ``collections`` in place, the next step is to populate them with ``embeddings``. ``Embeddings`` are created by processing ``documents`` or ``files``, which can then be retrieved based on ``semantic similarity`` to queries. Our application supports uploading files in various formats including ``.pptx``, ``.json``, ``.md``, and ``.txt``. Special attention should be paid to ``.json`` and ``.md`` files, as they require a specific format to ensure successful embedding:
