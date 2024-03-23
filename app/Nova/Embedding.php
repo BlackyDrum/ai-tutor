@@ -179,8 +179,6 @@ class Embedding extends Resource
         return false;
     }
 
-    public static $group = 'ChromaDB';
-
     /**
      * Get the cards available for the request.
      *

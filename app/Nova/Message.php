@@ -108,8 +108,6 @@ class Message extends Resource
         return false;
     }
 
-    public static $group = 'Chat';
-
     public static $globallySearchable = false;
 
     /**

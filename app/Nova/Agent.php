@@ -135,9 +135,25 @@ class Agent extends Resource
         ];
     }
 
+    public static function afterCreate(NovaRequest $request, Model $model)
+    {
+        $model->user_id = Auth::id();
+        $model->save();
+
+        self::changeActiveStatus($model);
+    }
+
     public static function afterUpdate(NovaRequest $request, Model $model)
     {
         self::changeActiveStatus($model);
+    }
+
+    public static function afterDelete(NovaRequest $request, Model $model)
+    {
+        Log::info('App: User with ID {user-id} deleted an agent', [
+            'id' => $model->id,
+            'name' => $model->name,
+        ]);
     }
 
     public function authorizedToDelete(Request $request)
@@ -145,12 +161,9 @@ class Agent extends Resource
         return !$this->resource->active || !$this->resource->module_id;
     }
 
-    public static function afterCreate(NovaRequest $request, Model $model)
+    public function authorizedToReplicate(Request $request)
     {
-        $model->user_id = Auth::id();
-        $model->save();
-
-        self::changeActiveStatus($model);
+        return false;
     }
 
     private static function changeActiveStatus($model)
@@ -163,21 +176,6 @@ class Agent extends Resource
                 ->update(['active' => false]);
         }
     }
-
-    public function authorizedToReplicate(Request $request)
-    {
-        return false;
-    }
-
-    public static function afterDelete(NovaRequest $request, Model $model)
-    {
-        Log::info('App: User with ID {user-id} deleted an agent', [
-            'id' => $model->id,
-            'name' => $model->name,
-        ]);
-    }
-
-    public static $group = 'Chat';
 
     /**
      * Get the cards available for the request.

@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
+use App\Models\Agents;
 use App\Nova\Actions\DestroyChromaDB;
 use App\Nova\Actions\SyncChromaDB;
 use App\Nova\Actions\ValidateChromaDBSync;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
@@ -76,10 +78,15 @@ class Collection extends Resource
                     'Specifies the maximum number of documents to embed per prompt'
                 ),
 
+            Boolean::make('Active')->readonly(
+                $this->resource->active && $this->resource->module_id
+            ),
+
             BelongsTo::make('Module', 'module', Module::class)
-                ->nullable()
-                ->creationRules('unique:collections,module_id')
-                ->updateRules('unique:collections,module_id,{{resourceId}}'),
+                ->readonly(
+                    $this->resource->active && $this->resource->module_id
+                )
+                ->nullable(),
 
             HasMany::make('Embedding'),
 
@@ -98,6 +105,13 @@ class Collection extends Resource
             $model->forceDelete();
             abort(500, $result['message']);
         }
+
+        self::changeActiveStatus($model);
+    }
+
+    public static function afterUpdate(NovaRequest $request, Model $model)
+    {
+        self::changeActiveStatus($model);
     }
 
     public static function afterDelete(NovaRequest $request, Model $model)
@@ -117,6 +131,11 @@ class Collection extends Resource
         $model->forceDelete();
     }
 
+    public function authorizedToDelete(Request $request)
+    {
+        return !$this->resource->active || !$this->resource->module_id;
+    }
+
     public function authorizedToForceDelete(Request $request)
     {
         return false;
@@ -126,12 +145,22 @@ class Collection extends Resource
     {
         return false;
     }
+
     public function authorizedToRestore(Request $request)
     {
         return false;
     }
 
-    public static $group = 'ChromaDB';
+    private static function changeActiveStatus($model)
+    {
+        if ($model->active) {
+            \App\Models\Collections::query()
+                ->whereNot('id', $model->id)
+                ->where('module_id', $model->module_id)
+                ->where('active', true)
+                ->update(['active' => false]);
+        }
+    }
 
     /**
      * Get the cards available for the request.

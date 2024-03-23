@@ -65,11 +65,6 @@ class Module extends Resource
         ];
     }
 
-    public function authorizedToReplicate(Request $request)
-    {
-        return false;
-    }
-
     public static function afterDelete(NovaRequest $request, Model $model)
     {
         Log::info('App: User with ID {user-id} deleted a module', [
@@ -77,6 +72,11 @@ class Module extends Resource
             'name' => $model->name,
             'ref-id' => $model->ref_id,
         ]);
+    }
+
+    public function authorizedToReplicate(Request $request)
+    {
+        return false;
     }
 
     /**

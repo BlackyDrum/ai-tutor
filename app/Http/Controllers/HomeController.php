@@ -65,11 +65,12 @@ class HomeController extends Controller
 
         $collection = Collections::query()
             ->where('module_id', '=', $moduleId)
+            ->where('active', '=', true)
             ->first();
 
         if (!$collection) {
             Log::critical(
-                'App: Failed to find a collection for module with ID {module-id}',
+                'App: Failed to find active collection for module with ID {module-id}',
                 [
                     'module-id' => $moduleId,
                 ]

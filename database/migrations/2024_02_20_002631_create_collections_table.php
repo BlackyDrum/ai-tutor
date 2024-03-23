@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->unsignedBigInteger('max_results');
+            $table->boolean('active')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });

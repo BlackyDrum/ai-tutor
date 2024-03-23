@@ -12,7 +12,7 @@ class Collections extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name', 'max_results', 'module_id'];
+    protected $fillable = ['name', 'max_results', 'module_id', 'active'];
 
     protected $hidden = ['deleted_at'];
 

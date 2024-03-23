@@ -81,12 +81,12 @@ class Conversation extends Resource
         ];
     }
 
-    public function authorizedToUpdate(Request $request)
+    public static function authorizedToCreate(Request $request)
     {
         return false;
     }
 
-    public static function authorizedToCreate(Request $request)
+    public function authorizedToUpdate(Request $request)
     {
         return false;
     }
@@ -95,8 +95,6 @@ class Conversation extends Resource
     {
         return false;
     }
-
-    public static $group = 'Chat';
 
     /**
      * Get the cards available for the request.

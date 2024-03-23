@@ -54,12 +54,12 @@ class SharedConversation extends Resource
         ];
     }
 
-    public function authorizedToUpdate(Request $request)
+    public static function authorizedToCreate(Request $request)
     {
         return false;
     }
 
-    public static function authorizedToCreate(Request $request)
+    public function authorizedToUpdate(Request $request)
     {
         return false;
     }
