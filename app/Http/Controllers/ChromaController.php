@@ -382,6 +382,7 @@ class ChromaController extends Controller
 
             $replicate->save();
 
+            // Get the existing embeddings from the original collection to prevent recalculating them
             $embedding = $originalCollection->get(ids: [$file->embedding_id]);
 
             $embeddings[] = $embedding->embeddings[0];
