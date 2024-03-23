@@ -10,6 +10,7 @@ use App\Models\Modules;
 use App\Models\User;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,7 @@ class HomeController extends Controller
         return Inertia::render('Home');
     }
 
-    public static function validateAppFunctionality()
+    public static function validateAppFunctionality($conversation = null)
     {
         $moduleId = Auth::user()->module_id;
 
@@ -51,6 +52,15 @@ class HomeController extends Controller
             );
 
             return false;
+        }
+
+        if ($conversation) {
+            try {
+                $agent = Agents::query()->findOrFail($conversation->agent_id);
+            } catch (ModelNotFoundException $exception) {
+                $conversation->agent_id = $agent->id;
+                $conversation->save();
+            }
         }
 
         $collection = Collections::query()

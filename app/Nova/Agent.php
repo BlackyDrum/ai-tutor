@@ -121,6 +121,8 @@ class Agent extends Resource
                     ],
                 ]),
 
+            HasMany::make('Conversations'),
+
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()

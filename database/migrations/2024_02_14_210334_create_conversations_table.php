@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('url_id')->unique();
             $table->string('openai_language_model');
+            $table->unsignedBigInteger('agent_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
@@ -23,6 +24,12 @@ return new class extends Migration {
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
+
+            $table
+                ->foreign('agent_id')
+                ->references('id')
+                ->on('agents')
+                ->onDelete('set null');
         });
     }
 

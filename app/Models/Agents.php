@@ -30,4 +30,9 @@ class Agents extends Model
     {
         return $this->belongsTo(Modules::class, 'module_id');
     }
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversations::class, 'agent_id');
+    }
 }

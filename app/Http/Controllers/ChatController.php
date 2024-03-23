@@ -65,7 +65,11 @@ class ChatController extends Controller
             ],
         ]);
 
-        $appCheckResults = HomeController::validateAppFunctionality();
+        $conversation = Conversations::query()
+            ->where('url_id', '=', $request->input('conversation_id'))
+            ->first();
+
+        $appCheckResults = HomeController::validateAppFunctionality($conversation);
 
         if (!$appCheckResults) {
             return response()->json(
@@ -83,10 +87,6 @@ class ChatController extends Controller
         // or ChromaDB item retrieval fails, allowing us to roll back
         // the database changes
         DB::beginTransaction();
-
-        $conversation = Conversations::query()
-            ->where('url_id', '=', $request->input('conversation_id'))
-            ->first();
 
         $messages = Messages::query()
             ->where('conversation_id', '=', $conversation->id)

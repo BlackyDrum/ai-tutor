@@ -11,6 +11,7 @@ class Conversations extends Model
 
     protected $fillable = [
         'openai_language_model',
+        'agent_id',
         'url_id',
         'user_id',
         'module_id',
@@ -19,6 +20,7 @@ class Conversations extends Model
 
     protected $hidden = [
         'id',
+        'agent_id',
         'temperature',
         'user_id',
         'updated_at',
@@ -33,6 +35,11 @@ class Conversations extends Model
     public function module()
     {
         return $this->belongsTo(Modules::class, 'module_id');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agents::class, 'agent_id');
     }
 
     public function messages()
