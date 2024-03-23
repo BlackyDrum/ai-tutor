@@ -386,9 +386,9 @@ class ChromaController extends Controller
             $replicate->save();
         }
 
-        $collection = self::getCollection($copy->name);
+        $copiedCollection = self::getCollection($copy->name);
 
-        $collection->add(
+        $copiedCollection->add(
             ids: $ids,
             embeddings: $embeddings,
             metadatas: $metadata,
