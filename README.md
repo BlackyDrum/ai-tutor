@@ -321,7 +321,7 @@ In our application, ``agents`` are responsible for shaping how responses from ``
 - **Name**: The ``identifier`` or ``title`` for the agent. Choose a name that clearly represents its role or the type of responses it's configured to provide.
 - **Instructions**: Detailed ``guidelines`` that the agent follows to generate responses. This should align with the module's content and objectives.
 - **Module**: The specific ``module`` this agent is associated with.
-- **Active**: A boolean value indicating whether the agent is currently active. Any new conversation will utilize this active agent, while pre-existing conversations continue with the agent they were initially assigned. Remember, within a module, only one agent can be active at any time.
+- **Active**: A boolean value indicating whether the agent is currently ``active``. Any new conversation will utilize this active agent, while ``pre-existing`` conversations continue with the agent they were ``initially`` assigned. Remember, within a module, only one agent can be active at any time.
 
 **Example Instructions**:
 ```
