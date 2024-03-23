@@ -373,19 +373,17 @@ class ChromaController extends Controller
                 'collection_id' => $copy->id,
             ]);
 
+            $embedding = $originalCollection->get(
+                ids: [$file->embedding_id],
+                include: ['embeddings', 'metadatas', 'documents']
+            );
+
             $ids[] = $replicate->embedding_id;
-            $metadata[] = [
-                'filename' => $replicate->name,
-                'size' => strlen($replicate->content),
-            ];
-            $documents[] = $replicate->content;
+            $embeddings[] = $embedding->embeddings[0];
+            $metadata[] = $embedding->metadatas[0];
+            $documents[] = $embedding->documents[0];
 
             $replicate->save();
-
-            // Get the existing embeddings from the original collection to prevent recalculating them
-            $embedding = $originalCollection->get(ids: [$file->embedding_id]);
-
-            $embeddings[] = $embedding->embeddings[0];
         }
 
         $collection = self::getCollection($copy->name);
