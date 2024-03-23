@@ -130,8 +130,6 @@ class Agent extends Resource
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
                 ->sortable(),
-
-            HasMany::make('Conversations'),
         ];
     }
 

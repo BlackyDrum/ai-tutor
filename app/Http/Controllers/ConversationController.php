@@ -48,7 +48,6 @@ class ConversationController extends Controller
             'name' => 'Chat #' . ($count + 1),
             'url_id' => Str::random(40),
             'openai_language_model' => $languageModel,
-            'agent_id' => $agent->id,
             'user_id' => Auth::id(),
         ]);
 

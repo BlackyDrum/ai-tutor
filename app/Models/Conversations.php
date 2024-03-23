@@ -10,7 +10,6 @@ class Conversations extends Model
     use HasFactory;
 
     protected $fillable = [
-        'agent_id',
         'openai_language_model',
         'url_id',
         'user_id',
@@ -19,17 +18,11 @@ class Conversations extends Model
 
     protected $hidden = [
         'id',
-        'agent_id',
         'temperature',
         'user_id',
         'updated_at',
         'created_at',
     ];
-
-    public function agent()
-    {
-        return $this->belongsTo(Agents::class, 'agent_id');
-    }
 
     public function user()
     {

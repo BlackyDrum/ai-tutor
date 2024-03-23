@@ -66,8 +66,6 @@ class Conversation extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            BelongsTo::make('Agent'),
-
             BelongsTo::make('Owner', 'user', User::class),
 
             HasMany::make('Messages'),

@@ -16,18 +16,12 @@ return new class extends Migration {
             $table->string('url_id')->unique();
             $table->string('openai_language_model');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('agent_id')->after('user_id');
             $table->timestamps();
 
             $table
                 ->foreign('user_id')
                 ->references('id')
                 ->on('users')
-                ->onDelete('cascade');
-            $table
-                ->foreign('agent_id')
-                ->references('id')
-                ->on('agents')
                 ->onDelete('cascade');
         });
     }
