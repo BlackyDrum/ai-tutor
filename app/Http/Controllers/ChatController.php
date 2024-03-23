@@ -305,6 +305,7 @@ class ChatController extends Controller
             // in the error message if the user's 'max_requests' value is set to a lower
             // value in production.
             ->limit($maxRequests)
-            ->get(['messages.created_at']);
+            ->get(['messages.created_at'])
+            ->reverse();
     }
 }

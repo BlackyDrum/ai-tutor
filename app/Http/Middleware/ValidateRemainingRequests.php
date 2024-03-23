@@ -25,7 +25,7 @@ class ValidateRemainingRequests
         $messages = ChatController::getUserMessagesFromLastDay();
 
         if ($messages->count() >= $maxRequests) {
-            $firstMessageTime = $messages->reverse()->first()->created_at;
+            $firstMessageTime = $messages->first()->created_at;
 
             $nextAvailableTime = Carbon::parse($firstMessageTime)->addDay();
 
