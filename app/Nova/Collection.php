@@ -218,7 +218,7 @@ class Collection extends Resource
             new ValidateChromaDBSync(),
             new SyncChromaDB(),
             new DestroyChromaDB(),
-            new ReplicateCollection(),
+            (new ReplicateCollection())->showInline(),
         ];
     }
 }
