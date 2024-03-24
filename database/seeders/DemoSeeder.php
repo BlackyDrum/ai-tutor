@@ -32,9 +32,10 @@ class DemoSeeder extends Seeder
 
         $user = User::firstOrCreate(
             [
-                'name' => 'admin',
+                'abbreviation' => 'admin',
             ],
             [
+                'name' => 'Admin',
                 'password' =>
                     '$2y$12$mxS/dfJ.88hUXOLH30dOWO1udNMKse2zrPrRMrNpH1ixrkdlngltu',
                 'admin' => true,

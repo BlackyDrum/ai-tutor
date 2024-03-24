@@ -28,7 +28,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string'],
+            'abbreviation' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -42,15 +42,15 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('name', 'password'))) {
+        if (! Auth::attempt($this->only('abbreviation', 'password'))) {
             RateLimiter::hit($this->throttleKey());
 
             Log::info('Auth: User authentication via login form failed', [
-                'user' => $this->input('name')
+                'user' => $this->input('abbreviation')
             ]);
 
             throw ValidationException::withMessages([
-                'name' => trans('auth.failed'),
+                'abbreviation' => trans('auth.failed'),
             ]);
         }
 
@@ -73,7 +73,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'name' => trans('auth.throttle', [
+            'abbreviation' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -85,6 +85,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->input('name')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->input('abbreviation')).'|'.$this->ip());
     }
 }

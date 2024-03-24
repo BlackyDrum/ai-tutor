@@ -54,6 +54,10 @@ class User extends Resource
 
             Text::make('Name')
                 ->sortable()
+                ->rules('required', 'max:255'),
+
+            Text::make('Abbreviation')
+                ->sortable()
                 ->rules('required', 'max:255')
                 ->creationRules('unique:users,name')
                 ->updateRules('unique:users,name,{{resourceId}}'),

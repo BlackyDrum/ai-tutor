@@ -16,7 +16,7 @@ defineProps({
 });
 
 const form = useForm({
-    name: "",
+    abbreviation: "",
     password: "",
 });
 
@@ -37,18 +37,19 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="name" value="Username" />
+                <InputLabel for="abbreviation" value="Username" />
 
                 <TextInput
-                    id="name"
+                    id="abbreviation"
                     class="mt-1 block w-full"
-                    v-model="form.name"
+                    v-model="form.abbreviation"
                     required
                     autofocus
                     autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError class="mt-2" :message="form.errors.abbreviation" />
+                <InputError class="mt-2" :message="$page.props.errors.lti?.message" />
             </div>
 
             <div class="mt-4">

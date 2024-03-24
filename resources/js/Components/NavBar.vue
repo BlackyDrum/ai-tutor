@@ -103,7 +103,7 @@ const handleResize = () => {
                     <UserAvatar />
 
                     <div class="self-center">
-                        {{ $page.props.auth.user.name }}
+                        {{ $page.props.auth.user.abbreviation }}
                     </div>
                 </div>
             </div>
