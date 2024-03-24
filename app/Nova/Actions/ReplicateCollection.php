@@ -19,6 +19,8 @@ class ReplicateCollection extends Action
 {
     use InteractsWithQueue, Queueable;
 
+    public $confirmText = 'This action will create a copy of the selected collection and its embeddings';
+
     /**
      * Perform the action on the given models.
      *
