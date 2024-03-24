@@ -73,34 +73,12 @@ class ChromaController extends Controller
         $pathToFile = storage_path() . '/app/' . $model->embedding_id;
 
         $filename = $model->name;
-
         $collectionId = $model->collection_id;
 
-        // We need to manually create the files here, because the API endpoint
-        // returns small artifacts of the pptx file. We do not want to store
-        // the whole pptx file, but rather these small artifacts. Each artifact
-        // represents a slide, and each slide represents an embedding.
         if (str_ends_with($filename, 'pptx')) {
-            $token = HomeController::getBearerToken();
+            $slides = self::parsePPTX($pathToFile);
 
-            $response = Http::withToken($token)
-                ->withoutVerifying()
-                ->asMultipart()
-                ->post(config('conversaition.url') . '/data/pptx-to-md', [
-                    [
-                        'name' => 'pptxfile',
-                        'contents' => fopen($pathToFile, 'r'),
-                        'headers' => [
-                            'Content-Type' => 'application/octet-stream',
-                        ],
-                    ],
-                ]);
-
-            if ($response->failed()) {
-                throw new \Exception('Failed to convert pptx to json');
-            }
-
-            $result = self::createEmbeddingFromJson($response->json(), $model);
+            $result = self::createEmbeddingFromJson($slides, $model);
 
             $model->forceDelete();
 
@@ -159,6 +137,73 @@ class ChromaController extends Controller
             metadatas: $metadata,
             documents: $documents
         );
+    }
+
+    private static function parsePPTX($pathToFile)
+    {
+        $zip = new \ZipArchive();
+        $data = [];
+
+        if ($zip->open($pathToFile)) {
+            $slideNumber = 0;
+
+            while (
+                $xmlIndex = $zip->locateName(
+                    'ppt/slides/slide' . ($slideNumber + 1) . '.xml'
+                )
+            ) {
+                $xmlData = $zip->getFromIndex($xmlIndex);
+                $xml = simplexml_load_string($xmlData);
+
+                $namespaces = $xml->getNamespaces(true);
+                $slideData = [
+                    'content' => [],
+                    'title' => '',
+                ];
+
+                $xml->registerXPathNamespace('a', $namespaces['a']);
+                $xml->registerXPathNamespace('p', $namespaces['p']);
+
+                $textBoxes = $xml->xpath('//p:sp');
+                if (!empty($textBoxes)) {
+                    $titleTexts = $textBoxes[0]->xpath('.//a:t');
+                    if (!empty($titleTexts)) {
+                        $slideData['title'] = join(
+                            '',
+                            array_map(function ($t) {
+                                return (string) $t;
+                            }, $titleTexts)
+                        );
+                    }
+
+                    // Remove the first text box which is the title
+                    array_shift($textBoxes);
+
+                    foreach ($textBoxes as $index => $sp) {
+                        $texts = $sp->xpath('.//a:t');
+                        if (!empty($texts)) {
+                            $textString = join(
+                                '',
+                                array_map(function ($t) {
+                                    return (string) $t;
+                                }, $texts)
+                            );
+                            $slideData['content'][] = $textString;
+                            //$slideData[(string) $index] = $textString;
+                        }
+                    }
+                }
+
+                $data['content'][(string) $slideNumber] = $slideData;
+                $slideNumber++;
+            }
+
+            $zip->close();
+
+            return $data;
+        } else {
+            throw new \Exception('Cannot open pptx file');
+        }
     }
 
     private static function createAndStoreSlide($model, $title, $body, $index)

@@ -22,7 +22,9 @@
         "laravel/tinker": "^2.8",
         "longhornopen/laravel-celtic-lti": "^1.0",
         "smalot/pdfparser": "^2.8",
-        "tightenco/ziggy": "^1.0"
+        "tightenco/ziggy": "^1.0",
+        "ext-zip": "*",
+        "ext-simplexml": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

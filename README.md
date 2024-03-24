@@ -281,27 +281,21 @@ With the ``collections`` in place, the next step is to populate them with ``embe
 - ``json``
 ```json
 {
-  "success": true,
-  "content": {
-    "0": {
-      "0": "This is a title from the first slide",
-      "1": "This is a first paragraph on the first slide",
-      "2": "This is a second paragraph on the first slide",
-      "content": [
-        "This is a first paragraph on the first slide",
-        "This is a second paragraph on the first slide"
-      ],
-      "title": "This is a title from the first slide"
-    },
-    "1": {
-      "0": "This is a title from the second slide",
-      "1": "This is a first paragraph from the second slide",
-      "content": [
-        "This is a first paragraph from the second slide"
-      ],
-      "title": "This is a title from the second slide"
-    }
-  }
+  "content": [
+      {
+          "content": [
+              "This is a first paragraph on the first slide",
+              "This is a second paragraph on the first slide"
+          ],
+          "title": "This is a title from the first slide"
+      },
+      {
+          "content": [
+              "This is a first paragraph from the second slide"
+          ],
+          "title": "This is a title from the second slide"
+      }
+  ]
 }
 ```
 - ``md``

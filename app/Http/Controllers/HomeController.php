@@ -85,34 +85,6 @@ class HomeController extends Controller
         ];
     }
 
-    public static function getBearerToken()
-    {
-        $response = Http::withoutVerifying()
-            ->asForm()
-            ->post(config('conversaition.url') . '/token', [
-                'username' => config('conversaition.username'),
-                'password' => config('conversaition.password'),
-                'grant_type' => config('conversaition.grant_type'),
-                'scope' => config('conversaition.scope'),
-                'client_id' => config('conversaition.client_id'),
-                'client_secret' => config('conversaition.client_secret'),
-            ]);
-
-        if ($response->failed()) {
-            Log::error(
-                'ConversAItion: Failed to get bearer token. Reason: {reason}. Status: {status}',
-                [
-                    'reason' => $response->reason(),
-                    'status' => $response->status(),
-                ]
-            );
-
-            throw new \Exception("Failed to get bearer token from ConversAItion backend");
-        }
-
-        return $response->json()['access_token'];
-    }
-
     public function acceptTerms(Request $request)
     {
         $request->validate([
