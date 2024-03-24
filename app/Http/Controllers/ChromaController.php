@@ -81,15 +81,7 @@ class ChromaController extends Controller
         // the whole pptx file, but rather these small artifacts. Each artifact
         // represents a slide, and each slide represents an embedding.
         if (str_ends_with($filename, 'pptx')) {
-            try {
-                $token = HomeController::getBearerToken();
-            } catch (\Exception $exception) {
-                if (file_exists($pathToFile)) {
-                    unlink($pathToFile);
-                }
-
-                throw $exception;
-            }
+            $token = HomeController::getBearerToken();
 
             $response = Http::withToken($token)
                 ->withoutVerifying()
@@ -103,10 +95,6 @@ class ChromaController extends Controller
                         ],
                     ],
                 ]);
-
-            if (file_exists($pathToFile)) {
-                unlink($pathToFile);
-            }
 
             if ($response->failed()) {
                 throw new \Exception('Failed to convert pptx to json');
@@ -122,10 +110,6 @@ class ChromaController extends Controller
         } elseif (str_ends_with($filename, 'json')) {
             $json = json_decode(file_get_contents($pathToFile), true);
 
-            if (file_exists($pathToFile)) {
-                unlink($pathToFile);
-            }
-
             $result = self::createEmbeddingFromJson($json, $model);
 
             $model->forceDelete();
@@ -135,10 +119,6 @@ class ChromaController extends Controller
             $metadata = $result['metadata'];
         } elseif (str_ends_with($filename, 'txt')) {
             $text = file_get_contents($pathToFile);
-
-            if (file_exists($pathToFile)) {
-                unlink($pathToFile);
-            }
 
             $model->content = $text ?? '';
 
@@ -157,10 +137,6 @@ class ChromaController extends Controller
         } elseif (str_ends_with($filename, 'md')) {
             $markdown = file_get_contents($pathToFile);
 
-            if (file_exists($pathToFile)) {
-                unlink($pathToFile);
-            }
-
             $result = self::createEmbeddingFromMarkdown($markdown, $model);
 
             $model->forceDelete();
@@ -169,10 +145,6 @@ class ChromaController extends Controller
             $documents = $result['documents'];
             $metadata = $result['metadata'];
         } else {
-            if (file_exists($pathToFile)) {
-                unlink($pathToFile);
-            }
-
             throw new \Exception(
                 'Attempted to process a file with the wrong format'
             );

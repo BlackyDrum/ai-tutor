@@ -127,6 +127,8 @@ class Embedding extends Resource
 
     public static function afterCreate(NovaRequest $request, Model $model)
     {
+        $pathToFile = storage_path() . '/app/' . $model->embedding_id;
+
         try {
             ChromaController::createEmbedding($model);
 
@@ -139,6 +141,10 @@ class Embedding extends Resource
             $model->forceDelete();
 
             abort(500, $exception->getMessage());
+        } finally {
+            if (file_exists($pathToFile)) {
+                unlink($pathToFile);
+            }
         }
     }
 
