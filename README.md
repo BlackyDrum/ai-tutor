@@ -49,6 +49,9 @@ The chatbot is designed with the student's needs in mind, offering a range of fu
   - [Adding Embeddings to a Collection](#adding-embeddings-to-a-collection)
   - [Adding an Agent to a Module](#adding-an-agent-to-a-module)
 - [Application Config Variables](#application-config-variables)
+- [User Authentication via LTI 1.0](#user-authentication-via-lti-10)
+  - [How It Works](#how-it-works-1)
+  - [Setting Up LTI Integration](#setting-up-lti-integration)
 
 
 ## Requirements
@@ -351,3 +354,24 @@ return [
     // can be adjusted on a per-user basis for greater personalization and control.
 ];
 ```
+
+## User Authentication via LTI 1.0
+Our application implements a secure user registration process through integration with ``ILIAS``. This integration is facilitated by ``LTI`` (Learning Tools Interoperability) version 1.0, ensuring that users can seamlessly ``authenticate`` and gain access to our application directly from ``ILIAS`` without the need for separate registration steps.
+By using ``LTI``, our application can authenticate users based on their existing ``ILIAS`` credentials.
+
+### How It Works
+When a user attempts to access our application from ``ILIAS``:
+1. **ILIAS sends a launch request** to our application. This request contains the ``user's data`` and ``authentication details``, securely ``signed`` to ensure data integrity.
+2. **Our application validates the signature** on the request using the ``consumer_key`` and ``shared_secret``. This step confirms that the request is indeed from the trusted ``ILIAS`` platform and has not been tampered with.
+3. **User session is initiated** in our application. Once verified, our application creates a new ``session`` for the user, granting them access without requiring separate login credentials.
+
+### Setting Up LTI Integration
+To integrate a new ``platform`` with our application using ``LTI 1.0``, you need to register the ``platform`` by creating a new database entry. This is done using the following artisan command:
+```
+php artisan lti:add_platform_1.2 {name} {consumer_key} {shared_secret}
+```
+- ``{name}``: The name you wish to assign to the platform, e.g ``ILIAS``.
+- ``{consumer_key}``: A ``unique key`` that identifies the platform to our application.
+- ``{shared_secret}``: A ``secret`` shared between our application and the platform to securely sign and validate requests.
+
+Replace ``{name}``, ``{consumer_key}``, and ``{shared_secret}`` with the actual values for the platform.
