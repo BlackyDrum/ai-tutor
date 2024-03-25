@@ -124,9 +124,9 @@ class ChatController extends Controller
 
         try {
             $promptWithContext = ChromaController::createPromptWithContext(
-                $collection->name,
+                $collection,
                 $request->input('message'),
-                $request->input('conversation_id')
+                $conversation
             );
         } catch (\Exception $exception) {
             Log::error(
@@ -134,7 +134,7 @@ class ChatController extends Controller
                 [
                     'message' => $exception->getMessage(),
                     'collection' => $collection->name,
-                    'conversation-id' => $request->input('conversation_id'),
+                    'conversation-id' => $conversation->id,
                 ]
             );
 
@@ -158,7 +158,7 @@ class ChatController extends Controller
                 [
                     'reason' => $response->json()['error']['message'],
                     'status' => $response->status(),
-                    'conversation-id' => $request->input('conversation_id'),
+                    'conversation-id' => $conversation->id,
                 ]
             );
 

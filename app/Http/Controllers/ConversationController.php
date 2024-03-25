@@ -61,8 +61,6 @@ class ConversationController extends Controller
             'collection_id' => $collection->id,
         ]);
 
-        $conversationID = $conversation->url_id;
-
         // Get the current time and save it in the 'created_at' field for messages.
         // This is done before we add records to the 'conversation_has_document'
         // table in the 'createPromptWithContext' function. It's important because
@@ -74,9 +72,9 @@ class ConversationController extends Controller
 
         try {
             $promptWithContext = ChromaController::createPromptWithContext(
-                $collection->name,
+                $collection,
                 $request->input('message'),
-                $conversationID
+                $conversation
             );
         } catch (\Exception $exception) {
             Log::error(
@@ -84,7 +82,7 @@ class ConversationController extends Controller
                 [
                     'message' => $exception->getMessage(),
                     'collection' => $collection->name,
-                    'conversation-id' => $conversationID,
+                    'conversation-id' => $conversation->id,
                 ]
             );
 
@@ -177,10 +175,10 @@ class ConversationController extends Controller
         }
 
         Log::info('App: User with ID {user-id} created a new conversation', [
-            'conversation-id' => $conversationID,
+            'conversation-id' => $conversation->id,
         ]);
 
-        return response()->json(['id' => $conversationID]);
+        return response()->json(['id' => $conversation->url_id]);
     }
 
     public function deleteConversation(Request $request)

@@ -21,26 +21,18 @@ use Illuminate\Support\Str;
 class ChromaController extends Controller
 {
     public static function createPromptWithContext(
-        $collectionName,
+        $collection,
         $message,
-        $conversation_id
+        $conversation
     ) {
-        $collection = self::getCollection($collectionName);
+        $chromaCollection = self::getCollection($collection->name);
 
-        $maxResults = Collections::query()
-            ->where('name', '=', $collectionName)
-            ->first()->max_results;
-
-        $queryResponse = $collection->query(
+        $queryResponse = $chromaCollection->query(
             queryTexts: [$message],
-            nResults: $maxResults
+            nResults: $collection->max_results
         );
 
         $enhancedMessage = "\nUser Message:\n" . $message . "\n\n";
-
-        $conversation = Conversations::query()
-            ->where('url_id', '=', $conversation_id)
-            ->first();
 
         foreach ($queryResponse->ids[0] as $id) {
             $file = Files::query()->where('embedding_id', '=', $id)->first();
