@@ -1,8 +1,8 @@
 {
-    "name": "blackydrum/chatbot",
+    "name": "blackydrum/ai-tutor",
     "type": "project",
-    "description": "Scientific AI assistant built for FH Aachen.",
-    "keywords": ["laravel", "ai", "chatbot", "fh aachen", "embeddings", "spa", "chromadb", "vectordb"],
+    "description": "An AI-powered tutor designed to enhance learning experiences for students",
+    "keywords": ["laravel", "ai", "chatbot", "fh aachen", "embeddings", "spa", "chromadb", "vectordb", "semantic-search"],
     "license": "MIT",
     "repositories": [
         {
