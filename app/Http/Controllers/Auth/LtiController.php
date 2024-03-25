@@ -41,9 +41,9 @@ class LtiController extends Controller
             $abbreviation = $tool->userResult->ltiUserId;
             $refId = $tool->resourceLink->getId();
 
-            $module = Modules::query()->where('ref_id', '=', $refId)->first();
-
-            if (!$module) {
+            try {
+                $module = Modules::query()->where('ref_id', '=', $refId)->firstOrFail();
+            } catch (\Exception $exception) {
                 Log::info(
                     'Auth: Module lookup failed. Invalid Ref ID provided',
                     [
