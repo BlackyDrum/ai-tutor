@@ -21,6 +21,11 @@ class Collections extends Model
         return $this->hasMany(Files::class, 'collection_id');
     }
 
+    public function conversations()
+    {
+        return $this->hasMany(Conversations::class, 'collection_id');
+    }
+
     public function module()
     {
         return $this->belongsTo(Modules::class, 'module_id');

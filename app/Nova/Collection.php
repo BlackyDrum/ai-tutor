@@ -91,6 +91,8 @@ class Collection extends Resource
 
             HasMany::make('Embedding'),
 
+            HasMany::make('Conversations'),
+
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()

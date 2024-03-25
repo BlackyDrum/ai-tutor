@@ -58,6 +58,7 @@ class ConversationController extends Controller
             'agent_id' => $agent->id,
             'user_id' => Auth::id(),
             'module_id' => $module->id,
+            'collection_id' => $collection->id,
         ]);
 
         $conversationID = $conversation->url_id;

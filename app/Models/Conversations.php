@@ -16,6 +16,7 @@ class Conversations extends Model
         'user_id',
         'module_id',
         'name',
+        'collection_id',
     ];
 
     protected $hidden = [
@@ -25,6 +26,7 @@ class Conversations extends Model
         'agent_id',
         'temperature',
         'user_id',
+        'collection_id',
         'updated_at',
         'created_at',
     ];
@@ -42,6 +44,11 @@ class Conversations extends Model
     public function agent()
     {
         return $this->belongsTo(Agents::class, 'agent_id');
+    }
+
+    public function collection()
+    {
+        return $this->belongsTo(Collections::class, 'collection_id');
     }
 
     public function messages()

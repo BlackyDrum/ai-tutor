@@ -79,6 +79,15 @@ class HomeController extends Controller
             return false;
         }
 
+        if ($conversation) {
+            try {
+                $collection = Collections::query()->findOrFail($conversation->collection_id);
+            } catch (ModelNotFoundException $exception) {
+                $conversation->collection_id = $collection->id;
+                $conversation->save();
+            }
+        }
+
         return [
             'agent' => $agent,
             'collection' => $collection,
