@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('ref_id')->unique();
+            $table->string('openai_language_model');
             $table->timestamps();
         });
     }

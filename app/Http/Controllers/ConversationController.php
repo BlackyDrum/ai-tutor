@@ -40,8 +40,6 @@ class ConversationController extends Controller
         $collection = $appCheckResults['collection'];
         $module = Modules::query()->find(Auth::user()->module_id);
 
-        $languageModel = config('api.openai_language_model');
-
         $count = Conversations::query()
             ->where('user_id', '=', Auth::id())
             ->count();
@@ -54,7 +52,7 @@ class ConversationController extends Controller
         $conversation = Conversations::query()->create([
             'name' => 'Chat #' . ($count + 1),
             'url_id' => Str::random(40),
-            'openai_language_model' => $languageModel,
+            'openai_language_model' => $module->openai_language_model,
             'agent_id' => $agent->id,
             'user_id' => Auth::id(),
             'module_id' => $module->id,
@@ -96,7 +94,7 @@ class ConversationController extends Controller
         $response = ChatController::sendMessageToOpenAI(
             $agent->instructions,
             $promptWithContext,
-            $languageModel
+            $conversation->openai_language_model
         );
 
         if ($response->failed()) {
@@ -127,7 +125,7 @@ class ConversationController extends Controller
         $response2 = ChatController::sendMessageToOpenAI(
             $systemMessage,
             $request->input('message'),
-            $languageModel,
+            $conversation->openai_language_model,
             $agentResponse,
             false,
             64

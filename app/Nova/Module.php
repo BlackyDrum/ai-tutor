@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Dashboards\OpenAI;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -9,6 +10,7 @@ use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -35,6 +37,19 @@ class Module extends Resource
      */
     public static $search = ['id', 'name', 'ref_id'];
 
+    public string $helpText = '';
+
+    public function __construct($resource = null)
+    {
+        parent::__construct($resource);
+
+        $models = OpenAI::models();
+
+        foreach ($models as $model) {
+            $this->helpText .= "<strong>{$model->name}</strong> - Input: \${$model->input} / 1M tokens, Output: \${$model->output} / 1M tokens<br>";
+        }
+    }
+
     /**
      * Get the fields displayed by the resource.
      *
@@ -58,6 +73,15 @@ class Module extends Resource
                 ->creationRules('unique:modules,ref_id')
                 ->updateRules('unique:modules,ref_id,{{resourceId}}')
                 ->help('Unique Ref ID for an ILIAS course'),
+
+            Select::make('OpenAI Language Model', 'openai_language_model')
+                ->rules('required', 'string')
+                ->options(function () {
+                    $models = OpenAI::models();
+
+                    return array_column($models, 'name', 'name');
+                })
+                ->help($this->helpText),
 
             HasMany::make('Conversations'),
 
