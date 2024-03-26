@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use LonghornOpen\LaravelCelticLTI\LtiTool;
@@ -29,11 +30,7 @@ class LtiController extends Controller
             $tool = LtiTool::getLtiTool();
             $tool->handleRequest();
         } catch (\Exception $exception) {
-            Log::info('Auth: LTI launch failed. Reason: {reason}', [
-                'reason' => $exception->getMessage(),
-            ]);
-
-            return $this->redirectWithError();
+            return $this->redirectWithError($exception->getMessage());
         }
 
         if ($tool->getLaunchType() === $tool::LAUNCH_TYPE_LAUNCH) {
@@ -41,18 +38,26 @@ class LtiController extends Controller
             $abbreviation = $tool->userResult->ltiUserId;
             $refId = $tool->resourceLink->getId();
 
-            try {
-                $module = Modules::query()->where('ref_id', '=', $refId)->firstOrFail();
-            } catch (\Exception $exception) {
-                Log::info(
-                    'Auth: Module lookup failed. Invalid Ref ID provided',
-                    [
-                        'refId' => $refId,
-                    ]
-                );
+            $validator = Validator::make(
+                [
+                    'name' => $name,
+                    'abbreviation' => $abbreviation,
+                    'refId' => $refId,
+                ],
+                [
+                    'name' => 'required|string|max:64',
+                    'abbreviation' => 'required|string|max:64',
+                    'refId' => 'required|integer|exists:modules,ref_id',
+                ]
+            );
 
-                return $this->redirectWithError();
+            if ($validator->fails()) {
+                return $this->redirectWithError($validator->errors()->toJson());
             }
+
+            $module = Modules::query()
+                ->where('ref_id', '=', $refId)
+                ->first();
 
             $user = User::firstOrCreate(
                 [
@@ -87,13 +92,15 @@ class LtiController extends Controller
             return redirect('/');
         }
 
-        Log::info('Auth: LTI launch failed');
-
         return $this->redirectWithError();
     }
 
-    private function redirectWithError()
+    private function redirectWithError($reason = null)
     {
+        Log::info('Auth: LTI launch failed. Reason: {reason}', [
+            'reason' => $reason ?? '',
+        ]);
+
         return redirect('/login')->withErrors(
             [
                 'message' =>
