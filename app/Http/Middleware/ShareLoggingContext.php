@@ -22,6 +22,7 @@ class ShareLoggingContext
             'request-id' => (string) Str::uuid(),
             'user-id' => Auth::id() ?? null,
             'username' => Auth::user()?->name ?? null,
+            'abbreviation' => Auth::user()?->abbreviation ?? null,
             'ip-address' => $request->getClientIp() ?? null,
             'route' => $request->route()?->uri ?? null,
             'method' => $request->method() ?? null,
