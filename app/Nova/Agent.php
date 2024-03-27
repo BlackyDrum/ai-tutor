@@ -169,11 +169,6 @@ class Agent extends Resource
         return !$this->resource->active || !$this->resource->module_id;
     }
 
-    public function authorizedToReplicate(Request $request)
-    {
-        return false;
-    }
-
     private static function changeActiveStatus($model)
     {
         if ($model->active) {
