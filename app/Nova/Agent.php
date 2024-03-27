@@ -164,6 +164,15 @@ class Agent extends Resource
         ]);
     }
 
+    public function replicate()
+    {
+        return tap(parent::replicate(), function ($resource) {
+            $model = $resource->model();
+
+            $model->active = false;
+        });
+    }
+
     public function authorizedToDelete(Request $request)
     {
         return !$this->resource->active || !$this->resource->module_id;
