@@ -238,7 +238,7 @@ class ChatController extends Controller
         $messages[] = ['role' => 'user', 'content' => $userMessage];
 
         return Http::withToken($token)
-            ->timeout(45)
+            ->timeout(60)
             ->post('https://api.openai.com/v1/chat/completions', [
                 'model' => $languageModel,
                 'temperature' => (float) $temperature,
