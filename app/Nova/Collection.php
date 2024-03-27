@@ -76,17 +76,21 @@ class Collection extends Resource
                 ->rules('required', 'integer', 'gte:0')
                 ->help(
                     'Specifies the maximum number of documents to embed per prompt'
-                ),
+                )
+                ->sortable(),
 
-            Boolean::make('Active')->readonly(
-                $this->resource->active && $this->resource->module_id
-            ),
+            Boolean::make('Active')
+                ->readonly(
+                    $this->resource->active && $this->resource->module_id
+                )
+                ->sortable(),
 
             BelongsTo::make('Module', 'module', Module::class)
                 ->readonly(
                     $this->resource->active && $this->resource->module_id
                 )
-                ->nullable(),
+                ->nullable()
+                ->sortable(),
 
             HasMany::make('Embedding'),
 

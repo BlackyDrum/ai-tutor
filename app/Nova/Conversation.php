@@ -60,13 +60,13 @@ class Conversation extends Resource
 
             Text::make('url_id')->onlyOnDetail(),
 
-            BelongsTo::make('Module'),
+            BelongsTo::make('Module')->sortable(),
 
-            BelongsTo::make('Agent'),
+            BelongsTo::make('Agent')->sortable(),
 
-            BelongsTo::make('Collection'),
+            BelongsTo::make('Collection')->sortable(),
 
-            BelongsTo::make('Owner', 'user', User::class),
+            BelongsTo::make('Owner', 'user', User::class)->sortable(),
 
             HasMany::make('Messages'),
 

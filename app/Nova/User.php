@@ -74,7 +74,9 @@ class User extends Resource
 
             Boolean::make('Admin'),
 
-            BelongsTo::make('Module', 'module', Module::class)->nullable(),
+            BelongsTo::make('Module', 'module', Module::class)
+                ->nullable()
+                ->sortable(),
 
             DateTime::make('Terms Accepted At')
                 ->hideWhenCreating()

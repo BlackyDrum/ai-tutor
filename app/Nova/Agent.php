@@ -90,7 +90,8 @@ class Agent extends Resource
 
                     return array_column($models, 'name', 'name');
                 })
-                ->help($this->helpText),
+                ->help($this->helpText)
+                ->sortable(),
 
             Number::make('Max Messages Included')
                 ->default(12)
@@ -118,15 +119,18 @@ class Agent extends Resource
                     'The maximum number of tokens that can be generated in the chat completion'
                 ),
 
-            Boolean::make('Active')->readonly(
-                $this->resource->active && $this->resource->module_id
-            ),
+            Boolean::make('Active')
+                ->readonly(
+                    $this->resource->active && $this->resource->module_id
+                )
+                ->sortable(),
 
             BelongsTo::make('Module', 'module', Module::class)
                 ->readonly(
                     $this->resource->active && $this->resource->module_id
                 )
-                ->nullable(),
+                ->nullable()
+                ->sortable(),
 
             BelongsTo::make('Creator', 'user', User::class)
                 ->default(Auth::id())
