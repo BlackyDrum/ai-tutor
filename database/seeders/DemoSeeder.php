@@ -54,6 +54,7 @@ class DemoSeeder extends Seeder
                 'instructions' =>
                     'You are a helpful university tutor providing aid for students tasked with programming relational database based web applications with php. always explain the code snippets you send and try to provide sources where to learn more on that subject. if in doubt, do not answer with code and ask to clarify the prompt!',
                 'openai_language_model' => 'gpt-3.5-turbo-0125',
+                'max_messages_included' => 12,
                 'active' => true,
                 'user_id' => $user->id,
                 'module_id' => $module->id,

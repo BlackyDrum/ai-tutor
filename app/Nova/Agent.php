@@ -15,6 +15,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -90,6 +91,12 @@ class Agent extends Resource
                     return array_column($models, 'name', 'name');
                 })
                 ->help($this->helpText),
+
+            Number::make('Max Messages Included')
+                ->rules('required', 'integer', 'gte:0')
+                ->help(
+                    'Limits the number of previous messages considered for context in an ongoing conversation'
+                ),
 
             Boolean::make('Active')->readonly(
                 $this->resource->active && $this->resource->module_id

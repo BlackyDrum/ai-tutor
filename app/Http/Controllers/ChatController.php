@@ -89,7 +89,7 @@ class ChatController extends Controller
         $messages = Messages::query()
             ->where('conversation_id', '=', $conversation->id)
             ->orderBy('created_at', 'desc')
-            ->limit(config('chat.max_messages_included'))
+            ->limit($agent->max_messages_included)
             ->get()
             ->reverse();
 
