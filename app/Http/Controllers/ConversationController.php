@@ -127,7 +127,7 @@ class ConversationController extends Controller
             $systemMessage,
             $request->input('message'),
             $agent->openai_language_model,
-            64,
+            50,
             0.8,
             $agentResponse,
             false
