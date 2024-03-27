@@ -30,6 +30,8 @@ class Messages extends Model
         'completion_tokens',
         'openai_language_model',
         'conversation_id',
+        'created_at',
+        'updated_at',
     ];
 
     public function conversation()
