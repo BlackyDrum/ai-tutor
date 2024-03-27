@@ -5,7 +5,6 @@ namespace App\Nova\Metrics;
 use App\Models\Files;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
-use Laravel\Nova\Nova;
 
 class Embeddings extends Value
 {

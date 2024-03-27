@@ -2,8 +2,6 @@
 
 namespace App\Nova\Metrics\Openai;
 
-use App\Models\Messages;
-use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Partition;
 

@@ -4,18 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Collections;
 use App\Models\ConversationHasDocument;
-use App\Models\Conversations;
 use App\Models\Files;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 use Codewithkyrian\ChromaDB\Embeddings\OpenAIEmbeddingFunction;
-use GuzzleHttp\Client;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ChromaController extends Controller

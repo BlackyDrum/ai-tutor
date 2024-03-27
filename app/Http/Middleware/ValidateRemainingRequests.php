@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use App\Http\Controllers\ChatController;
-use App\Models\Messages;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;

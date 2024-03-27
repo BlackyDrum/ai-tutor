@@ -2,10 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Agents;
-use App\Models\Collections;
-use App\Models\Conversations;
-use App\Models\Messages;
 use App\Nova\Agent;
 use App\Nova\Collection;
 use App\Nova\Conversation;

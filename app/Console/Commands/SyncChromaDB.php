@@ -6,7 +6,6 @@ use App\Http\Controllers\ChromaController;
 use App\Models\Collections;
 use App\Models\Files;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class SyncChromaDB extends Command
 {

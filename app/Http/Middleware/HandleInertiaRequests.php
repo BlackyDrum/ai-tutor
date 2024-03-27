@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Collections;
 use App\Models\Conversations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

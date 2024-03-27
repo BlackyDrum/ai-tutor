@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Agents;
-use App\Models\Collections;
 use App\Models\Conversations;
 use App\Models\Messages;
 use App\Models\Modules;

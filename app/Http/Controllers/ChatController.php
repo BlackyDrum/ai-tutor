@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Agents;
-use App\Models\Collections;
 use App\Models\ConversationHasDocument;
 use App\Models\Conversations;
 use App\Models\Messages;
-use App\Models\Modules;
-use App\Models\SharedConversations;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ChatController extends Controller

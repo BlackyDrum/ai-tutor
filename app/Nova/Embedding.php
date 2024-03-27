@@ -3,9 +3,6 @@
 namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
-use App\Models\Files;
-use App\Nova\Actions\SyncChromaDB;
-use App\Nova\Actions\ValidateChromaDBSync;
 use App\Nova\Metrics\Embeddings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -15,7 +12,6 @@ use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\File;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
