@@ -19,6 +19,8 @@ class Agents extends Model
         'active',
         'user_id',
         'module_id',
+        'temperature',
+        'max_response_tokens',
     ];
 
     public function user()

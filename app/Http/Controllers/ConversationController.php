@@ -92,7 +92,9 @@ class ConversationController extends Controller
         $response = ChatController::sendMessageToOpenAI(
             $agent->instructions,
             $promptWithContext,
-            $agent->openai_language_model
+            $agent->openai_language_model,
+            $agent->max_response_tokens,
+            $agent->temperature
         );
 
         if ($response->failed()) {
@@ -125,9 +127,10 @@ class ConversationController extends Controller
             $systemMessage,
             $request->input('message'),
             $agent->openai_language_model,
+            64,
+            0.8,
             $agentResponse,
-            false,
-            64
+            false
         );
 
         if ($response2->failed()) {

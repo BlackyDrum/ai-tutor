@@ -66,8 +66,6 @@ class LtiController extends Controller
                     'admin' => false,
                     'module_id' => $module->id,
                     'max_requests' => config('chat.max_requests'),
-                    'temperature' => config('chat.temperature'),
-                    'max_response_tokens' => config('chat.max_response_tokens'),
                 ]
             );
 

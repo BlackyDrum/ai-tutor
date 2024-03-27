@@ -93,9 +93,29 @@ class Agent extends Resource
                 ->help($this->helpText),
 
             Number::make('Max Messages Included')
+                ->default(12)
                 ->rules('required', 'integer', 'gte:0')
                 ->help(
                     'Limits the number of previous messages considered for context in an ongoing conversation'
+                ),
+
+            Number::make('Temperature')
+                ->default(0.7)
+                ->step(0.1)
+                ->min(0)
+                ->max(1)
+                ->rules('required', 'numeric', 'between:0,1')
+                ->help(
+                    'Specifies how deterministic the agent should answer. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic'
+                ),
+
+            Number::make('Max Response Tokens')
+                ->default(1000)
+                ->min(0)
+                ->max(4096)
+                ->rules('required', 'integer', 'between:0,4096')
+                ->help(
+                    'The maximum number of tokens that can be generated in the chat completion'
                 ),
 
             Boolean::make('Active')->readonly(
