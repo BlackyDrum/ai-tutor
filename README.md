@@ -323,7 +323,7 @@ In our application, ``agents`` are responsible for shaping how responses from ``
 - **Module**: The specific ``module`` this agent is associated with.
 - **Active**: A boolean value indicating whether the agent is currently ``active``. Any new conversation will utilize this active agent, while ``pre-existing`` conversations continue with the agent they were ``initially`` assigned. Remember, within a module, only one agent can be active at any time.
 - **OpenAI Language Model**: Specify which ``OpenAI`` language model should be used for generating ``responses``. Any new conversation will utilize this specified language model, while ``pre-existing`` conversations will continue to use the language model that was ``initially`` assigned.
-- **Max Messages Included**: Limits the number of ``previous messages`` considered for context in an ongoing conversation.
+- **Max Messages Included**: Limits the number of ``previous messages`` considered for context in an ongoing conversation. Any new conversation will utilize this specified number, while ``pre-existing`` conversations will continue to use the number that was ``initially`` assigned.
 
 **Example Instructions**:
 ```

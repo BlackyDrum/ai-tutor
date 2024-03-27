@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('url_id')->unique();
             $table->string('openai_language_model');
+            $table->unsignedInteger('max_messages_included');
             $table->unsignedBigInteger('agent_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();

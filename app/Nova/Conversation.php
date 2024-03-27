@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -63,6 +64,8 @@ class Conversation extends Resource
             Text::make('OpenAI Language Model', 'openai_language_model')
                 ->hideWhenUpdating()
                 ->sortable(),
+
+            Number::make('Max Messages Included'),
 
             BelongsTo::make('Module'),
 
