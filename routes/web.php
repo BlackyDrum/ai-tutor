@@ -54,6 +54,11 @@ Route::middleware(['auth'])->group(function () {
                 'deleteConversation',
             ])->name('delete');
 
+            Route::delete('/all', [
+                ConversationController::class,
+                'deleteAllConversations',
+            ])->name('delete.all');
+
             Route::patch('/name', [
                 ConversationController::class,
                 'renameConversation',

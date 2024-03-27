@@ -1,10 +1,57 @@
 <script setup>
-import { Link, router } from "@inertiajs/vue3";
+import { Link, router, usePage } from "@inertiajs/vue3";
+import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
+import { useConfirm } from "primevue/useconfirm";
 
-import Tag from "primevue/tag";
-
+const page = usePage();
 const toast = useToast();
+const confirm = useConfirm();
+
+const isDeletingConversation = ref(false);
+
+const deleteAll = () => {
+    if (isDeletingConversation.value) return;
+
+    confirm.require({
+        message: `This will delete all conversations`,
+        header: "Delete conversations?",
+        icon: "pi pi-info-circle",
+        rejectLabel: "Cancel",
+        acceptLabel: "Delete",
+        rejectClass: "p-button-secondary p-button-outlined",
+        acceptClass: "p-button-danger",
+        acceptIcon: "pi pi-trash",
+        accept: () => {
+            isDeletingConversation.value = true;
+
+            window.axios
+                .delete("/conversation/all", {})
+                .then((result) => {
+                    if (page.url === "/") {
+                        page.props.auth.history.splice(
+                            0,
+                            page.props.auth.history.length,
+                        );
+                    } else {
+                        router.get("/");
+                    }
+                })
+                .catch((error) => {
+                    toast.add({
+                        severity: "error",
+                        summary: "Error",
+                        detail:
+                            error.response.data.message ?? error.response.data,
+                        life: 5000,
+                    });
+                })
+                .finally(() => {
+                    isDeletingConversation.value = false;
+                });
+        },
+    });
+};
 </script>
 
 <template>
@@ -24,15 +71,13 @@ const toast = useToast();
         </Link>
 
         <div
-            class="mb-1 flex cursor-not-allowed gap-4 rounded-lg p-2 opacity-30"
+            @click="deleteAll"
+            class="my-1 flex cursor-pointer gap-4 rounded-lg p-2 text-red-600 hover:bg-app-light"
         >
-            <div class="self-center">
-                <span class="pi pi-cog"></span>
+            <div>
+                <span class="pi pi-trash"></span>
             </div>
-            <div class="flex w-full">
-                <div class="self-center">Settings</div>
-                <Tag class="ml-auto" value="Coming soon" severity="info"></Tag>
-            </div>
+            <div>Delete All</div>
         </div>
         <hr class="h-px border-0 bg-gray-500/40" />
         <div

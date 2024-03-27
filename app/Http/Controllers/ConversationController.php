@@ -208,6 +208,15 @@ class ConversationController extends Controller
         return response()->json(['id' => $request->input('conversation_id')]);
     }
 
+    public function deleteAllConversations(Request $request)
+    {
+        Conversations::query()
+            ->where('user_id', '=', Auth::id())
+            ->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
     public function renameConversation(Request $request)
     {
         $request->validate([
