@@ -7,6 +7,7 @@ use App\Nova\Actions\DestroyChromaDB;
 use App\Nova\Actions\ReplicateCollection;
 use App\Nova\Actions\SyncChromaDB;
 use App\Nova\Actions\ValidateChromaDBSync;
+use App\Nova\Filters\ModuleFilter;
 use App\Nova\Metrics\Collections;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -208,6 +209,11 @@ class Collection extends Resource
     public function cards(NovaRequest $request)
     {
         return [new Collections()];
+    }
+
+    public function filters(NovaRequest $request)
+    {
+        return [new ModuleFilter()];
     }
 
     /**

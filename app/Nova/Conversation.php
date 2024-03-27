@@ -2,6 +2,10 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\AgentFilter;
+use App\Nova\Filters\CollectionFilter;
+use App\Nova\Filters\ModuleFilter;
+use App\Nova\Filters\UserFilter;
 use App\Nova\Metrics\ConversationsPerDay;
 use Illuminate\Http\Request;
 use Laravel\Nova\Actions\ExportAsCsv;
@@ -101,6 +105,16 @@ class Conversation extends Resource
     public function cards(NovaRequest $request)
     {
         return [new ConversationsPerDay()];
+    }
+
+    public function filters(NovaRequest $request)
+    {
+        return [
+            new ModuleFilter(),
+            new CollectionFilter(),
+            new AgentFilter(),
+            new UserFilter(),
+        ];
     }
 
     /**

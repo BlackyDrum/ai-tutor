@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\ModuleFilter;
 use App\Nova\Metrics\Users;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
@@ -114,6 +115,11 @@ class User extends Resource
     public function cards(NovaRequest $request)
     {
         return [new Users()];
+    }
+
+    public function filters(NovaRequest $request)
+    {
+        return [new ModuleFilter()];
     }
 
     /**

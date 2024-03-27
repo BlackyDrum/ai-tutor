@@ -2,6 +2,8 @@
 
 namespace App\Nova;
 
+use App\Nova\Filters\LanguageModelFilter;
+use App\Nova\Filters\RatingFilter;
 use App\Nova\Metrics\MessagesPerDay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -119,6 +121,11 @@ class Message extends Resource
     public function cards(NovaRequest $request)
     {
         return [new MessagesPerDay()];
+    }
+
+    public function filters(NovaRequest $request)
+    {
+        return [new LanguageModelFilter(), new RatingFilter()];
     }
 
     /**

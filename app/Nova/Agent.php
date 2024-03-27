@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use App\Models\Agents;
 use App\Nova\Dashboards\OpenAI;
+use App\Nova\Filters\ModuleFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -211,6 +212,11 @@ class Agent extends Resource
                 ->where('active', true)
                 ->update(['active' => false]);
         }
+    }
+
+    public function filters(NovaRequest $request)
+    {
+        return [new ModuleFilter()];
     }
 
     /**
