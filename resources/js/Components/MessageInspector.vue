@@ -26,6 +26,7 @@ const showDialog = ref(false);
     <Dialog
         :visible="message"
         :closable="false"
+        :draggable="false"
         modal
         header="Inspect Message"
         class="max-w-[95%] break-words xl:max-w-[35%]"
