@@ -78,6 +78,12 @@ class Conversation extends Resource
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
                 ->sortable(),
+
+            DateTime::make('Updated At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->onlyOnDetail()
+                ->sortable(),
         ];
     }
 

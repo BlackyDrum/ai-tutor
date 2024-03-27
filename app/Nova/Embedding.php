@@ -114,6 +114,13 @@ class Embedding extends Resource
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
+                ->onlyOnDetail()
+                ->sortable(),
+
+            DateTime::make('Updated At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->onlyOnDetail()
                 ->sortable(),
         ];
     }

@@ -92,7 +92,7 @@ class User extends Resource
             DateTime::make('Updated At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
-                ->hideFromIndex()
+                ->onlyOnDetail()
                 ->sortable(),
 
             HasMany::make('Conversations'),

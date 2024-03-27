@@ -5,6 +5,7 @@ namespace App\Nova;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -56,6 +57,18 @@ class Module extends Resource
                 ->creationRules('unique:modules,ref_id')
                 ->updateRules('unique:modules,ref_id,{{resourceId}}')
                 ->help('Unique Ref ID for an ILIAS course'),
+
+            DateTime::make('Created At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->onlyOnDetail()
+                ->sortable(),
+
+            DateTime::make('Updated At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->onlyOnDetail()
+                ->sortable(),
 
             HasMany::make('Conversations'),
 

@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\URL;
@@ -49,6 +50,17 @@ class SharedConversation extends Resource
             )->displayUsing(fn() => 'Show'),
 
             Text::make('Shared URL ID', 'shared_url_id'),
+
+            DateTime::make('Created At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->sortable(),
+
+            DateTime::make('Updated At')
+                ->hideWhenCreating()
+                ->hideWhenUpdating()
+                ->onlyOnDetail()
+                ->sortable(),
 
             BelongsTo::make('Conversation'),
         ];
