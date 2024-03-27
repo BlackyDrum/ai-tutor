@@ -7,12 +7,14 @@ use App\Models\Conversations;
 use App\Models\Messages;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ChatController extends Controller
 {
@@ -245,11 +247,22 @@ class ChatController extends Controller
     {
         $request->validate([
             'helpful' => 'required|boolean',
-            'message_id' => 'required|integer|exists:messages,id',
+            'message_id' => 'required|string',
         ]);
 
+        $id = Hashids::decode($request->input('message_id'));
+
+        try {
+            Messages::query()->findOrFail($id);
+        } catch (ModelNotFoundException $exception) {
+            return response()->json(
+                ['message_id' => 'The selected message id is invalid'],
+                404
+            );
+        }
+
         $message = Messages::query()
-            ->where('messages.id', '=', $request->input('message_id'))
+            ->where('messages.id', '=', $id)
             ->join(
                 'conversations',
                 'conversations.id',

@@ -12,6 +12,8 @@
     ],
     "require": {
         "php": "^8.2",
+        "ext-simplexml": "*",
+        "ext-zip": "*",
         "codewithkyrian/chromadb-php": "^0.2.0",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^1.0",
@@ -23,8 +25,7 @@
         "longhornopen/laravel-celtic-lti": "^1.0",
         "smalot/pdfparser": "^2.8",
         "tightenco/ziggy": "^1.0",
-        "ext-zip": "*",
-        "ext-simplexml": "*"
+        "vinkla/hashids": "^12.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
