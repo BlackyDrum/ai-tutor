@@ -273,7 +273,6 @@ To make the application fully operational, certain preliminary data entries are 
 ``Modules`` in our application mirror the structure of courses at ``FH Aachen``. To add a module, you'll need to populate entries in the ``modules`` table with specific details:
 - **Name**: This is the ``name`` of the module or course as it is officially referred to at ``FH Aachen``.
 - **Ref ID**: Each course at ``FH Aachen`` has a unique ``reference ID``, often found in ``ILIAS``. This ID must be specified to create a clear linkage between the application module and its real-world counterpart in ``ILIAS``.
-- **OpenAI Language Model**: Specify which ``OpenAI`` language model should be used for generating ``responses`` within this particular module. Any new conversation within a module will utilize this specified language model, while ``pre-existing`` conversations will continue to use the language model that was ``initially`` assigned.
 
 ### Adding a ChromaDB Collection
 In our application, each module should have an associated collection within ``ChromaDB``. Collections hold ``embeddings``, which are contextual representations of documents or data points. To ensure effective management and retrieval of these ``embeddings``, you'll need to create entries in the ``collections`` table for each module:
@@ -323,6 +322,7 @@ In our application, ``agents`` are responsible for shaping how responses from ``
 - **Instructions**: Detailed ``guidelines`` that the agent follows to generate responses. This should align with the module's content and objectives.
 - **Module**: The specific ``module`` this agent is associated with.
 - **Active**: A boolean value indicating whether the agent is currently ``active``. Any new conversation will utilize this active agent, while ``pre-existing`` conversations continue with the agent they were ``initially`` assigned. Remember, within a module, only one agent can be active at any time.
+- **OpenAI Language Model**: Specify which ``OpenAI`` language model should be used for generating ``responses``. Any new conversation will utilize this specified language model, while ``pre-existing`` conversations will continue to use the language model that was ``initially`` assigned.
 
 **Example Instructions**:
 ```
