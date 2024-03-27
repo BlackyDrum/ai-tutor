@@ -40,7 +40,6 @@ The chatbot is designed with the student's needs in mind, offering a range of fu
 -   [OpenAI](#openai)
     -   [Setting up the OpenAI API Key](#setting-up-the-openai-api-key)
     -   [Registering New Language Models](#registering-new-language-models)
-    -   [Selecting a Language Model](#selecting-a-language-model)
     -   [Understanding Pricing: Completion Tokens and Prompt Tokens](#understanding-pricing-completion-tokens-and-prompt-tokens)
 -   [Application Usage](#application-usage)
     -   [Adding a Module to the Application](#adding-a-module-to-the-application)
@@ -304,14 +303,6 @@ public static function models()
         ...
     ];
 }
-```
-
-### Selecting a Language Model
-
-To configure which language model is used for `conversations` within our application, you need to specify your choice in the `.env` file:
-
-```env
-OPENAI_LANGUAGE_MODEL=gpt-3.5-turbo-0125
 ```
 
 ### Understanding Pricing: Completion Tokens and Prompt Tokens
