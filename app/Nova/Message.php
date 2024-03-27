@@ -12,8 +12,10 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Markdown;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Vinkla\Hashids\Facades\Hashids;
 
 class Message extends Resource
 {
@@ -47,7 +49,9 @@ class Message extends Resource
     public function fields(NovaRequest $request)
     {
         return [
-            ID::make()->sortable(),
+            ID::make()
+                ->sortable()
+                ->resolveUsing(fn($value) => Hashids::decode($value)),
 
             BelongsTo::make('Conversation')->readonly()->hideWhenUpdating(),
 
@@ -68,11 +72,15 @@ class Message extends Resource
                 }
             ),
 
-            Textarea::make('User Message with Context'),
+            Textarea::make('User Message with Context')->hideWhenUpdating(),
 
             Number::make('Prompt Tokens')->hideWhenUpdating()->sortable(),
 
             Number::make('Completion Tokens')->hideWhenUpdating()->sortable(),
+
+            Text::make('OpenAI Language Model', 'openai_language_model')
+                ->hideWhenUpdating()
+                ->sortable(),
 
             Badge::make('Helpful')
                 ->map([

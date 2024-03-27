@@ -10,8 +10,6 @@ class Conversations extends Model
     use HasFactory;
 
     protected $fillable = [
-        'openai_language_model',
-        'max_messages_included',
         'agent_id',
         'url_id',
         'user_id',
@@ -22,8 +20,6 @@ class Conversations extends Model
 
     protected $hidden = [
         'id',
-        'openai_language_model',
-        'max_messages_included',
         'module_id',
         'agent_id',
         'temperature',

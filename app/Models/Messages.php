@@ -17,6 +17,7 @@ class Messages extends Model
         'user_message_with_context',
         'prompt_tokens',
         'completion_tokens',
+        'openai_language_model',
         'conversation_id',
         'helpful',
         'created_at',
@@ -27,6 +28,7 @@ class Messages extends Model
         'user_message_with_context',
         'prompt_tokens',
         'completion_tokens',
+        'openai_language_model',
         'conversation_id',
     ];
 
@@ -38,7 +40,7 @@ class Messages extends Model
     protected function id(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Hashids::encode($value),
+            get: fn(string $value) => Hashids::encode($value)
         );
     }
 }

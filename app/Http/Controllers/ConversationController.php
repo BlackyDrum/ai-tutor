@@ -50,8 +50,6 @@ class ConversationController extends Controller
         $conversation = Conversations::query()->create([
             'name' => 'Chat #' . ($count + 1),
             'url_id' => Str::random(40),
-            'openai_language_model' => $agent->openai_language_model,
-            'max_messages_included' => $agent->max_messages_included,
             'agent_id' => $agent->id,
             'user_id' => Auth::id(),
             'module_id' => $module->id,
@@ -84,6 +82,7 @@ class ConversationController extends Controller
             );
 
             DB::rollBack();
+
             return response()->json(
                 ['message' => 'Internal Server Error'],
                 500
@@ -93,7 +92,7 @@ class ConversationController extends Controller
         $response = ChatController::sendMessageToOpenAI(
             $agent->instructions,
             $promptWithContext,
-            $conversation->openai_language_model
+            $agent->openai_language_model
         );
 
         if ($response->failed()) {
@@ -106,6 +105,7 @@ class ConversationController extends Controller
             );
 
             DB::rollBack();
+
             return response()->json($response->reason(), $response->status());
         }
 
@@ -124,7 +124,7 @@ class ConversationController extends Controller
         $response2 = ChatController::sendMessageToOpenAI(
             $systemMessage,
             $request->input('message'),
-            $conversation->openai_language_model,
+            $agent->openai_language_model,
             $agentResponse,
             false,
             64
@@ -159,6 +159,7 @@ class ConversationController extends Controller
             'completion_tokens' => $response->json()['usage'][
                 'completion_tokens'
             ],
+            'openai_language_model' => $agent->openai_language_model,
             'conversation_id' => $conversation->id,
             'created_at' => $now,
         ]);
