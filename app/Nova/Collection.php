@@ -11,6 +11,7 @@ use App\Nova\Filters\ModuleFilter;
 use App\Nova\Metrics\Collections;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
@@ -198,6 +199,15 @@ class Collection extends Resource
                 ->where('active', true)
                 ->update(['active' => false]);
         }
+    }
+
+    public static function softDeletes()
+    {
+        if (static::authorizable() and Gate::check('restore', get_class(static::newModel()))) {
+            return parent::softDeletes();
+        }
+
+        return false;
     }
 
     /**

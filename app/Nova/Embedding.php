@@ -8,6 +8,7 @@ use App\Nova\Metrics\Embeddings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
@@ -209,6 +210,15 @@ class Embedding extends Resource
 
     public function authorizedToRestore(Request $request)
     {
+        return false;
+    }
+
+    public static function softDeletes()
+    {
+        if (static::authorizable() and Gate::check('restore', get_class(static::newModel()))) {
+            return parent::softDeletes();
+        }
+
         return false;
     }
 
