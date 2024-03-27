@@ -12,6 +12,7 @@ import Main from "@/Layouts/Main.vue";
 import Prompt from "@/Components/Prompt.vue";
 import LoadingDots from "@/Components/LoadingDots.vue";
 import UserAvatar from "@/Components/UserAvatar.vue";
+import MessageInspector from "@/Components/MessageInspector.vue";
 
 import Message from "primevue/message";
 import Avatar from "primevue/avatar";
@@ -35,6 +36,7 @@ const promptComponent = ref();
 const mainComponent = ref();
 const scrollContainer = ref();
 const messages = ref([]);
+const inspectedMessage = ref(null);
 
 const timeoutId = ref();
 
@@ -255,6 +257,12 @@ const copyMessage = (id) => {
         });
 };
 
+const inspectMessage = (id) => {
+    inspectedMessage.value = messages.value.find(
+        (message) => message.id === id,
+    );
+};
+
 const userAvatarLabel = computed(() => {
     if (page.props.hasPrompt) return undefined;
     else if (page.props.username) return page.props.username[0].toUpperCase();
@@ -356,6 +364,12 @@ const displayName = computed(() => {
                                                 : 'pi pi-thumbs-down'
                                         "
                                     />
+                                    <button
+                                        v-if="$page.props.username"
+                                        @click="inspectMessage(message.id)"
+                                        v-tooltip.bottom="'Inspect'"
+                                        class="pi pi-info-circle"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -370,4 +384,10 @@ const displayName = computed(() => {
             />
         </Main>
     </AuthenticatedLayout>
+
+    <MessageInspector
+        v-if="$page.props.username"
+        :message="inspectedMessage"
+        @close="inspectedMessage = null"
+    />
 </template>

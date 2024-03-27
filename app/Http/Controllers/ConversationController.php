@@ -275,6 +275,7 @@ class ConversationController extends Controller
             )
             ->where('shared_conversations.shared_url_id', '=', $id)
             ->whereRaw('messages.created_at < shared_conversations.created_at')
+            ->orderBy('messages.created_at')
             ->select(['messages.user_message', 'messages.agent_message'])
             ->get();
 
@@ -365,8 +366,18 @@ class ConversationController extends Controller
         }
 
         $messages = Messages::query()
-            ->where('conversation_id', '=', $conversation->id)
-            ->orderBy('created_at')
+            ->leftJoin('conversations', 'conversations.id', '=', 'messages.conversation_id')
+            ->leftJoin('modules', 'modules.id', '=', 'conversations.module_id')
+            ->leftJoin('agents', 'agents.id', '=', 'conversations.agent_id')
+            ->where('messages.conversation_id', '=', $conversation->id)
+            ->orderBy('messages.created_at')
+            ->select([
+                'messages.*',
+                'conversations.id AS conversation_id',
+                'conversations.name AS conversation_name',
+                'modules.name AS module_name',
+                'agents.name AS agent_name',
+            ])
             ->get();
 
         return Inertia::render('Chat', [

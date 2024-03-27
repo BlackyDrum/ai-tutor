@@ -36,6 +36,7 @@ class ChatController extends Controller
         $messages = Messages::query()
             ->where('conversation_id', '=', $conversation->id)
             ->orderBy('created_at')
+            ->select(['id', 'user_message', 'agent_message', 'helpful'])
             ->get();
 
         return Inertia::render('Chat', [

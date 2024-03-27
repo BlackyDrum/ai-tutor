@@ -24,16 +24,6 @@ class Messages extends Model
         'updated_at',
     ];
 
-    protected $hidden = [
-        'user_message_with_context',
-        'prompt_tokens',
-        'completion_tokens',
-        'openai_language_model',
-        'conversation_id',
-        'created_at',
-        'updated_at',
-    ];
-
     public function conversation()
     {
         return $this->belongsTo(Conversations::class, 'conversation_id');
@@ -42,7 +32,9 @@ class Messages extends Model
     protected function id(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => Hashids::encode($value)
+            get: fn(string $value) => request()->route()->getName() == 'peek'
+                ? $value
+                : Hashids::encode($value)
         );
     }
 }
