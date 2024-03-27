@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Models\Agents;
+use App\Nova\Dashboards\OpenAI;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -41,6 +43,19 @@ class Agent extends Resource
      */
     public static $search = ['id', 'name'];
 
+    public string $helpText = '';
+
+    public function __construct($resource = null)
+    {
+        parent::__construct($resource);
+
+        $models = OpenAI::models();
+
+        foreach ($models as $model) {
+            $this->helpText .= "<strong>{$model->name}</strong> - Input: \${$model->input} / 1M tokens, Output: \${$model->output} / 1M tokens<br>";
+        }
+    }
+
     /**
      * Get the fields displayed by the resource.
      *
@@ -61,39 +76,20 @@ class Agent extends Resource
                 )
                 ->sortable(),
 
-            /*
-
-            Text::make('Context')
-                ->rules('required','string','max:255')
-                ->hideFromIndex()
-                ->hideWhenUpdating()
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
-                }),
-
-            Text::make('First Message')
-                ->rules('required','string','max:255')
-                ->hideFromIndex()
-                ->hideWhenUpdating()
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
-                }),
-
-            Text::make('Response Shape')
-                ->rules('required','string','max:255')
-                ->hideFromIndex()
-                ->hideWhenUpdating()
-                ->readonly(function() {
-                    return (bool)$this->resource->id;
-                }),
-
-            */
-
             Textarea::make('Instructions')
                 ->rules('required', 'string')
                 ->help(
                     'Guidelines that the agent follows to generate responses'
                 ),
+
+            Select::make('OpenAI Language Model', 'openai_language_model')
+                ->rules('required', 'string')
+                ->options(function () {
+                    $models = OpenAI::models();
+
+                    return array_column($models, 'name', 'name');
+                })
+                ->help($this->helpText),
 
             Boolean::make('Active')->readonly(
                 $this->resource->active && $this->resource->module_id

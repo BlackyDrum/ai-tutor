@@ -50,7 +50,7 @@ class ConversationController extends Controller
         $conversation = Conversations::query()->create([
             'name' => 'Chat #' . ($count + 1),
             'url_id' => Str::random(40),
-            'openai_language_model' => $module->openai_language_model,
+            'openai_language_model' => $agent->openai_language_model,
             'agent_id' => $agent->id,
             'user_id' => Auth::id(),
             'module_id' => $module->id,
