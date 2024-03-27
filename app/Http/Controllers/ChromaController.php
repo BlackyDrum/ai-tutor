@@ -94,8 +94,6 @@ class ChromaController extends Controller
                 ],
             ];
 
-            $model->user_id = Auth::id();
-
             $model->save();
         } elseif (str_ends_with($filename, 'md')) {
             $markdown = file_get_contents($pathToFile);
@@ -201,7 +199,6 @@ class ChromaController extends Controller
             'name' => $model->name . " Slide $index",
             'content' => $contentOnSlide,
             'size' => strlen($contentOnSlide),
-            'user_id' => Auth::id(),
             'collection_id' => $model->collection_id,
         ]);
 

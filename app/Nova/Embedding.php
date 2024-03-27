@@ -102,15 +102,6 @@ class Embedding extends Resource
                     return (bool) $this->resource->id;
                 }),
 
-            BelongsTo::make('Creator', 'user', User::class)
-                ->nullable()
-                ->default(Auth::id())
-                ->hideWhenCreating()
-                ->sortable()
-                ->showOnUpdating(function () {
-                    return $this->resource->user_id == null;
-                }),
-
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
