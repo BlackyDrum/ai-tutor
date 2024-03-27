@@ -28,11 +28,11 @@ class Ratings extends Partition
         return $this->result([
             'Helpful' => $positive,
             'Not Helpful' => $negative,
-            'Not Rated' => $neutral
+            'Not Rated' => $neutral,
         ])->colors([
             'Helpful' => '#66ff66',
             'Not Helpful' => '#ff6666',
-            'Not Rated' => '#ffffff'
+            'Not Rated' => '#ffffff',
         ]);
     }
 

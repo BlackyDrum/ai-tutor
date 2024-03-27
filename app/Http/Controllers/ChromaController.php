@@ -434,15 +434,16 @@ class ChromaController extends Controller
                 '',
                 config('api.openai_embedding_model')
             );
-        }
-        elseif ($embeddingFunction == 'jina') {
+        } elseif ($embeddingFunction == 'jina') {
             return new JinaEmbeddingFunction(
                 config('api.jina_api_key'),
                 config('api.jina_embedding_model')
             );
         }
 
-        throw new \Exception("Invalid embedding provider. Please choose 'jina' or 'openai'");
+        throw new \Exception(
+            "Invalid embedding provider. Please choose 'jina' or 'openai'"
+        );
     }
 
     public static function getClient()

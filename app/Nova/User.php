@@ -52,9 +52,7 @@ class User extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('Name')
-                ->sortable()
-                ->rules('required', 'max:255'),
+            Text::make('Name')->sortable()->rules('required', 'max:255'),
 
             Text::make('Abbreviation')
                 ->sortable()

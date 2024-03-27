@@ -49,7 +49,10 @@ const submit = () => {
                 />
 
                 <InputError class="mt-2" :message="form.errors.abbreviation" />
-                <InputError class="mt-2" :message="$page.props.errors.lti?.message" />
+                <InputError
+                    class="mt-2"
+                    :message="$page.props.errors.lti?.message"
+                />
             </div>
 
             <div class="mt-4">

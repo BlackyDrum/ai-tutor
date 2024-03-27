@@ -55,9 +55,7 @@ class LtiController extends Controller
                 return $this->redirectWithError($validator->errors()->toJson());
             }
 
-            $module = Modules::query()
-                ->where('ref_id', '=', $refId)
-                ->first();
+            $module = Modules::query()->where('ref_id', '=', $refId)->first();
 
             $user = User::firstOrCreate(
                 [

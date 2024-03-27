@@ -81,7 +81,9 @@ class HomeController extends Controller
 
         if ($conversation) {
             try {
-                $collection = Collections::query()->findOrFail($conversation->collection_id);
+                $collection = Collections::query()->findOrFail(
+                    $conversation->collection_id
+                );
             } catch (ModelNotFoundException $exception) {
                 $conversation->collection_id = $collection->id;
                 $conversation->save();

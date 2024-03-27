@@ -35,7 +35,9 @@ class SyncChromaDB extends Action
     {
         Artisan::call('chroma:sync');
 
-        return ActionResponse::message('Synced ChromaDB with the relational database');
+        return ActionResponse::message(
+            'Synced ChromaDB with the relational database'
+        );
     }
 
     /**

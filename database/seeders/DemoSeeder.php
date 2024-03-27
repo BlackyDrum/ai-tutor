@@ -27,7 +27,7 @@ class DemoSeeder extends Seeder
             ],
             [
                 'name' => 'Demo',
-                'openai_language_model' => 'gpt-3.5-turbo-0125'
+                'openai_language_model' => 'gpt-3.5-turbo-0125',
             ]
         );
 
