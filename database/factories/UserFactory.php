@@ -25,10 +25,11 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
+            'abbreviation' => Str::random(7),
             'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'admin' => false,
+            'terms_accepted_at' => null,
+            'max_requests' => config('chat.max_requests'),
         ];
     }
 

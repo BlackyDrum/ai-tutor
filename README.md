@@ -122,7 +122,7 @@ $ docker-compose up -d
 10. (Optional) Seed the database with `demo` data:
 
 ```
-$ php artisan db:seed --class=DemoSeeder
+$ php artisan db:seed
 ```
 
 Username: `admin` Password: `P3X8MYcd2BwE7qa3`
