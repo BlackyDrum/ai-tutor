@@ -127,8 +127,9 @@ $ php artisan db:seed --class=DemoSeeder
 
 Username: `admin` Password: `P3X8MYcd2BwE7qa3`
 
-> **Note:** Make sure to not use this user in production! 11. Start the `development server`:
+> **Note:** Make sure to not use this user in production!
 
+11. Start the `development server`:
 ```
 $ php artisan serve
 ```
