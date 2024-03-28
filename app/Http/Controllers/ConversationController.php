@@ -112,7 +112,7 @@ class ConversationController extends Controller
         }
 
         $systemMessage =
-            'Create a concise and short title for the messages. Focus on identifying and condensing the primary elements or topics discussed.';
+            'Create a concise and short title in 5 words or fewer for the messages. Focus on identifying and condensing the primary elements or topics discussed.';
 
         $agentResponse = [
             [
@@ -126,8 +126,8 @@ class ConversationController extends Controller
         $response2 = ChatController::sendMessageToOpenAI(
             $systemMessage,
             $request->input('message'),
-            $agent->openai_language_model,
-            50,
+            config('api.openai_conversation_title_creator_model'),
+            32,
             0.8,
             $agentResponse,
             false

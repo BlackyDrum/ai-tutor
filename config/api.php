@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'auth_key' => env('API_AUTH_KEY'),
-
     'openai_embedding_model' => env('OPENAI_EMBEDDING_MODEL'),
+
+    'openai_conversation_title_creator_model' => env('OPENAI_CONVERSATION_TITLE_CREATOR_MODEL'),
 
     'jina_embedding_model' => env('JINA_EMBEDDING_MODEL'),
 
