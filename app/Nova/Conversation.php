@@ -64,6 +64,15 @@ class Conversation extends Resource
 
             Text::make('url_id')->onlyOnDetail(),
 
+            Text::make('Name Created By', 'openai_language_model')->sortable(),
+
+            Text::make('Name Prompt Tokens', 'prompt_tokens')->sortable(),
+
+            Text::make(
+                'Name Completion Tokens',
+                'completion_tokens'
+            )->sortable(),
+
             BelongsTo::make('Module')->sortable(),
 
             BelongsTo::make('Agent')->sortable(),

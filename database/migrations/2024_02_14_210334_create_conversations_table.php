@@ -14,6 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('url_id')->unique();
+            $table->unsignedInteger('prompt_tokens')->nullable();
+            $table->unsignedInteger('completion_tokens')->nullable();
+            $table->string('openai_language_model')->nullable();
             $table->unsignedBigInteger('agent_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();

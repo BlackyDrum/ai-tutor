@@ -123,10 +123,14 @@ class ConversationController extends Controller
             ],
         ];
 
+        $nameCreatorModel = config(
+            'api.openai_conversation_title_creator_model'
+        );
+
         $response2 = ChatController::sendMessageToOpenAI(
             $systemMessage,
             $request->input('message'),
-            config('api.openai_conversation_title_creator_model'),
+            $nameCreatorModel,
             32,
             0.8,
             $agentResponse,
@@ -148,6 +152,11 @@ class ConversationController extends Controller
             $conversation->update([
                 'name' => $response2->json()['choices'][0]['message'][
                     'content'
+                ],
+                'openai_language_model' => $nameCreatorModel,
+                'prompt_tokens' => $response2->json()['usage']['prompt_tokens'],
+                'completion_tokens' => $response2->json()['usage'][
+                    'completion_tokens'
                 ],
             ]);
         }
@@ -210,9 +219,7 @@ class ConversationController extends Controller
 
     public function deleteAllConversations(Request $request)
     {
-        Conversations::query()
-            ->where('user_id', '=', Auth::id())
-            ->delete();
+        Conversations::query()->where('user_id', '=', Auth::id())->delete();
 
         return response()->json(['ok' => true]);
     }
@@ -375,7 +382,12 @@ class ConversationController extends Controller
         }
 
         $messages = Messages::query()
-            ->leftJoin('conversations', 'conversations.id', '=', 'messages.conversation_id')
+            ->leftJoin(
+                'conversations',
+                'conversations.id',
+                '=',
+                'messages.conversation_id'
+            )
             ->leftJoin('modules', 'modules.id', '=', 'conversations.module_id')
             ->leftJoin('agents', 'agents.id', '=', 'conversations.agent_id')
             ->where('messages.conversation_id', '=', $conversation->id)

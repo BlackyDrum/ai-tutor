@@ -2,6 +2,7 @@
 
 namespace App\Nova\Metrics\Openai;
 
+use App\Models\Conversations;
 use App\Models\Messages;
 use App\Nova\Dashboards\OpenAI;
 use Carbon\Carbon;
@@ -31,14 +32,25 @@ class TotalCosts extends Value
         $totalPrice = 0;
 
         foreach ($models as $model) {
-            $tokens = self::getTokens($model->name, $range);
-            $price = self::calculatePrice(
-                $tokens['prompt_tokens'],
-                $tokens['completion_tokens'],
+            $messageTokens = self::getTokens($model->name, $range);
+            $conversationNameTokens = self::getTokens(
+                $model->name,
+                $range,
+                true
+            );
+            $messagePrice = self::calculatePrice(
+                $messageTokens['prompt_tokens'],
+                $messageTokens['completion_tokens'],
                 $model->input,
                 $model->output
             );
-            $totalPrice += $price;
+            $namePrice = self::calculatePrice(
+                $conversationNameTokens['prompt_tokens'],
+                $conversationNameTokens['completion_tokens'],
+                $model->input,
+                $model->output
+            );
+            $totalPrice += $messagePrice + $namePrice;
         }
 
         $result = number_format($totalPrice, 2);
@@ -56,13 +68,22 @@ class TotalCosts extends Value
             ($completionTokens / 1e6) * $outputPrice;
     }
 
-    public static function getTokens($modelName, $range = 'ALL')
-    {
-        $totalPromptTokens = Messages::query()
+    public static function getTokens(
+        $modelName,
+        $range = 'ALL',
+        $getTokensForConversationName = false
+    ) {
+        $totalPromptTokens = ($getTokensForConversationName
+            ? Conversations::query()
+            : Messages::query()
+        )
             ->where('openai_language_model', $modelName)
             ->select(DB::raw('SUM(prompt_tokens) AS total'));
 
-        $totalCompletionTokens = Messages::query()
+        $totalCompletionTokens = ($getTokensForConversationName
+            ? Conversations::query()
+            : Messages::query()
+        )
             ->where('openai_language_model', $modelName)
             ->select(DB::raw('SUM(completion_tokens) AS total'));
 

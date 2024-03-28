@@ -16,6 +16,9 @@ class Conversations extends Model
         'module_id',
         'name',
         'collection_id',
+        'prompt_tokens',
+        'completion_tokens',
+        'openai_language_model',
     ];
 
     protected $hidden = [
@@ -25,6 +28,9 @@ class Conversations extends Model
         'temperature',
         'user_id',
         'collection_id',
+        'prompt_tokens',
+        'completion_tokens',
+        'openai_language_model',
         'updated_at',
         'created_at',
     ];

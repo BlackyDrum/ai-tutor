@@ -15,28 +15,44 @@ abstract class Model extends Partition
     {
         parent::__construct($component);
 
-        $tokens = TotalCosts::getTokens($this->name);
-
-        $costs = number_format(
-            TotalCosts::calculatePrice(
-                $tokens['prompt_tokens'],
-                $tokens['completion_tokens'],
-                $this->input,
-                $this->output
-            ),
-            2
+        $messageTokens = TotalCosts::getTokens($this->name);
+        $conversationNameTokens = TotalCosts::getTokens(
+            $this->name,
+            'ALL',
+            true
         );
+
+        $messageCosts = TotalCosts::calculatePrice(
+            $messageTokens['prompt_tokens'],
+            $messageTokens['completion_tokens'],
+            $this->input,
+            $this->output
+        );
+
+        $nameCosts = TotalCosts::calculatePrice(
+            $conversationNameTokens['prompt_tokens'],
+            $conversationNameTokens['completion_tokens'],
+            $this->input,
+            $this->output
+        );
+
+        $costs = number_format($messageCosts + $nameCosts, 2);
 
         $this->helpText = "Input: \${$this->input} / 1M tokens<br>Output: \${$this->output} / 1M tokens<br><b>Total costs: \$$costs</b>";
     }
 
     public function calculate(NovaRequest $request)
     {
-        $tokens = TotalCosts::getTokens($this->name);
+        $messageTokens = TotalCosts::getTokens($this->name);
+
+        $nameTokens = TotalCosts::getTokens($this->name, 'ALL', true);
 
         return $this->result([
-            'Prompt Tokens' => $tokens['prompt_tokens'],
-            'Completion Tokens' => $tokens['completion_tokens'],
+            'Prompt Tokens' =>
+                $messageTokens['prompt_tokens'] + $nameTokens['prompt_tokens'],
+            'Completion Tokens' =>
+                $messageTokens['completion_tokens'] +
+                $nameTokens['completion_tokens'],
         ]);
     }
 
