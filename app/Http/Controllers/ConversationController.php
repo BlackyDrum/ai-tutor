@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Module;
-use App\Models\SharedConversations;
+use App\Models\SharedConversation;
 use App\Models\User;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
@@ -259,7 +259,7 @@ class ConversationController extends Controller
 
     public function share(string $id)
     {
-        $shared = SharedConversations::query()
+        $shared = SharedConversation::query()
             ->where('shared_conversations.shared_url_id', '=', $id)
             ->first();
 
@@ -276,7 +276,7 @@ class ConversationController extends Controller
 
         $conversation = Conversation::query()->find($shared->conversation_id);
 
-        $messages = SharedConversations::query()
+        $messages = SharedConversation::query()
             ->join(
                 'conversations',
                 'conversations.id',
@@ -322,7 +322,7 @@ class ConversationController extends Controller
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
-        $sharedConversation = SharedConversations::query()
+        $sharedConversation = SharedConversation::query()
             ->where('conversation_id', '=', $conversation->id)
             ->first();
 
@@ -333,7 +333,7 @@ class ConversationController extends Controller
             );
         }
 
-        $sharedConversation = SharedConversations::query()->create([
+        $sharedConversation = SharedConversation::query()->create([
             'shared_url_id' => Str::random(40),
             'conversation_id' => $conversation->id,
         ]);
@@ -364,7 +364,7 @@ class ConversationController extends Controller
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
-        SharedConversations::query()
+        SharedConversation::query()
             ->where('conversation_id', '=', $conversation->id)
             ->delete();
 

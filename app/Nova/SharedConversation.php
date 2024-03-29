@@ -15,9 +15,9 @@ class SharedConversation extends Resource
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\SharedConversations>
+     * @var class-string<\App\Models\SharedConversation>
      */
-    public static $model = \App\Models\SharedConversations::class;
+    public static $model = \App\Models\SharedConversation::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
