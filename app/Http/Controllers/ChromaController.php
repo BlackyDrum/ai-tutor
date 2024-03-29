@@ -405,14 +405,14 @@ class ChromaController extends Controller
         $chromaDB->deleteCollection($model->name);
     }
 
-    public static function getCollection($collection)
+    public static function getCollection($name)
     {
         $chromaDB = self::getClient();
 
         $embeddingFunction = self::getEmbeddingFunction();
 
         return $chromaDB->getCollection(
-            $collection,
+            $name,
             embeddingFunction: $embeddingFunction
         );
     }
