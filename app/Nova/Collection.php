@@ -63,10 +63,8 @@ class Collection extends Resource
                     $value,
                     $fail
                 ) {
-                    if (!ctype_alnum($value)) {
-                        $fail(
-                            "The $attribute field must only contain alphanumeric characters"
-                        );
+                    if ($message = self::checkInvalidCollectionName($value)) {
+                        $fail($message);
                     }
                 })
                 ->creationRules('unique:collections,name')
@@ -208,9 +206,31 @@ class Collection extends Resource
         }
     }
 
+    private static function checkInvalidCollectionName($name)
+    {
+        if (
+            !preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_.-]{1,61}[a-zA-Z0-9]$/', $name)
+        ) {
+            return 'The name must be 3-63 characters long, start and end with an alphanumeric character, and may contain periods, hyphens and underscores.';
+        }
+
+        if (str_contains($name, '..')) {
+            return 'The name cannot contain two consecutive periods.';
+        }
+
+        if (filter_var($name, FILTER_VALIDATE_IP)) {
+            return 'The name cannot be a valid IPv4 address.';
+        }
+
+        return false;
+    }
+
     public static function softDeletes()
     {
-        if (static::authorizable() and Gate::check('restore', get_class(static::newModel()))) {
+        if (
+            static::authorizable() and
+            Gate::check('restore', get_class(static::newModel()))
+        ) {
             return parent::softDeletes();
         }
 
