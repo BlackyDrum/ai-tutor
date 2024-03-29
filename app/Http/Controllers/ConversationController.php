@@ -274,7 +274,7 @@ class ConversationController extends Controller
             return redirect('/');
         }
 
-        $name = Conversations::query()->find($shared->conversation_id)->name;
+        $conversation = Conversations::query()->find($shared->conversation_id);
 
         $messages = SharedConversations::query()
             ->join(
@@ -289,7 +289,7 @@ class ConversationController extends Controller
                 '=',
                 'conversations.id'
             )
-            ->where('shared_conversations.shared_url_id', '=', $id)
+            ->where('conversations.id', '=', $conversation->id)
             ->whereRaw('messages.created_at < shared_conversations.created_at')
             ->orderBy('messages.created_at')
             ->select(['messages.user_message', 'messages.agent_message'])
@@ -298,7 +298,7 @@ class ConversationController extends Controller
         return Inertia::render('Chat', [
             'messages' => $messages,
             'conversation_id' => $id,
-            'conversation_name' => $name,
+            'conversation_name' => $conversation->name,
             'hasPrompt' => false,
             'showOptions' => false,
             'username' => null,
