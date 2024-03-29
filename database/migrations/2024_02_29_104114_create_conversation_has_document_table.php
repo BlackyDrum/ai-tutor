@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('conversation_has_document', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('conversation_id');
-            $table->unsignedBigInteger('file_id');
+            $table->unsignedBigInteger('embedding_id');
             $table->timestamps();
 
             $table->foreign('conversation_id')->references('id')->on('conversations')->onDelete('cascade');
-            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+            $table->foreign('embedding_id')->references('id')->on('embeddings')->onDelete('cascade');
 
-            $table->unique(['conversation_id', 'file_id']);
+            $table->unique(['conversation_id', 'embedding_id']);
         });
     }
 

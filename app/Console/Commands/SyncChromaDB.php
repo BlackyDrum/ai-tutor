@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\ChromaController;
 use App\Models\Collections;
-use App\Models\Files;
+use App\Models\Embedding;
 use Illuminate\Console\Command;
 
 class SyncChromaDB extends Command
@@ -71,22 +71,22 @@ class SyncChromaDB extends Command
             $embeddingIds = [];
 
             foreach ($ids as $key => $id) {
-                $file = Files::query()->updateOrCreate(
+                $embedding = Embedding::query()->updateOrCreate(
                     [
                         'embedding_id' => $id,
                     ],
                     [
-                        'name' => $metadata[$key]['filename'],
+                        'name' => $metadata[$key]['name'],
                         'content' => $documents[$key],
                         'size' => $metadata[$key]['size'],
                         'collection_id' => $relationalCollection->id,
                     ]
                 );
 
-                $embeddingIds[] = $file->embedding_id;
+                $embeddingIds[] = $embedding->embedding_id;
             }
 
-            Files::query()
+            Embedding::query()
                 ->where('collection_id', '=', $relationalCollection->id)
                 ->whereNotIn('embedding_id', $embeddingIds)
                 ->forceDelete();

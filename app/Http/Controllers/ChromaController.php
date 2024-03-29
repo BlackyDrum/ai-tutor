@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Collections;
 use App\Models\ConversationHasDocument;
-use App\Models\Files;
+use App\Models\Embedding;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 use Codewithkyrian\ChromaDB\Embeddings\OpenAIEmbeddingFunction;
@@ -28,11 +28,11 @@ class ChromaController extends Controller
         $enhancedMessage = "\nUser Message:\n" . $message . "\n\n";
 
         foreach ($queryResponse->ids[0] as $id) {
-            $file = Files::query()->where('embedding_id', '=', $id)->first();
+            $embedding = Embedding::query()->where('embedding_id', '=', $id)->first();
 
             $count = ConversationHasDocument::query()
                 ->where('conversation_id', '=', $conversation->id)
-                ->where('file_id', '=', $file->id)
+                ->where('embedding_id', '=', $embedding->id)
                 ->count();
 
             // If document is already embedded in context
@@ -42,11 +42,11 @@ class ChromaController extends Controller
 
             ConversationHasDocument::query()->create([
                 'conversation_id' => $conversation->id,
-                'file_id' => $file->id,
+                'embedding_id' => $embedding->id,
             ]);
 
             $enhancedMessage .= "\n\"\"\"\n";
-            $enhancedMessage .= "Context Document:\n" . $file->content . "\n";
+            $enhancedMessage .= "Context Document:\n" . $embedding->content . "\n";
             $enhancedMessage .= "\"\"\"\n";
         }
 
@@ -92,7 +92,7 @@ class ChromaController extends Controller
             $documents = [$text];
             $metadata = [
                 [
-                    'filename' => $model->name,
+                    'name' => $model->name,
                     'size' => $model->size,
                 ],
             ];
@@ -197,7 +197,7 @@ class ChromaController extends Controller
         $embedding_id = Str::random(40);
         $contentOnSlide = "Title: $title\n$body";
 
-        Files::query()->create([
+        Embedding::query()->create([
             'embedding_id' => $embedding_id,
             'name' => $model->name . " Slide $index",
             'content' => $contentOnSlide,
@@ -206,7 +206,7 @@ class ChromaController extends Controller
         ]);
 
         $metadata = [
-            'filename' => $model->name . " Slide $index",
+            'name' => $model->name . " Slide $index",
             'size' => strlen($contentOnSlide),
         ];
 
@@ -299,7 +299,7 @@ class ChromaController extends Controller
             ids: [$model->embedding_id],
             metadatas: [
                 [
-                    'filename' => $model->name,
+                    'name' => $model->name,
                     'size' => strlen($model->content),
                 ],
             ],
@@ -356,7 +356,7 @@ class ChromaController extends Controller
 
     public static function replicateCollection($original, $copy)
     {
-        $files = Files::query()
+        $embeddings = Embedding::query()
             ->where('collection_id', '=', $original->id)
             ->get();
 
@@ -365,25 +365,25 @@ class ChromaController extends Controller
         $originalCollection = self::getCollection($original->name);
 
         $ids = [];
-        $embeddings = [];
-        $metadata = [];
-        $documents = [];
+        $allEmbeddings = [];
+        $allMetadata = [];
+        $allDocuments = [];
 
-        foreach ($files as $file) {
-            $replicate = $file->replicate(['created_at', 'updated_at'])->fill([
+        foreach ($embeddings as $embedding) {
+            $replicate = $embedding->replicate(['created_at', 'updated_at'])->fill([
                 'embedding_id' => Str::random(40),
                 'collection_id' => $copy->id,
             ]);
 
-            $embedding = $originalCollection->get(
-                ids: [$file->embedding_id],
+            $result = $originalCollection->get(
+                ids: [$embedding->embedding_id],
                 include: ['embeddings', 'metadatas', 'documents']
             );
 
             $ids[] = $replicate->embedding_id;
-            $embeddings[] = $embedding->embeddings[0];
-            $metadata[] = $embedding->metadatas[0];
-            $documents[] = $embedding->documents[0];
+            $allEmbeddings[] = $result->embeddings[0];
+            $allMetadata[] = $result->metadatas[0];
+            $allDocuments[] = $result->documents[0];
 
             $replicate->save();
         }
@@ -392,9 +392,9 @@ class ChromaController extends Controller
 
         $copiedCollection->add(
             ids: $ids,
-            embeddings: $embeddings,
-            metadatas: $metadata,
-            documents: $documents
+            embeddings: $allEmbeddings,
+            metadatas: $allMetadata,
+            documents: $allDocuments
         );
     }
 

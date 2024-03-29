@@ -25,9 +25,9 @@ class Embedding extends Resource
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Files>
+     * @var class-string<\App\Models\Embedding>
      */
-    public static $model = \App\Models\Files::class;
+    public static $model = \App\Models\Embedding::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.

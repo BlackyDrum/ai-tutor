@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\ChromaController;
 use App\Models\Collections;
-use App\Models\Files;
+use App\Models\Embedding;
 use Illuminate\Console\Command;
 
 class ValidateChromaDBSync extends Command
@@ -118,7 +118,7 @@ class ValidateChromaDBSync extends Command
                 ->where('name', '=', $collectionName)
                 ->first()->id;
 
-            $relationalDB = Files::query()
+            $relationalDB = Embedding::query()
                 ->where('collection_id', '=', $collectionId)
                 ->get();
 
@@ -164,7 +164,7 @@ class ValidateChromaDBSync extends Command
                     $collectionError = true;
                 }
 
-                $name = $embedding->metadatas[0]['filename'];
+                $name = $embedding->metadatas[0]['name'];
                 if ($name != $relationalEmbedding->name) {
                     $this->error(
                         "Name of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB Name: {$relationalEmbedding->name}, ChromaDB Name: $name"
@@ -194,11 +194,11 @@ class ValidateChromaDBSync extends Command
             // they exist because we've already confirmed the metadata matches
             // if they exist in both databases
             foreach ($embeddings->ids as $embedding) {
-                $f = Files::query()
+                $e = Embedding::query()
                     ->where('embedding_id', '=', $embedding)
                     ->first();
 
-                if (!$f) {
+                if (!$e) {
                     $this->error(
                         "Cannot find RelationalDB Embedding for {$embedding}"
                     );

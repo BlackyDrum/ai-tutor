@@ -2,7 +2,7 @@
 
 namespace App\Nova\Metrics;
 
-use App\Models\Files;
+use App\Models\Embedding;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 
@@ -20,7 +20,7 @@ class Embeddings extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->result(Files::query()->count());
+        return $this->result(Embedding::query()->count());
     }
 
     public function ranges()

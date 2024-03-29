@@ -18,7 +18,7 @@ class Collections extends Model
 
     public function embedding()
     {
-        return $this->hasMany(Files::class, 'collection_id');
+        return $this->hasMany(Embedding::class, 'collection_id');
     }
 
     public function conversations()

@@ -11,18 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('files', function (Blueprint $table) {
+        Schema::create('embeddings', function (Blueprint $table) {
             $table->id();
             $table->string('embedding_id')->unique()->nullable();
             $table->string('name');
             $table->text('content')->nullable();
             $table->unsignedBigInteger('size')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('collection_id');
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('collection_id')->references('id')->on('collections')->onDelete('cascade');
         });
     }
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('files');
+        Schema::dropIfExists('embeddings');
     }
 };
