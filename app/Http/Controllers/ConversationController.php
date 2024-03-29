@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Conversation;
-use App\Models\Messages;
+use App\Models\Message;
 use App\Models\Modules;
 use App\Models\SharedConversations;
 use App\Models\User;
@@ -161,7 +161,7 @@ class ConversationController extends Controller
             ]);
         }
 
-        Messages::query()->create([
+        Message::query()->create([
             'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars(
                 $response->json()['choices'][0]['message']['content']
@@ -381,7 +381,7 @@ class ConversationController extends Controller
             return redirect('/');
         }
 
-        $messages = Messages::query()
+        $messages = Message::query()
             ->leftJoin(
                 'conversations',
                 'conversations.id',

@@ -2,7 +2,7 @@
 
 namespace App\Nova\Metrics;
 
-use App\Models\Messages;
+use App\Models\Message;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Trend;
 use Laravel\Nova\Nova;
@@ -21,7 +21,7 @@ class MessagesPerDay extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByDays($request, Messages::class)->showSumValue();
+        return $this->countByDays($request, Message::class)->showSumValue();
     }
 
     /**

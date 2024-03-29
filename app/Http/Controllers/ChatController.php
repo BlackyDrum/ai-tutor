@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ConversationHasDocument;
 use App\Models\Conversation;
-use App\Models\Messages;
+use App\Models\Message;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -33,7 +33,7 @@ class ChatController extends Controller
             return redirect('/');
         }
 
-        $messages = Messages::query()
+        $messages = Message::query()
             ->where('conversation_id', '=', $conversation->id)
             ->orderBy('created_at')
             ->select(['id', 'user_message', 'agent_message', 'helpful'])
@@ -89,7 +89,7 @@ class ChatController extends Controller
         // the database changes
         DB::beginTransaction();
 
-        $messages = Messages::query()
+        $messages = Message::query()
             ->where('conversation_id', '=', $conversation->id)
             ->orderBy('created_at', 'desc')
             ->limit($agent->max_messages_included)
@@ -168,7 +168,7 @@ class ChatController extends Controller
             return response()->json($response->reason(), $response->status());
         }
 
-        $message = Messages::query()->create([
+        $message = Message::query()->create([
             'user_message' => $request->input('message'),
             'agent_message' => htmlspecialchars(
                 $response->json()['choices'][0]['message']['content']
@@ -257,7 +257,7 @@ class ChatController extends Controller
         $id = Hashids::decode($request->input('message_id'));
 
         try {
-            Messages::query()->findOrFail($id);
+            Message::query()->findOrFail($id);
         } catch (ModelNotFoundException $exception) {
             return response()->json(
                 ['message_id' => 'The selected message id is invalid'],
@@ -265,7 +265,7 @@ class ChatController extends Controller
             );
         }
 
-        $message = Messages::query()
+        $message = Message::query()
             ->where('messages.id', '=', $id)
             ->join(
                 'conversations',
@@ -302,7 +302,7 @@ class ChatController extends Controller
 
         $maxRequests = Auth::user()->max_requests;
 
-        return Messages::query()
+        return Message::query()
             ->join(
                 'conversations',
                 'messages.conversation_id',

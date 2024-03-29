@@ -54,7 +54,7 @@ class User extends Authenticatable
     public function messages()
     {
         return $this->hasManyThrough(
-            Messages::class,
+            Message::class,
             Conversation::class,
             '',
             'conversation_id'

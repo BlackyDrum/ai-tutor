@@ -2,7 +2,7 @@
 
 namespace App\Nova\Metrics;
 
-use App\Models\Messages;
+use App\Models\Message;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Partition;
 
@@ -18,11 +18,11 @@ class Ratings extends Partition
      */
     public function calculate(NovaRequest $request)
     {
-        $positive = Messages::query()->where('helpful', true)->count();
+        $positive = Message::query()->where('helpful', true)->count();
 
-        $negative = Messages::query()->where('helpful', false)->count();
+        $negative = Message::query()->where('helpful', false)->count();
 
-        $neutral = Messages::query()->whereNull('helpful')->count();
+        $neutral = Message::query()->whereNull('helpful')->count();
 
         return $this->result([
             'Helpful' => $positive,

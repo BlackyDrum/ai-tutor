@@ -3,7 +3,7 @@
 namespace App\Nova\Metrics\Openai;
 
 use App\Models\Conversation;
-use App\Models\Messages;
+use App\Models\Message;
 use App\Nova\Dashboards\OpenAI;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -75,14 +75,14 @@ class TotalCosts extends Value
     ) {
         $totalPromptTokens = ($getTokensForConversationName
             ? Conversation::query()
-            : Messages::query()
+            : Message::query()
         )
             ->where('openai_language_model', $modelName)
             ->select(DB::raw('SUM(prompt_tokens) AS total'));
 
         $totalCompletionTokens = ($getTokensForConversationName
             ? Conversation::query()
-            : Messages::query()
+            : Message::query()
         )
             ->where('openai_language_model', $modelName)
             ->select(DB::raw('SUM(completion_tokens) AS total'));
