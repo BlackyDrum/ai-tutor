@@ -65,6 +65,9 @@ class ChromaController extends Controller
 
             $result = self::createEmbeddingFromJson($slides, $model);
 
+            // After processing the file into separate slides/pages, we don't
+            // need the uploaded file anymore. So, we delete the model to avoid
+            // storing unnecessary data.
             $model->forceDelete();
 
             $ids = $result['ids'];
