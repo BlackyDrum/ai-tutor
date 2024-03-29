@@ -97,7 +97,7 @@ class HomeController extends Controller
         User::query()
             ->find(Auth::id())
             ->update([
-                'terms_accepted_at' => date('Y-m-d H:i:s'),
+                'terms_accepted_at' => now(),
             ]);
 
         Log::info('App: User with ID {user-id} accepted the terms');
