@@ -2,7 +2,6 @@
 
 namespace App\Nova;
 
-use App\Models\Agents;
 use App\Nova\Dashboards\OpenAI;
 use App\Nova\Filters\ModuleFilter;
 use Illuminate\Database\Eloquent\Model;
@@ -27,9 +26,9 @@ class Agent extends Resource
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Agents>
+     * @var class-string<\App\Models\Agent>
      */
-    public static $model = \App\Models\Agents::class;
+    public static $model = \App\Models\Agent::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -208,7 +207,7 @@ class Agent extends Resource
     private static function changeActiveStatus($model)
     {
         if ($model->active) {
-            Agents::query()
+            \App\Models\Agent::query()
                 ->whereNot('id', $model->id)
                 ->where('module_id', $model->module_id)
                 ->where('active', true)

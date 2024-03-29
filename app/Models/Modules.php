@@ -13,7 +13,7 @@ class Modules extends Model
 
     public function agent()
     {
-        return $this->hasMany(Agents::class, 'module_id');
+        return $this->hasMany(Agent::class, 'module_id');
     }
 
     public function user()

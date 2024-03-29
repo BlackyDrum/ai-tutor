@@ -2,7 +2,7 @@
 
 namespace App\Nova\Filters;
 
-use App\Models\Agents;
+use App\Models\Agent;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -38,6 +38,6 @@ class AgentFilter extends Filter
      */
     public function options(NovaRequest $request)
     {
-        return array_column(Agents::all()->toArray(), 'id', 'name');
+        return array_column(Agent::all()->toArray(), 'id', 'name');
     }
 }

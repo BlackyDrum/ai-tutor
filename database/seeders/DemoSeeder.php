@@ -3,16 +3,11 @@
 namespace Database\Seeders;
 
 use App\Http\Controllers\ChromaController;
-use App\Http\Controllers\HomeController;
-use App\Models\Agents;
+use App\Models\Agent;
 use App\Models\Collections;
 use App\Models\Modules;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class DemoSeeder extends Seeder
 {
@@ -44,7 +39,7 @@ class DemoSeeder extends Seeder
             ]
         );
 
-        $agent = Agents::firstOrCreate(
+        $agent = Agent::firstOrCreate(
             [
                 'name' => 'DemoAgent',
             ],
