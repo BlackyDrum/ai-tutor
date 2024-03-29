@@ -35,6 +35,6 @@ class Agent extends Model
 
     public function conversations()
     {
-        return $this->hasMany(Conversations::class, 'agent_id');
+        return $this->hasMany(Conversation::class, 'agent_id');
     }
 }

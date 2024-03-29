@@ -13,6 +13,6 @@ class SharedConversations extends Model
 
     public function conversation()
     {
-        return $this->belongsTo(Conversations::class, 'conversation_id');
+        return $this->belongsTo(Conversation::class, 'conversation_id');
     }
 }

@@ -23,6 +23,6 @@ class Modules extends Model
 
     public function conversations()
     {
-        return $this->hasMany(Conversations::class, 'module_id');
+        return $this->hasMany(Conversation::class, 'module_id');
     }
 }

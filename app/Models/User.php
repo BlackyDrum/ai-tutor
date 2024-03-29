@@ -55,7 +55,7 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(
             Messages::class,
-            Conversations::class,
+            Conversation::class,
             '',
             'conversation_id'
         );
@@ -63,7 +63,7 @@ class User extends Authenticatable
 
     public function conversations()
     {
-        return $this->hasMany(Conversations::class, 'user_id');
+        return $this->hasMany(Conversation::class, 'user_id');
     }
 
     public function module()

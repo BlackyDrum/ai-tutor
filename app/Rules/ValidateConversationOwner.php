@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Models\Conversations;
+use App\Models\Conversation;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +16,7 @@ class ValidateConversationOwner implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $conversation = Conversations::query()
+        $conversation = Conversation::query()
             ->where('url_id', $value)
             ->first();
 

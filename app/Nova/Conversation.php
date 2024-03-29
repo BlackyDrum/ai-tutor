@@ -22,9 +22,9 @@ class Conversation extends Resource
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Conversations>
+     * @var class-string<\App\Models\Conversation>
      */
-    public static $model = \App\Models\Conversations::class;
+    public static $model = \App\Models\Conversation::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.

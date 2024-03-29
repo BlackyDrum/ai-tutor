@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Conversations;
+use App\Models\Conversation;
 use App\Models\Messages;
 use App\Models\Modules;
 use App\Models\SharedConversations;
@@ -38,7 +38,7 @@ class ConversationController extends Controller
         $collection = $appCheckResults['collection'];
         $module = Modules::query()->find(Auth::user()->module_id);
 
-        $count = Conversations::query()
+        $count = Conversation::query()
             ->where('user_id', '=', Auth::id())
             ->count();
 
@@ -47,7 +47,7 @@ class ConversationController extends Controller
         // no messages
         DB::beginTransaction();
 
-        $conversation = Conversations::query()->create([
+        $conversation = Conversation::query()->create([
             'name' => 'Chat #' . ($count + 1),
             'url_id' => Str::random(40),
             'agent_id' => $agent->id,
@@ -203,7 +203,7 @@ class ConversationController extends Controller
             ],
         ]);
 
-        Conversations::query()
+        Conversation::query()
             ->where('url_id', '=', $request->input('conversation_id'))
             ->delete();
 
@@ -219,7 +219,7 @@ class ConversationController extends Controller
 
     public function deleteAllConversations(Request $request)
     {
-        Conversations::query()->where('user_id', '=', Auth::id())->delete();
+        Conversation::query()->where('user_id', '=', Auth::id())->delete();
 
         return response()->json(['ok' => true]);
     }
@@ -237,7 +237,7 @@ class ConversationController extends Controller
             ],
         ]);
 
-        Conversations::query()
+        Conversation::query()
             ->where('url_id', '=', $request->input('conversation_id'))
             ->update([
                 'name' => $request->input('name'),
@@ -274,7 +274,7 @@ class ConversationController extends Controller
             return redirect('/');
         }
 
-        $conversation = Conversations::query()->find($shared->conversation_id);
+        $conversation = Conversation::query()->find($shared->conversation_id);
 
         $messages = SharedConversations::query()
             ->join(
@@ -318,7 +318,7 @@ class ConversationController extends Controller
             ],
         ]);
 
-        $conversation = Conversations::query()
+        $conversation = Conversation::query()
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
@@ -360,7 +360,7 @@ class ConversationController extends Controller
             ],
         ]);
 
-        $conversation = Conversations::query()
+        $conversation = Conversation::query()
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
@@ -375,7 +375,7 @@ class ConversationController extends Controller
 
     public function peek(string $id)
     {
-        $conversation = Conversations::query()->where('url_id', $id)->first();
+        $conversation = Conversation::query()->where('url_id', $id)->first();
 
         if (!$conversation) {
             return redirect('/');

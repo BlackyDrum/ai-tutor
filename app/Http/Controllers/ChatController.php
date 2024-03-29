@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ConversationHasDocument;
-use App\Models\Conversations;
+use App\Models\Conversation;
 use App\Models\Messages;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
@@ -20,7 +20,7 @@ class ChatController extends Controller
 {
     public function show(string $id)
     {
-        $conversation = Conversations::query()->where('url_id', $id)->first();
+        $conversation = Conversation::query()->where('url_id', $id)->first();
 
         if (!$conversation || $conversation->user_id !== Auth::id()) {
             Log::info(
@@ -64,7 +64,7 @@ class ChatController extends Controller
             ],
         ]);
 
-        $conversation = Conversations::query()
+        $conversation = Conversation::query()
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 

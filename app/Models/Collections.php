@@ -23,7 +23,7 @@ class Collections extends Model
 
     public function conversations()
     {
-        return $this->hasMany(Conversations::class, 'collection_id');
+        return $this->hasMany(Conversation::class, 'collection_id');
     }
 
     public function module()

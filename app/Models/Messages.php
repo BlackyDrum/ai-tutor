@@ -26,7 +26,7 @@ class Messages extends Model
 
     public function conversation()
     {
-        return $this->belongsTo(Conversations::class, 'conversation_id');
+        return $this->belongsTo(Conversation::class, 'conversation_id');
     }
 
     protected function id(): Attribute

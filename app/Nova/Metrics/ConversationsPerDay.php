@@ -2,7 +2,7 @@
 
 namespace App\Nova\Metrics;
 
-use App\Models\Conversations;
+use App\Models\Conversation;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Trend;
 use Laravel\Nova\Nova;
@@ -23,7 +23,7 @@ class ConversationsPerDay extends Trend
     {
         return $this->countByDays(
             $request,
-            Conversations::class
+            Conversation::class
         )->showSumValue();
     }
 

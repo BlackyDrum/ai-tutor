@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Conversations;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
@@ -34,7 +34,7 @@ class HandleInertiaRequests extends Middleware
         $conversations = [];
 
         if (!str_starts_with($request->path(), 'admin') && Auth::check()) {
-            $conversations = Conversations::query()
+            $conversations = Conversation::query()
                 ->where('user_id', '=', Auth::id())
                 ->leftJoin(
                     'shared_conversations',
