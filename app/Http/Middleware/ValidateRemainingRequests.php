@@ -21,6 +21,15 @@ class ValidateRemainingRequests
     {
         $maxRequests = Auth::user()->max_requests;
 
+        if ($maxRequests == 0) {
+            return response()->json(
+                [
+                    'message' => 'You cannot write messages at the moment',
+                ],
+                403
+            );
+        }
+
         $messages = ChatController::getUserMessagesFromLastDay();
 
         if ($messages->count() >= $maxRequests) {
