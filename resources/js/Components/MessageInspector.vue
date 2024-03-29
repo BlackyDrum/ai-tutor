@@ -29,7 +29,7 @@ const showDialog = ref(false);
         :draggable="false"
         modal
         header="Inspect Message"
-        class="max-w-[95%] break-words xl:max-w-[35%]"
+        class="min-w-[25%] max-w-[95%] break-words xl:max-w-[35%]"
     >
         <div v-for="(key, value) in data" class="my-1">
             <strong>{{ value }}:</strong>
