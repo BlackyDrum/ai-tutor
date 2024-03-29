@@ -22,7 +22,7 @@ class ChatController extends Controller
     {
         $conversation = Conversations::query()->where('url_id', $id)->first();
 
-        if (empty($conversation) || $conversation->user_id !== Auth::id()) {
+        if (!$conversation || $conversation->user_id !== Auth::id()) {
             Log::info(
                 'App: User with ID {user-id} tried to access an invalid conversation',
                 [
