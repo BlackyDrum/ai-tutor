@@ -68,6 +68,6 @@ class User extends Authenticatable
 
     public function module()
     {
-        return $this->belongsTo(Modules::class, 'module_id');
+        return $this->belongsTo(Module::class, 'module_id');
     }
 }

@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Http\Controllers\ChromaController;
 use App\Models\Agent;
 use App\Models\Collection;
-use App\Models\Modules;
+use App\Models\Module;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -16,7 +16,7 @@ class DemoSeeder extends Seeder
      */
     public function run(): void
     {
-        $module = Modules::firstOrCreate(
+        $module = Module::firstOrCreate(
             [
                 'ref_id' => 1214757,
             ],

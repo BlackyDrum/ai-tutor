@@ -2,7 +2,7 @@
 
 namespace App\Nova\Filters;
 
-use App\Models\Modules;
+use App\Models\Module;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -38,6 +38,6 @@ class ModuleFilter extends Filter
      */
     public function options(NovaRequest $request)
     {
-        return array_column(Modules::all()->toArray(), 'id', 'name');
+        return array_column(Module::all()->toArray(), 'id', 'name');
     }
 }

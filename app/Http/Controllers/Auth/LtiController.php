@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Modules;
+use App\Models\Module;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +54,7 @@ class LtiController extends Controller
                 return $this->redirectWithError($validator->errors()->toJson());
             }
 
-            $module = Modules::query()->where('ref_id', '=', $refId)->first();
+            $module = Module::query()->where('ref_id', '=', $refId)->first();
 
             $user = User::firstOrCreate(
                 [

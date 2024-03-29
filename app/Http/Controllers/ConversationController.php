@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Conversation;
 use App\Models\Message;
-use App\Models\Modules;
+use App\Models\Module;
 use App\Models\SharedConversations;
 use App\Models\User;
 use App\Rules\ValidateConversationOwner;
@@ -36,7 +36,7 @@ class ConversationController extends Controller
 
         $agent = $appCheckResults['agent'];
         $collection = $appCheckResults['collection'];
-        $module = Modules::query()->find(Auth::user()->module_id);
+        $module = Module::query()->find(Auth::user()->module_id);
 
         $count = Conversation::query()
             ->where('user_id', '=', Auth::id())
