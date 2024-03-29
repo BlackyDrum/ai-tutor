@@ -242,10 +242,10 @@ class ChromaController extends Controller
             );
 
             $result = self::createAndStoreSlide(
-                $model,
-                substr($slide[0], 1), // title
-                $slide[1], // content
-                $index
+                model: $model,
+                title: substr($slide[0], 1),
+                body: $slide[1],
+                index: $index
             );
 
             $ids[] = $result['id'];
@@ -413,7 +413,7 @@ class ChromaController extends Controller
 
         return $chromaDB->getCollection(
             $name,
-            embeddingFunction: $embeddingFunction
+            $embeddingFunction
         );
     }
 

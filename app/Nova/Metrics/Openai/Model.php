@@ -17,9 +17,8 @@ abstract class Model extends Partition
 
         $messageTokens = TotalCosts::getTokens($this->name);
         $conversationNameTokens = TotalCosts::getTokens(
-            $this->name,
-            'ALL',
-            true
+            modelName: $this->name,
+            getTokensForConversationName: true
         );
 
         $messageCosts = TotalCosts::calculatePrice(
@@ -45,7 +44,10 @@ abstract class Model extends Partition
     {
         $messageTokens = TotalCosts::getTokens($this->name);
 
-        $nameTokens = TotalCosts::getTokens($this->name, 'ALL', true);
+        $nameTokens = TotalCosts::getTokens(
+            modelName: $this->name,
+            getTokensForConversationName: true
+        );
 
         return $this->result([
             'Prompt Tokens' =>

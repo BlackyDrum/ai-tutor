@@ -90,11 +90,11 @@ class ConversationController extends Controller
         }
 
         $response = ChatController::sendMessageToOpenAI(
-            $agent->instructions,
-            $promptWithContext,
-            $agent->openai_language_model,
-            $agent->max_response_tokens,
-            $agent->temperature
+            systemMessage: $agent->instructions,
+            userMessage: $promptWithContext,
+            languageModel: $agent->openai_language_model,
+            max_tokens: $agent->max_response_tokens,
+            temperature:  $agent->temperature
         );
 
         if ($response->failed()) {
@@ -128,13 +128,13 @@ class ConversationController extends Controller
         );
 
         $response2 = ChatController::sendMessageToOpenAI(
-            $systemMessage,
-            $request->input('message'),
-            $nameCreatorModel,
-            32,
-            0.8,
-            $agentResponse,
-            false
+            systemMessage: $systemMessage,
+            userMessage: $request->input('message'),
+            languageModel: $nameCreatorModel,
+            max_tokens: 32,
+            temperature: 0.8,
+            recentMessages: $agentResponse,
+            usesContext: false
         );
 
         if ($response2->failed()) {

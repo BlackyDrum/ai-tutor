@@ -145,12 +145,12 @@ class ChatController extends Controller
         }
 
         $response = self::sendMessageToOpenAI(
-            $agent->instructions,
-            $promptWithContext,
-            $agent->openai_language_model,
-            $agent->max_response_tokens,
-            $agent->temperature,
-            $recentMessages
+            systemMessage: $agent->instructions,
+            userMessage: $promptWithContext,
+            languageModel: $agent->openai_language_model,
+            max_tokens: $agent->max_response_tokens,
+            temperature: $agent->temperature,
+            recentMessages: $recentMessages
         );
 
         if ($response->failed()) {

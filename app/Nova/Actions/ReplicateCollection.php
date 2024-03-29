@@ -36,7 +36,7 @@ class ReplicateCollection extends Action
         ]);
 
         try {
-            ChromaController::replicateCollection($model, $replication);
+            ChromaController::replicateCollection(original: $model, copy: $replication);
 
             Log::info(
                 'User with ID {user-id} replicated a collection with name {name}',
