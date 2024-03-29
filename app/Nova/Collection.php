@@ -28,9 +28,9 @@ class Collection extends Resource
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Collections>
+     * @var class-string<\App\Models\Collection>
      */
-    public static $model = \App\Models\Collections::class;
+    public static $model = \App\Models\Collection::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -139,7 +139,7 @@ class Collection extends Resource
     public static function afterUpdate(NovaRequest $request, Model $model)
     {
         // Since Nova doesn't offer a direct way to work with the previous model state after an update,
-        // we update the ChromaDB instance related to this collection in the 'Collections' model's boot method.
+        // we update the ChromaDB instance related to this collection in the 'Collection' model's boot method.
 
         self::changeActiveStatus($model);
 
@@ -198,7 +198,7 @@ class Collection extends Resource
     private static function changeActiveStatus($model)
     {
         if ($model->active) {
-            \App\Models\Collections::query()
+            \App\Models\Collection::query()
                 ->whereNot('id', $model->id)
                 ->where('module_id', $model->module_id)
                 ->where('active', true)

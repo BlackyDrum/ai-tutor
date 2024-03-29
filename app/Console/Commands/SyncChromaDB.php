@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\ChromaController;
-use App\Models\Collections;
+use App\Models\Collection;
 use App\Models\Embedding;
 use Illuminate\Console\Command;
 
@@ -37,7 +37,7 @@ class SyncChromaDB extends Command
         $collectionNames = [];
 
         foreach ($chromaCollections as $chromaCollection) {
-            $collection = Collections::query()->updateOrCreate(
+            $collection = Collection::query()->updateOrCreate(
                 [
                     'name' => $chromaCollection->name,
                 ],
@@ -49,11 +49,11 @@ class SyncChromaDB extends Command
             $collectionNames[] = $collection->name;
         }
 
-        Collections::query()
+        Collection::query()
             ->whereNotIn('name', $collectionNames)
             ->forceDelete();
 
-        $relationalCollections = Collections::all();
+        $relationalCollections = Collection::all();
 
         foreach ($relationalCollections as $relationalCollection) {
             $collection = ChromaController::getCollection(

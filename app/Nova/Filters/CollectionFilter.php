@@ -2,7 +2,7 @@
 
 namespace App\Nova\Filters;
 
-use App\Models\Collections;
+use App\Models\Collection;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -38,6 +38,6 @@ class CollectionFilter extends Filter
      */
     public function options(NovaRequest $request)
     {
-        return array_column(Collections::all()->toArray(), 'id', 'name');
+        return array_column(Collection::all()->toArray(), 'id', 'name');
     }
 }

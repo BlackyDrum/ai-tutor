@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agent;
-use App\Models\Collections;
+use App\Models\Collection;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -55,7 +55,7 @@ class HomeController extends Controller
             }
         }
 
-        $collection = Collections::query()
+        $collection = Collection::query()
             ->where('module_id', '=', $moduleId)
             ->where('active', '=', true)
             ->first();
@@ -73,7 +73,7 @@ class HomeController extends Controller
 
         if ($conversation) {
             try {
-                $collection = Collections::query()->findOrFail(
+                $collection = Collection::query()->findOrFail(
                     $conversation->collection_id
                 );
             } catch (ModelNotFoundException $exception) {

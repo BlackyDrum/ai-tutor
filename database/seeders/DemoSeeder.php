@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Http\Controllers\ChromaController;
 use App\Models\Agent;
-use App\Models\Collections;
+use App\Models\Collection;
 use App\Models\Modules;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -56,7 +56,7 @@ class DemoSeeder extends Seeder
             ]
         );
 
-        $collection = Collections::query()->firstOrCreate(
+        $collection = Collection::query()->firstOrCreate(
             [
                 'name' => 'DemoCollection',
             ],

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Collections;
+use App\Models\Collection;
 use App\Models\ConversationHasDocument;
 use App\Models\Embedding;
 use Codewithkyrian\ChromaDB\ChromaDB;
@@ -114,7 +114,7 @@ class ChromaController extends Controller
             );
         }
 
-        $collection = Collections::query()->find($collectionId)->name;
+        $collection = Collection::query()->find($collectionId)->name;
 
         $collection = self::getCollection($collection);
 
@@ -291,7 +291,7 @@ class ChromaController extends Controller
 
     public static function updateEmbedding($model)
     {
-        $collection = Collections::query()->find($model->collection_id)->name;
+        $collection = Collection::query()->find($model->collection_id)->name;
 
         $collection = self::getCollection($collection);
 
@@ -313,7 +313,7 @@ class ChromaController extends Controller
 
     public static function deleteEmbedding($model)
     {
-        $collection = Collections::query()->find($model->collection_id)->name;
+        $collection = Collection::query()->find($model->collection_id)->name;
 
         $collection = self::getCollection($collection);
 

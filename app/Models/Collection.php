@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 
-class Collections extends Model
+class Collection extends Model
 {
     use HasFactory, SoftDeletes;
 

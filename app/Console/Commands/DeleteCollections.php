@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\ChromaController;
-use App\Models\Collections;
+use App\Models\Collection;
 use App\Models\Embedding;
 use Illuminate\Console\Command;
 
@@ -32,7 +32,7 @@ class DeleteCollections extends Command
 
         $chromaDB->deleteAllCollections();
 
-        Collections::query()->forceDelete();
+        Collection::query()->forceDelete();
 
         Embedding::query()->forceDelete();
     }

@@ -2,6 +2,7 @@
 
 namespace App\Nova\Metrics;
 
+use App\Models\Collection;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 
@@ -19,7 +20,7 @@ class Collections extends Value
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->count($request, \App\Models\Collections::class);
+        return $this->count($request, Collection::class);
     }
 
     public function ranges()

@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\ChromaController;
-use App\Models\Collections;
+use App\Models\Collection;
 use App\Models\Embedding;
 use Illuminate\Console\Command;
 
@@ -44,7 +44,7 @@ class ValidateChromaDBSync extends Command
         $collections = $client->listCollections();
         $chromaCollectionCount = count($collections);
 
-        $relationalCollections = Collections::all();
+        $relationalCollections = Collection::all();
 
         $this->info('Validating collections...');
         if ($relationalCollections->count() != $chromaCollectionCount) {
@@ -62,7 +62,7 @@ class ValidateChromaDBSync extends Command
         // Check if all ChromaDB collections have a corresponding
         // collection in the relational database
         foreach ($collections as $collection) {
-            $relationalCollection = Collections::query()
+            $relationalCollection = Collection::query()
                 ->where('name', '=', $collection->name)
                 ->first();
 
@@ -114,7 +114,7 @@ class ValidateChromaDBSync extends Command
 
             $collection = ChromaController::getCollection($collectionName);
 
-            $collectionId = Collections::query()
+            $collectionId = Collection::query()
                 ->where('name', '=', $collectionName)
                 ->first()->id;
 

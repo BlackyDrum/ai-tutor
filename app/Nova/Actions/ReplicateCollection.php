@@ -3,10 +3,9 @@
 namespace App\Nova\Actions;
 
 use App\Http\Controllers\ChromaController;
-use App\Models\Collections;
+use App\Models\Collection;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Actions\ActionResponse;
@@ -29,7 +28,7 @@ class ReplicateCollection extends Action
     {
         $model = $models[0];
 
-        $replication = Collections::query()->create([
+        $replication = Collection::query()->create([
             'name' => $model->name . time(),
             'max_results' => $model->max_results,
             'active' => false,

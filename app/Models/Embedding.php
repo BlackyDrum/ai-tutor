@@ -24,7 +24,7 @@ class Embedding extends Model
 
     public function collection()
     {
-        return $this->belongsTo(Collections::class);
+        return $this->belongsTo(Collection::class);
     }
 
     public function user()
