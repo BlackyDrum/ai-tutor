@@ -1,6 +1,6 @@
 <script setup>
 import { router, Link, usePage } from "@inertiajs/vue3";
-import { computed, nextTick, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 
@@ -22,6 +22,23 @@ const isDeletingSharedConversation = ref(false);
 const renameInput = ref();
 const showRenameInput = ref(false);
 const showConversationShareDialog = ref(false);
+
+onMounted(() => {
+    window.addEventListener("click", handleClickOutsideRenameInput, true);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("click", handleClickOutsideRenameInput, true);
+});
+
+const handleClickOutsideRenameInput = (event) => {
+    if (
+        showRenameInput.value &&
+        !event.target.parentNode.className.includes("rename-input")
+    ) {
+        renameConversation();
+    }
+};
 
 const toggleConversationOverlayPanel = (event, conversation) => {
     if (isSendingRequest.value) return;
@@ -130,6 +147,18 @@ const handleRenameConversation = () => {
 
 const renameConversation = () => {
     if (isSendingRequest.value) return;
+
+    const conversation = page.props.auth.history.find(
+        (conversation) =>
+            conversation.url_id === selectedConversation.value.url_id,
+    );
+
+    if (conversation.name === selectedConversation.value.name) {
+        selectedConversation.value = null;
+        showRenameInput.value = false;
+
+        return;
+    }
 
     isRenamingConversation.value = true;
 
@@ -328,7 +357,7 @@ const getSharedConversationLink = computed(() => {
             </button>
         </div>
 
-        <div v-else class="my-1 block flex-1 rounded-lg py-2">
+        <div v-else class="rename-input my-1 block flex-1 rounded-lg py-2">
             <InputText
                 v-model="selectedConversation.name"
                 @keydown.enter="renameConversation"
