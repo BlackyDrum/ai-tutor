@@ -26,6 +26,7 @@ onMounted(() => {
     handleResize();
 
     window.addEventListener("resize", handleResize);
+    window.addEventListener("click", handleClickOutsideProfileOverlay, true);
 });
 
 onBeforeUnmount(() => {
@@ -35,7 +36,18 @@ onBeforeUnmount(() => {
     );
 
     window.removeEventListener("resize", handleResize);
+    window.removeEventListener("click", handleClickOutsideProfileOverlay, true);
 });
+
+const handleClickOutsideProfileOverlay = (event) => {
+    if (
+        showProfileOP.value &&
+        !event.target.className.includes("profile-overlay") &&
+        !event.target.parentNode.className.includes("profile-overlay")
+    ) {
+        showProfileOP.value = false;
+    }
+};
 
 const scrollTo = (pos) => {
     scrollPanel.value.$el.children[0].children[0].scrollTo(0, pos);
@@ -98,7 +110,7 @@ const handleResize = () => {
                 <div
                     @click="showProfileOP = !showProfileOP"
                     :class="{ 'bg-app-light': showProfileOP }"
-                    class="flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-app-light"
+                    class="profile-overlay flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-app-light"
                 >
                     <UserAvatar />
 
