@@ -262,7 +262,6 @@ class Collection extends Resource
     public function actions(NovaRequest $request)
     {
         return [
-            ExportAsCsv::make()->nameable(),
             new ValidateChromaDBSync(),
             new SyncChromaDB(),
             new DestroyChromaDB(),

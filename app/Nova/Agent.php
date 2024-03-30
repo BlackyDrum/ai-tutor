@@ -219,15 +219,4 @@ class Agent extends Resource
     {
         return [new ModuleFilter()];
     }
-
-    /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function actions(NovaRequest $request)
-    {
-        return [ExportAsCsv::make()->nameable()];
-    }
 }
