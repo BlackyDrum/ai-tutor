@@ -62,7 +62,7 @@ class Conversation extends Resource
                 fn() => 'Show'
             ),
 
-            Text::make('url_id')->onlyOnDetail(),
+            Text::make('URL ID')->onlyOnDetail(),
 
             Text::make('Name Created By', 'openai_language_model')->sortable(),
 

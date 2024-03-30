@@ -194,7 +194,7 @@ class ChromaController extends Controller
 
     private static function createAndStoreSlide($model, $title, $body, $index)
     {
-        $embedding_id = Str::random(40);
+        $embedding_id = Str::orderedUuid()->toString();
         $contentOnSlide = "Title: $title\n$body";
 
         Embedding::query()->create([
@@ -371,7 +371,7 @@ class ChromaController extends Controller
 
         foreach ($embeddings as $embedding) {
             $replicate = $embedding->replicate(['created_at', 'updated_at'])->fill([
-                'embedding_id' => Str::random(40),
+                'embedding_id' => Str::orderedUuid()->toString(),
                 'collection_id' => $copy->id,
             ]);
 

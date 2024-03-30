@@ -49,7 +49,7 @@ class ConversationController extends Controller
 
         $conversation = Conversation::query()->create([
             'name' => 'Chat #' . ($count + 1),
-            'url_id' => Str::random(40),
+            'url_id' => Str::orderedUuid()->toString(),
             'agent_id' => $agent->id,
             'user_id' => Auth::id(),
             'module_id' => $module->id,
@@ -334,7 +334,7 @@ class ConversationController extends Controller
         }
 
         $sharedConversation = SharedConversation::query()->create([
-            'shared_url_id' => Str::random(40),
+            'shared_url_id' => Str::orderedUuid()->toString(),
             'conversation_id' => $conversation->id,
         ]);
 
