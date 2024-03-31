@@ -73,7 +73,7 @@ const handleResize = () => {
     <Transition name="navbar-transition">
         <div
             class="z-20 h-dvh w-[260px] flex-shrink-0 bg-black text-white max-md:fixed"
-            v-if="showResponsiveNavBar"
+            v-show="showResponsiveNavBar"
         >
             <nav class="h-full w-full p-2">
                 <div class="flex h-full w-full flex-col">
@@ -112,7 +112,7 @@ const handleResize = () => {
                     </div>
                     <div class="relative w-full text-sm">
                         <Transition name="profile-items-transition">
-                            <ProfileItems v-if="showProfileOP" />
+                            <ProfileItems v-show="showProfileOP" />
                         </Transition>
                     </div>
                     <div
