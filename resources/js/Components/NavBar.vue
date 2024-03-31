@@ -40,10 +40,12 @@ onBeforeUnmount(() => {
 });
 
 const handleClickOutsideProfileOverlay = (event) => {
+    const className = "profile-overlay";
+
     if (
         showProfileOP.value &&
-        !event.target.className.includes("profile-overlay") &&
-        !event.target.parentNode.className.includes("profile-overlay")
+        !event.target.className.includes(className) &&
+        !event.target.parentNode.className.includes(className)
     ) {
         showProfileOP.value = false;
     }
