@@ -10,9 +10,9 @@ import Terms from "@/Components/Terms.vue";
     <Toast />
     <Terms />
     <ConfirmDialog class="max-w-[95%]" :draggable="false" />
-    <div class="flex">
+    <div class="flex select-none">
         <NavBar />
-        <div class="min-w-0 flex-1">
+        <div class="min-w-0 flex-1 select-text">
             <main>
                 <slot />
             </main>
