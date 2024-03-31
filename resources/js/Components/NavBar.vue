@@ -1,6 +1,13 @@
 <script setup>
 import { router, Link, usePage } from "@inertiajs/vue3";
-import { nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
+import {
+    nextTick,
+    onBeforeMount,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+    watch,
+} from "vue";
 import { useToast } from "primevue/usetoast";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
@@ -20,14 +27,14 @@ const resizeThreshold = 768;
 const showProfileOP = ref(false);
 const showResponsiveNavBar = ref(true);
 const scrollPanel = ref();
+const hasScrolled = ref(false);
 
 onBeforeMount(() => {
     handleResize();
 });
 
 onMounted(() => {
-    const scrollPosition = router.restore("scroll-position") ?? 0;
-    scrollTo(scrollPosition);
+    scrollTo(getScrollPosition());
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("click", handleClickOutsideProfileOverlay, true);
@@ -55,6 +62,10 @@ const handleClickOutsideProfileOverlay = (event) => {
     }
 };
 
+const getScrollPosition = () => {
+    return router.restore("scroll-position") ?? 0;
+};
+
 const scrollTo = (pos) => {
     scrollPanel.value.$el.children[0].children[0].scrollTo(0, pos);
 };
@@ -64,6 +75,16 @@ const handleResize = () => {
         showResponsiveNavBar.value = false;
     }
 };
+
+watch(showResponsiveNavBar, () => {
+    if (showResponsiveNavBar.value && !hasScrolled.value) {
+        nextTick(() => {
+            scrollTo(getScrollPosition());
+
+            hasScrolled.value = true;
+        });
+    }
+});
 </script>
 
 <template>
