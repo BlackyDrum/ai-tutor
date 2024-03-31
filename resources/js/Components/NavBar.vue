@@ -107,7 +107,9 @@ const handleResize = () => {
                     </ScrollPanel>
                 </div>
                 <div class="relative w-full text-sm">
-                    <ProfileItems v-if="showProfileOP" />
+                    <Transition name="profile-items">
+                        <ProfileItems v-if="showProfileOP" />
+                    </Transition>
                 </div>
                 <div
                     @click="showProfileOP = !showProfileOP"
@@ -128,5 +130,30 @@ const handleResize = () => {
 <style>
 .p-scrollpanel-bar-x {
     display: none;
+}
+
+.profile-items-enter-active {
+    transition:
+        transform 0.05s ease,
+        opacity 0.1s ease;
+    transform-origin: bottom;
+}
+.profile-items-leave-active {
+    transition:
+        transform 0.5s ease,
+        opacity 0.1s ease;
+    transform-origin: bottom;
+}
+
+.profile-items-enter-from,
+.profile-items-leave-to {
+    transform: scaleY(0);
+    opacity: 0;
+}
+
+.profile-items-enter-to,
+.profile-items-leave-from {
+    transform: scaleY(1);
+    opacity: 1;
 }
 </style>
