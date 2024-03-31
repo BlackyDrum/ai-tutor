@@ -1,6 +1,6 @@
 <script setup>
 import { router, Link, usePage } from "@inertiajs/vue3";
-import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import { nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
@@ -15,15 +15,19 @@ const appName = import.meta.env.VITE_APP_NAME;
 const page = usePage();
 const toast = useToast();
 
+const resizeThreshold = 768;
+
 const showProfileOP = ref(false);
 const showResponsiveNavBar = ref(true);
 const scrollPanel = ref();
 
+onBeforeMount(() => {
+    handleResize();
+});
+
 onMounted(() => {
     const scrollPosition = router.restore("scroll-position") ?? 0;
     scrollTo(scrollPosition);
-
-    handleResize();
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("click", handleClickOutsideProfileOverlay, true);
@@ -56,7 +60,7 @@ const scrollTo = (pos) => {
 };
 
 const handleResize = () => {
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= resizeThreshold) {
         showResponsiveNavBar.value = false;
     }
 };
