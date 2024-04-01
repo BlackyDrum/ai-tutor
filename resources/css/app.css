@@ -14,19 +14,23 @@
     --app-dark: #202123;
 }
 
-#scroll-container {
+.scroll-container {
     scrollbar-width: thin;
     scrollbar-color: var(--app-light) transparent;
 }
 
+.scroll-container:not(:hover) {
+    scrollbar-color: transparent transparent;
+}
+
 @media (prefers-color-scheme: light) {
-    #scroll-container, textarea {
+    .scroll-container, textarea {
         scrollbar-width: thin;
         scrollbar-color: var(--app-light) transparent;
     }
 }
 @media (prefers-color-scheme: dark) {
-    #scroll-container, textarea {
+    .scroll-container, textarea {
         scrollbar-width: thin;
         scrollbar-color: #ffffff transparent;
     }

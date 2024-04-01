@@ -282,9 +282,8 @@ const displayName = computed(() => {
 
         <Main ref="mainComponent">
             <div
-                id="scroll-container"
                 ref="scrollContainer"
-                class="mb-6 flex w-full flex-1 justify-center overflow-y-auto px-4"
+                class="scroll-container mb-6 flex w-full flex-1 justify-center overflow-y-auto px-4"
             >
                 <div class="w-full max-w-[48rem]">
                     <div v-for="(message, index) in messages">
