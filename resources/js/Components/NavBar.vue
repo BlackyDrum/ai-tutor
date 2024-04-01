@@ -39,10 +39,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-    router.remember(
-        scrollContainer.value.scrollTop,
-        "scroll-position",
-    );
+    router.remember(scrollContainer.value.scrollTop, "scroll-position");
 
     window.removeEventListener("resize", handleResize);
     window.removeEventListener("click", handleClickOutsideProfileOverlay, true);
@@ -86,17 +83,17 @@ watch(showResponsiveNavBar, () => {
 </script>
 
 <template>
-    <div class="flex max-md:fixed z-20">
+    <div class="z-20 flex max-md:fixed">
         <Transition name="navbar-transition">
             <div
-                class="h-dvh w-[260px] flex-shrink-0 bg-black text-white"
+                class="h-dvh w-[260px] flex-shrink-0 bg-gray-50 dark:bg-black dark:text-white"
                 v-show="showResponsiveNavBar"
             >
                 <nav class="h-full w-full p-2">
                     <div class="flex h-full w-full flex-col">
                         <Link
                             href="/"
-                            class="block flex cursor-pointer rounded-lg p-2 hover:bg-app-light"
+                            class="block flex cursor-pointer rounded-lg p-2 hover:bg-gray-300/50 hover:dark:bg-app-light"
                         >
                             <div class="flex-shrink-0">
                                 <ApplicationLogo class="w-8" />
@@ -122,7 +119,7 @@ watch(showResponsiveNavBar, () => {
                         <div class="min-h-0 flex-1">
                             <div
                                 ref="scrollContainer"
-                                class="scroll-container h-full w-full p-2 overflow-y-auto"
+                                class="scroll-container h-full w-full overflow-y-auto p-2"
                             >
                                 <Conversations />
                             </div>
@@ -134,8 +131,11 @@ watch(showResponsiveNavBar, () => {
                         </div>
                         <div
                             @click="showProfileOP = !showProfileOP"
-                            :class="{ 'bg-app-light': showProfileOP }"
-                            class="profile-overlay flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-app-light"
+                            :class="{
+                                'bg-gray-300/50 dark:bg-app-light':
+                                    showProfileOP,
+                            }"
+                            class="profile-overlay flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-gray-300/50 hover:dark:bg-app-light"
                         >
                             <UserAvatar class="flex-shrink-0" />
 
@@ -150,11 +150,11 @@ watch(showResponsiveNavBar, () => {
 
         <div
             @click="showResponsiveNavBar = !showResponsiveNavBar"
-            class="z-50 cursor-pointer rounded-full h-min p-2 ml-2 mt-2 hover:bg-gray-800/50 dark:text-white"
+            class="z-50 ml-2 mt-2 h-min cursor-pointer rounded-full p-2 hover:bg-gray-800/50 dark:text-white"
         >
-        <span
-            :class="showResponsiveNavBar ? 'pi pi-times' : 'pi pi-bars'"
-        ></span>
+            <span
+                :class="showResponsiveNavBar ? 'pi pi-times' : 'pi pi-bars'"
+            ></span>
         </div>
     </div>
 </template>

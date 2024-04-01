@@ -57,12 +57,12 @@ const deleteAll = () => {
 <template>
     <div
         :class="$page.props.auth.user.admin ? '-top-[140px]' : '-top-[100px]'"
-        class="absolute z-10 mb-2 w-full rounded-lg bg-app-dark p-1"
+        class="absolute z-10 mb-2 w-full rounded-lg bg-gray-300 p-1 font-semibold dark:bg-app-dark"
     >
         <Link
             v-if="$page.props.auth.user.admin"
             href="/admin"
-            class="mb-1 block flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-app-light"
+            class="mb-1 block flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-gray-400 hover:dark:bg-app-light"
         >
             <div>
                 <span class="pi pi-shield"></span>
@@ -72,7 +72,7 @@ const deleteAll = () => {
 
         <div
             @click="deleteAll"
-            class="my-1 flex cursor-pointer gap-4 rounded-lg p-2 text-red-600 hover:bg-app-light"
+            class="my-1 flex cursor-pointer gap-4 rounded-lg p-2 text-red-600 hover:bg-gray-400 hover:dark:bg-app-light"
         >
             <div>
                 <span class="pi pi-trash"></span>
@@ -82,7 +82,7 @@ const deleteAll = () => {
         <hr class="h-px border-0 bg-gray-500/40" />
         <div
             @click="router.post('/logout')"
-            class="mt-1 flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-app-light"
+            class="mt-1 flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-gray-400 hover:dark:bg-app-light"
         >
             <div>
                 <span class="pi pi-sign-out"></span>

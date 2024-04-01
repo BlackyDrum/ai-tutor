@@ -323,13 +323,13 @@ const getSharedConversationLink = computed(() => {
                 (selectedConversation &&
                     selectedConversation.url_id !== conversation.url_id)
             "
-            class="group relative flex rounded-lg hover:bg-app-dark"
+            class="group relative flex rounded-lg hover:bg-gray-200 hover:dark:bg-app-dark"
             :class="{
-                'bg-[#343537]':
+                'bg-gray-300 dark:bg-[#343537]':
                     conversation.url_id ===
                     $page.url.slice($page.url.lastIndexOf('/') + 1),
 
-                'bg-app-dark':
+                'bg-gray-200 dark:bg-app-dark':
                     selectedConversation &&
                     selectedConversation.url_id === conversation.url_id,
             }"
@@ -345,7 +345,7 @@ const getSharedConversationLink = computed(() => {
             </Link>
             <button
                 @click="toggleConversationOverlayPanel($event, conversation)"
-                class="absolute right-2 top-1 block hidden rounded-lg bg-app-dark p-1 pl-2 group-hover:block"
+                class="absolute right-2 top-1 block hidden rounded-lg p-1 pl-2 group-hover:block"
             >
                 <span
                     :class="
@@ -362,7 +362,7 @@ const getSharedConversationLink = computed(() => {
                 v-model="selectedConversation.name"
                 @keydown.enter="renameConversation"
                 ref="renameInput"
-                class="w-full rounded-lg bg-black text-white"
+                class="w-full rounded-lg dark:bg-black dark:text-white"
             />
         </div>
     </div>
@@ -370,12 +370,12 @@ const getSharedConversationLink = computed(() => {
     <!-- Conversations Overlay Panel -->
     <OverlayPanel
         ref="conversationOverlayPanel"
-        class="z-50 border-none bg-app-dark font-semibold"
+        class="z-50 border-none font-semibold dark:bg-app-dark"
         @hide="handleConversationOverlayPanelHiding"
     >
         <div
             @click="handleConversationShare"
-            class="flex cursor-pointer gap-4 rounded-lg p-2 text-sm text-white hover:bg-gray-700/20"
+            class="flex cursor-pointer gap-4 rounded-lg p-2 text-sm hover:bg-gray-700/20 dark:text-white"
         >
             <div>
                 <span class="pi pi-share-alt"></span>
@@ -384,7 +384,7 @@ const getSharedConversationLink = computed(() => {
         </div>
         <div
             @click="handleRenameConversation"
-            class="flex cursor-pointer gap-4 rounded-lg p-2 text-sm text-white hover:bg-gray-700/20"
+            class="flex cursor-pointer gap-4 rounded-lg p-2 text-sm hover:bg-gray-700/20 dark:text-white"
         >
             <div>
                 <span class="pi pi-pencil"></span>
@@ -445,9 +445,11 @@ const getSharedConversationLink = computed(() => {
 </template>
 
 <style>
-.p-overlaypanel:after,
-.p-overlaypanel:before {
-    border-bottom-color: var(--app-dark);
-    border-top-color: var(--app-dark);
+@media (prefers-color-scheme: dark) {
+    .p-overlaypanel:after,
+    .p-overlaypanel:before {
+        border-bottom-color: var(--app-dark);
+        border-top-color: var(--app-dark);
+    }
 }
 </style>
