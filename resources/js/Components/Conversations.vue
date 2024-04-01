@@ -448,5 +448,6 @@ const getSharedConversationLink = computed(() => {
 .p-overlaypanel:after,
 .p-overlaypanel:before {
     border-bottom-color: var(--app-dark);
+    border-top-color: var(--app-dark);
 }
 </style>
