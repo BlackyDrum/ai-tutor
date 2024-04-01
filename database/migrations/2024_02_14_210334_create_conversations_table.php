@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->unsignedInteger('prompt_tokens')->nullable();
             $table->unsignedInteger('completion_tokens')->nullable();
             $table->string('openai_language_model')->nullable();
+            $table->boolean('name_edited')->default(false);
             $table->unsignedBigInteger('agent_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();

@@ -241,6 +241,7 @@ class ConversationController extends Controller
             ->where('url_id', '=', $request->input('conversation_id'))
             ->update([
                 'name' => $request->input('name'),
+                'name_edited' => true,
             ]);
 
         Log::info(

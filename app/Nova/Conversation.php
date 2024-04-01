@@ -10,6 +10,7 @@ use App\Nova\Metrics\ConversationsPerDay;
 use Illuminate\Http\Request;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
@@ -75,6 +76,8 @@ class Conversation extends Resource
             Text::make('Name Completion Tokens', 'completion_tokens')
                 ->sortable()
                 ->onlyOnDetail(),
+
+            Boolean::make('Name Edited')->onlyOnDetail(),
 
             BelongsTo::make('Module')->sortable(),
 

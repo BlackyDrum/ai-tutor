@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Http\Controllers\ChromaController;
 use App\Models\Agent;
 use App\Models\Collection;
+use App\Models\Conversation;
 use App\Models\Module;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -78,5 +79,7 @@ class DemoSeeder extends Seeder
                 throw $exception;
             }
         }
+
+        Conversation::factory()->count(100)->create();
     }
 }

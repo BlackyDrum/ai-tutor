@@ -19,6 +19,7 @@ class Conversation extends Model
         'prompt_tokens',
         'completion_tokens',
         'openai_language_model',
+        'name_edited',
     ];
 
     protected $hidden = [
@@ -31,6 +32,7 @@ class Conversation extends Model
         'prompt_tokens',
         'completion_tokens',
         'openai_language_model',
+        'name_edited',
         'updated_at',
         'created_at',
     ];
