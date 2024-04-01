@@ -345,7 +345,7 @@ const getSharedConversationLink = computed(() => {
             </Link>
             <button
                 @click="toggleConversationOverlayPanel($event, conversation)"
-                class="absolute right-2 top-1 block hidden rounded-lg bg-gray-200 dark:bg-app-dark p-1 pl-2 group-hover:block"
+                class="absolute right-2 top-1 block hidden rounded-lg bg-gray-200 p-1 pl-2 group-hover:block dark:bg-app-dark"
             >
                 <span
                     :class="
