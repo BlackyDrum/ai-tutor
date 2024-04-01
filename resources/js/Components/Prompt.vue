@@ -103,7 +103,7 @@ const handleInput = () => {
             </Button>
         </form>
     </div>
-    <div class="my-2 text-center text-xs">
+    <div class="p-1 pb-2 text-center text-xs">
         Bachelor thesis project by <strong>Gani Aytan</strong>. Please contact
         <a class="underline" href="mailto:gani.aytan@alumni.fh-aachen.de"
             >gani.aytan@alumni.fh-aachen.de</a
