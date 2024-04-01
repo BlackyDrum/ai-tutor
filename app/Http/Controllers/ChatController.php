@@ -23,13 +23,6 @@ class ChatController extends Controller
         $conversation = Conversation::query()->where('url_id', $id)->first();
 
         if (!$conversation || $conversation->user_id !== Auth::id()) {
-            Log::info(
-                'App: User with ID {user-id} tried to access an invalid conversation',
-                [
-                    'conversation-id' => $id,
-                ]
-            );
-
             return redirect('/');
         }
 

@@ -265,13 +265,6 @@ class ConversationController extends Controller
             ->first();
 
         if (!$shared) {
-            Log::info(
-                'App: User with ID {user-id} tried to access an invalid, shared conversation',
-                [
-                    'shared-conversation-url-id' => $id,
-                ]
-            );
-
             return redirect('/');
         }
 
