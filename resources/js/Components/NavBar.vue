@@ -24,23 +24,15 @@ const resizeThreshold = 768;
 
 const showProfileOP = ref(false);
 const showResponsiveNavBar = ref(true);
-const scrollContainer = ref();
-const hasScrolled = ref(false);
 
-onBeforeMount(() => {
+onMounted(() => {
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("click", handleClickOutsideProfileOverlay, true);
+
     handleResize();
 });
 
-onMounted(() => {
-    scrollTo(getScrollPosition());
-
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("click", handleClickOutsideProfileOverlay, true);
-});
-
 onBeforeUnmount(() => {
-    router.remember(scrollContainer.value.scrollTop, "scroll-position");
-
     window.removeEventListener("resize", handleResize);
     window.removeEventListener("click", handleClickOutsideProfileOverlay, true);
 });
@@ -57,29 +49,11 @@ const handleClickOutsideProfileOverlay = (event) => {
     }
 };
 
-const getScrollPosition = () => {
-    return router.restore("scroll-position") ?? 0;
-};
-
-const scrollTo = (pos) => {
-    scrollContainer.value.scrollTo(0, pos);
-};
-
 const handleResize = () => {
     if (window.innerWidth <= resizeThreshold) {
         showResponsiveNavBar.value = false;
     }
 };
-
-watch(showResponsiveNavBar, () => {
-    if (showResponsiveNavBar.value && !hasScrolled.value) {
-        nextTick(() => {
-            scrollTo(getScrollPosition());
-
-            hasScrolled.value = true;
-        });
-    }
-});
 </script>
 
 <template>
@@ -117,10 +91,7 @@ watch(showResponsiveNavBar, () => {
                             </div>
                         </Link>
                         <div class="min-h-0 flex-1">
-                            <div
-                                ref="scrollContainer"
-                                class="scroll-container h-full w-full overflow-y-auto px-2"
-                            >
+                            <div class="h-full w-full px-2">
                                 <Conversations />
                             </div>
                         </div>
@@ -137,7 +108,7 @@ watch(showResponsiveNavBar, () => {
                                 'bg-gray-300/50 dark:bg-app-light':
                                     showProfileOP,
                             }"
-                            class="profile-overlay mx-2 mb-2 flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-gray-300/50 hover:dark:bg-app-light"
+                            class="profile-overlay mx-2 mb-2 mt-4 flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-gray-300/50 hover:dark:bg-app-light"
                         >
                             <UserAvatar class="flex-shrink-0" />
 

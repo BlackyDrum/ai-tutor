@@ -8,6 +8,7 @@ import OverlayPanel from "primevue/overlaypanel";
 import InputText from "primevue/inputtext";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
+import VirtualScroller from "primevue/virtualscroller";
 
 const page = usePage();
 const toast = useToast();
@@ -22,14 +23,29 @@ const isDeletingSharedConversation = ref(false);
 const renameInput = ref();
 const showRenameInput = ref(false);
 const showConversationShareDialog = ref(false);
+const scrollContainer = ref();
 
 onMounted(() => {
+    scrollTo(getScrollPosition());
+
     window.addEventListener("click", handleClickOutsideRenameInput, true);
 });
 
 onBeforeUnmount(() => {
+    router.remember(scrollContainer.value.$el.scrollTop, "scroll-position");
+
     window.removeEventListener("click", handleClickOutsideRenameInput, true);
 });
+
+const getScrollPosition = () => {
+    return router.restore("scroll-position") ?? 0;
+};
+
+const scrollTo = (pos) => {
+    nextTick(() => {
+        scrollContainer.value.$el.scrollTo(0, pos);
+    });
+};
 
 const handleClickOutsideRenameInput = (event) => {
     if (
@@ -139,7 +155,7 @@ const handleRenameConversation = () => {
     showRenameInput.value = true;
 
     nextTick(() => {
-        renameInput.value[0].$el.focus();
+        renameInput.value.$el.focus();
     });
 
     conversationOverlayPanel.value.visible = false;
@@ -312,60 +328,63 @@ const getSharedConversationLink = computed(() => {
 </script>
 
 <template>
-    <div
-        v-for="(conversation, index) in $page.props.auth.history"
-        :key="conversation.url_id"
-        class="my-2"
+    <VirtualScroller
+        :items="$page.props.auth.history"
+        class="scroll-container my-2"
+        :itemSize="40"
+        ref="scrollContainer"
     >
-        <div
-            v-if="
-                !showRenameInput ||
-                (selectedConversation &&
-                    selectedConversation.url_id !== conversation.url_id)
-            "
-            class="group relative flex rounded-lg hover:bg-gray-200 hover:dark:bg-app-dark"
-            :class="{
-                'bg-gray-300 dark:bg-[#343537]':
-                    conversation.url_id ===
-                    $page.url.slice($page.url.lastIndexOf('/') + 1),
+        <template v-slot:item="{ item, options }">
+            <div
+                v-if="
+                    !showRenameInput ||
+                    (selectedConversation &&
+                        selectedConversation.url_id !== item.url_id)
+                "
+                class="group relative flex rounded-lg hover:bg-gray-200 hover:dark:bg-app-dark"
+                :class="{
+                    'bg-gray-300 dark:bg-[#343537]':
+                        item.url_id ===
+                        $page.url.slice($page.url.lastIndexOf('/') + 1),
 
-                'bg-gray-200 dark:bg-app-dark':
-                    selectedConversation &&
-                    selectedConversation.url_id === conversation.url_id,
-            }"
-            v-tooltip="{
-                value: conversation.name,
-            }"
-        >
-            <Link
-                :href="`/chat/${conversation.url_id}`"
-                class="my-1 block flex-1 cursor-pointer truncate whitespace-nowrap rounded-lg px-2 py-1"
+                    'bg-gray-200 dark:bg-app-dark':
+                        selectedConversation &&
+                        selectedConversation.url_id === item.url_id,
+                }"
+                v-tooltip="{
+                    value: item.name,
+                }"
             >
-                {{ conversation.name }}
-            </Link>
-            <button
-                @click="toggleConversationOverlayPanel($event, conversation)"
-                class="absolute right-2 top-1 block hidden rounded-lg bg-gray-200 p-1 pl-2 group-hover:block dark:bg-app-dark"
-            >
-                <span
-                    :class="
-                        isSendingRequest
-                            ? 'pi pi-spin pi-spinner'
-                            : 'pi pi-ellipsis-h'
-                    "
-                ></span>
-            </button>
-        </div>
+                <Link
+                    :href="`/chat/${item.url_id}`"
+                    class="my-1 block flex-1 cursor-pointer truncate whitespace-nowrap rounded-lg px-2 py-1"
+                >
+                    {{ item.name }}
+                </Link>
+                <button
+                    @click="toggleConversationOverlayPanel($event, item)"
+                    class="absolute right-2 top-1 block hidden rounded-lg bg-gray-200 p-1 pl-2 group-hover:block dark:bg-app-dark"
+                >
+                    <span
+                        :class="
+                            isSendingRequest
+                                ? 'pi pi-spin pi-spinner'
+                                : 'pi pi-ellipsis-h'
+                        "
+                    ></span>
+                </button>
+            </div>
 
-        <div v-else class="rename-input my-1 block flex-1 rounded-lg py-2">
-            <InputText
-                v-model="selectedConversation.name"
-                @keydown.enter="renameConversation"
-                ref="renameInput"
-                class="w-full rounded-lg dark:bg-black dark:text-white"
-            />
-        </div>
-    </div>
+            <div v-else class="rename-input my-1 block flex-1 rounded-lg py-2">
+                <InputText
+                    v-model="selectedConversation.name"
+                    @keydown.enter="renameConversation"
+                    ref="renameInput"
+                    class="w-full rounded-lg dark:bg-black dark:text-white"
+                />
+            </div>
+        </template>
+    </VirtualScroller>
 
     <!-- Conversations Overlay Panel -->
     <OverlayPanel
@@ -445,6 +464,10 @@ const getSharedConversationLink = computed(() => {
 </template>
 
 <style>
+.p-virtualscroller-content {
+    max-width: 100%;
+}
+
 @media (prefers-color-scheme: dark) {
     .p-overlaypanel:after,
     .p-overlaypanel:before {
