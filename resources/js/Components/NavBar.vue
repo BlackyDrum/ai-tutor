@@ -89,11 +89,11 @@ watch(showResponsiveNavBar, () => {
                 class="h-dvh w-[260px] flex-shrink-0 bg-gray-50 dark:bg-black dark:text-white"
                 v-show="showResponsiveNavBar"
             >
-                <nav class="h-full w-full p-2">
-                    <div class="flex h-full w-full flex-col">
+                <nav class="h-full w-full">
+                    <div class="flex h-full w-full flex-col gap-1">
                         <Link
                             href="/"
-                            class="block flex cursor-pointer rounded-lg p-2 hover:bg-gray-300/50 hover:dark:bg-app-light"
+                            class="mx-2 mt-2 block flex cursor-pointer rounded-lg p-2 hover:bg-gray-300/50 hover:dark:bg-app-light"
                         >
                             <div class="flex-shrink-0">
                                 <ApplicationLogo class="w-8" />
@@ -119,15 +119,17 @@ watch(showResponsiveNavBar, () => {
                         <div class="min-h-0 flex-1">
                             <div
                                 ref="scrollContainer"
-                                class="scroll-container h-full w-full overflow-y-auto p-2"
+                                class="scroll-container h-full w-full overflow-y-auto px-2"
                             >
                                 <Conversations />
                             </div>
                         </div>
-                        <div class="relative w-full text-sm">
-                            <Transition name="profile-items-transition">
-                                <ProfileItems v-show="showProfileOP" />
-                            </Transition>
+                        <div class="px-2">
+                            <div class="relative w-full text-sm">
+                                <Transition name="profile-items-transition">
+                                    <ProfileItems v-show="showProfileOP" />
+                                </Transition>
+                            </div>
                         </div>
                         <div
                             @click="showProfileOP = !showProfileOP"
@@ -135,7 +137,7 @@ watch(showResponsiveNavBar, () => {
                                 'bg-gray-300/50 dark:bg-app-light':
                                     showProfileOP,
                             }"
-                            class="profile-overlay flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-gray-300/50 hover:dark:bg-app-light"
+                            class="profile-overlay mx-2 mb-2 flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-gray-300/50 hover:dark:bg-app-light"
                         >
                             <UserAvatar class="flex-shrink-0" />
 

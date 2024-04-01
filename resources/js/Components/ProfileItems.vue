@@ -56,8 +56,8 @@ const deleteAll = () => {
 
 <template>
     <div
-        :class="$page.props.auth.user.admin ? '-top-[140px]' : '-top-[100px]'"
-        class="absolute z-10 mb-2 w-full rounded-lg bg-gray-300 p-1 font-semibold dark:bg-app-dark"
+        :class="$page.props.auth.user.admin ? '-top-[135px]' : '-top-[98px]'"
+        class="absolute z-10 w-full rounded-lg bg-gray-300 p-1 font-semibold dark:bg-app-dark"
     >
         <Link
             v-if="$page.props.auth.user.admin"
