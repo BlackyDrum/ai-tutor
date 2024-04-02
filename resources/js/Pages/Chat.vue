@@ -47,6 +47,7 @@ const messagesRaw = ref([]);
 const currentPage = ref(2);
 const hasMoreMessages = ref(true);
 const inspectedMessage = ref(null);
+const isFetchingMessages = ref(false);
 
 const timeoutId = ref();
 
@@ -94,6 +95,8 @@ const fetchMessages = (share, peek) => {
     const basePath = share ? "share" : peek ? "peek" : "chat";
     let url = `/${basePath}/messages/${page.props.conversation_id}?page=${currentPage.value}`;
 
+    isFetchingMessages.value = true;
+
     axios
         .get(url)
         .then((result) => {
@@ -133,6 +136,9 @@ const fetchMessages = (share, peek) => {
                 detail: error.response.data.message ?? error.response.data,
                 life: 5000,
             });
+        })
+        .finally(() => {
+            isFetchingMessages.value = false;
         });
 };
 
@@ -356,6 +362,15 @@ const displayName = computed(() => {
                 @scroll="handleScroll"
             >
                 <div class="w-full max-w-[48rem]">
+                    <div>
+                        <LoadingDots
+                            v-show="
+                                isFetchingMessages &&
+                                $page.props.messages.total !==
+                                    $page.props.messages.data.length
+                            "
+                        />
+                    </div>
                     <div v-for="(message, index) in messages">
                         <div class="mt-6 flex gap-3">
                             <div>
