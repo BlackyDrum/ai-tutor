@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Vinkla\Hashids\Facades\Hashids;
 
 class Message extends Model
@@ -32,7 +33,10 @@ class Message extends Model
     protected function id(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => request()->route()->getName() == 'peek'
+            get: fn(string $value) => str_contains(
+                request()->route()->getName(),
+                'peek'
+            )
                 ? $value
                 : Hashids::encode($value)
         );

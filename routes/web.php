@@ -35,6 +35,11 @@ Route::middleware(['auth'])->group(function () {
                 'show'
             );
 
+            Route::get('/messages/{conversation_id}', [
+                ChatController::class,
+                'fetchMessagesForShare',
+            ])->name('messages.fetch');
+
             Route::post('/', [
                 ConversationController::class,
                 'createShare',
@@ -65,9 +70,19 @@ Route::middleware(['auth'])->group(function () {
             ])->name('rename');
         });
 
-    Route::get('/peek/{id}', [ConversationController::class, 'peek'])
+    Route::prefix('peek')
+        ->name('peek.')
         ->middleware(EnsureIsAdmin::class)
-        ->name('peek');
+        ->group(function () {
+            Route::get('/{id}', [ConversationController::class, 'peek'])->name(
+                'show'
+            );
+
+            Route::get('/messages/{conversation_id}', [
+                ChatController::class,
+                'fetchMessagesForPeek',
+            ])->name('messages.fetch');
+        });
 
     Route::prefix('chat')
         ->name('chat.')
@@ -78,6 +93,11 @@ Route::middleware(['auth'])->group(function () {
                 ChatController::class,
                 'updateRating',
             ])->name('rate');
+
+            Route::get('/messages/{conversation_id}', [
+                ChatController::class,
+                'fetchMessagesForChat',
+            ])->name('messages.fetch');
 
             Route::middleware([
                 ValidateRemainingRequests::class,

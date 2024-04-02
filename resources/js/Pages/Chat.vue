@@ -1,6 +1,13 @@
 <script setup>
 import { Head, usePage } from "@inertiajs/vue3";
-import { computed, onBeforeMount, onMounted, onUnmounted, ref } from "vue";
+import {
+    computed,
+    nextTick,
+    onBeforeMount,
+    onMounted,
+    onUnmounted,
+    ref,
+} from "vue";
 import { useToast } from "primevue/usetoast";
 
 import showdown from "showdown";
@@ -36,12 +43,20 @@ const promptComponent = ref();
 const mainComponent = ref();
 const scrollContainer = ref();
 const messages = ref([]);
+const messagesRaw = ref([]);
+const currentPage = ref(2);
+const hasMoreMessages = ref(true);
 const inspectedMessage = ref(null);
 
 const timeoutId = ref();
 
 onBeforeMount(() => {
-    messages.value = JSON.parse(JSON.stringify(page.props.messages));
+    messages.value = JSON.parse(
+        JSON.stringify(page.props.messages.data),
+    ).reverse();
+    messagesRaw.value = JSON.parse(
+        JSON.stringify(page.props.messages.data),
+    ).reverse();
 
     messages.value.map((message) => {
         message.agent_message = processAgentMessage(message.agent_message);
@@ -72,6 +87,60 @@ onUnmounted(() => {
         clearTimeout(timeoutId.value);
     }
 });
+
+const fetchMessages = (share, peek) => {
+    if (!hasMoreMessages.value) return;
+
+    const basePath = share ? "share" : peek ? "peek" : "chat";
+    let url = `/${basePath}/messages/${page.props.conversation_id}?page=${currentPage.value}`;
+
+    axios
+        .get(url)
+        .then((result) => {
+            if (result.data.data.length > 0) {
+                const previousScrollHeight = scrollContainer.value.scrollHeight;
+
+                messages.value = [
+                    ...result.data.data.reverse().map((message) => ({
+                        ...message,
+                        agent_message: processAgentMessage(
+                            message.agent_message,
+                        ),
+                    })),
+                    ...messages.value,
+                ];
+
+                messagesRaw.value = [
+                    ...result.data.data.reverse(),
+                    ...messagesRaw.value,
+                ];
+
+                nextTick(() => {
+                    const newScrollHeight = scrollContainer.value.scrollHeight;
+                    scrollContainer.value.scrollTop +=
+                        newScrollHeight - previousScrollHeight;
+
+                    currentPage.value++;
+                });
+            } else {
+                hasMoreMessages.value = false;
+            }
+        })
+        .catch((error) => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
+        });
+};
+
+const handleScroll = () => {
+    if (scrollContainer.value.scrollTop === 0) {
+        fetchMessages(page.url.includes("share"), page.url.includes("peek"));
+    }
+};
 
 const handleMessageSubmission = (userMessage) => {
     if (
@@ -127,7 +196,7 @@ const handleMessageSubmission = (userMessage) => {
                 });
             }
 
-            page.props.messages.push({
+            messagesRaw.value.push({
                 agent_message: agent_message,
                 conversation_id: page.props.conversation_id,
                 created_at: created_at,
@@ -239,7 +308,7 @@ const copyMessage = (id) => {
 
     // Accessing the messages property is necessary since the markdown
     // content in our messages ref variable is already parsed.
-    const message = page.props.messages.find((message) => message.id === id);
+    const message = messagesRaw.value.find((message) => message.id === id);
 
     navigator.clipboard
         .writeText(decodeHtml(message.agent_message))
@@ -284,6 +353,7 @@ const displayName = computed(() => {
             <div
                 ref="scrollContainer"
                 class="scroll-container mb-6 flex w-full flex-1 justify-center overflow-y-auto px-4"
+                @scroll="handleScroll"
             >
                 <div class="w-full max-w-[48rem]">
                     <div v-for="(message, index) in messages">

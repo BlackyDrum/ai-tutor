@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ConversationHasDocument;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\SharedConversation;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -22,15 +23,11 @@ class ChatController extends Controller
     {
         $conversation = Conversation::query()->where('url_id', $id)->first();
 
-        if (!$conversation || $conversation->user_id !== Auth::id()) {
+        $messages = self::getMessagesForChat($id);
+
+        if (!$messages) {
             return redirect('/');
         }
-
-        $messages = Message::query()
-            ->where('conversation_id', '=', $conversation->id)
-            ->orderBy('created_at')
-            ->select(['id', 'user_message', 'agent_message', 'helpful'])
-            ->get();
 
         return Inertia::render('Chat', [
             'messages' => $messages,
@@ -41,6 +38,134 @@ class ChatController extends Controller
             'username' => null,
             'info' => session()->pull('info_message_remaining_messages'),
         ]);
+    }
+
+    public function fetchMessagesForChat(
+        Request $request,
+        string $conversation_id
+    ) {
+        $messages = self::getMessagesForChat($conversation_id);
+
+        if (!$messages) {
+            return response()->json(
+                ['message' => 'The selected conversation id is invalid'],
+                422
+            );
+        }
+
+        return response()->json($messages);
+    }
+
+    public function fetchMessagesForPeek(
+        Request $request,
+        string $conversation_id
+    ) {
+        $messages = self::getMessagesForPeek($conversation_id);
+
+        if (!$messages) {
+            return response()->json(
+                ['message' => 'The selected conversation id is invalid'],
+                422
+            );
+        }
+
+        return response()->json($messages);
+    }
+
+    public function fetchMessagesForShare(
+        Request $request,
+        string $conversation_id
+    ) {
+        $messages = self::getMessagesForShare($conversation_id);
+
+        if (!$messages) {
+            return response()->json(
+                ['message' => 'The selected conversation id is invalid'],
+                422
+            );
+        }
+
+        return response()->json($messages);
+    }
+
+    public static function getMessagesForShare($conversation_id)
+    {
+        $shared = SharedConversation::query()
+            ->where('shared_conversations.shared_url_id', '=', $conversation_id)
+            ->first();
+
+        if (!$shared) {
+            return false;
+        }
+
+        $conversation = Conversation::query()->find($shared->conversation_id);
+
+        return SharedConversation::query()
+            ->join(
+                'conversations',
+                'conversations.id',
+                '=',
+                'shared_conversations.conversation_id'
+            )
+            ->join(
+                'messages',
+                'messages.conversation_id',
+                '=',
+                'conversations.id'
+            )
+            ->where('conversations.id', '=', $conversation->id)
+            ->whereRaw('messages.created_at < shared_conversations.created_at')
+            ->orderBy('messages.created_at', 'desc')
+            ->select(['messages.user_message', 'messages.agent_message'])
+            ->paginate(config('chat.messages_per_page'));
+    }
+
+    public static function getMessagesForPeek($conversation_id)
+    {
+        $conversation = Conversation::query()
+            ->where('url_id', $conversation_id)
+            ->first();
+
+        if (!$conversation) {
+            return false;
+        }
+
+        return Message::query()
+            ->leftJoin(
+                'conversations',
+                'conversations.id',
+                '=',
+                'messages.conversation_id'
+            )
+            ->leftJoin('modules', 'modules.id', '=', 'conversations.module_id')
+            ->leftJoin('agents', 'agents.id', '=', 'conversations.agent_id')
+            ->where('messages.conversation_id', '=', $conversation->id)
+            ->orderBy('messages.created_at', 'desc')
+            ->select([
+                'messages.*',
+                'conversations.id AS conversation_id',
+                'conversations.name AS conversation_name',
+                'modules.name AS module_name',
+                'agents.name AS agent_name',
+            ])
+            ->paginate(config('chat.messages_per_page'));
+    }
+
+    public static function getMessagesForChat($conversation_id)
+    {
+        $conversation = Conversation::query()
+            ->where('url_id', $conversation_id)
+            ->first();
+
+        if (!$conversation || $conversation->user_id !== Auth::id()) {
+            return false;
+        }
+
+        return Message::query()
+            ->where('conversation_id', '=', $conversation->id)
+            ->orderBy('created_at', 'desc')
+            ->select(['id', 'user_message', 'agent_message', 'helpful'])
+            ->paginate(config('chat.messages_per_page'));
     }
 
     public function chat(Request $request)

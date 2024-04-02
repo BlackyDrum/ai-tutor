@@ -94,7 +94,7 @@ class ConversationController extends Controller
             userMessage: $promptWithContext,
             languageModel: $agent->openai_language_model,
             max_tokens: $agent->max_response_tokens,
-            temperature:  $agent->temperature
+            temperature: $agent->temperature
         );
 
         if ($response->failed()) {
@@ -260,34 +260,17 @@ class ConversationController extends Controller
 
     public function share(string $id)
     {
-        $shared = SharedConversation::query()
-            ->where('shared_conversations.shared_url_id', '=', $id)
-            ->first();
+        $messages = ChatController::getMessagesForShare($id);
 
-        if (!$shared) {
+        if (!$messages) {
             return redirect('/');
         }
 
-        $conversation = Conversation::query()->find($shared->conversation_id);
+        $shared = SharedConversation::query()
+            ->where('shared_url_id', $id)
+            ->first();
 
-        $messages = SharedConversation::query()
-            ->join(
-                'conversations',
-                'conversations.id',
-                '=',
-                'shared_conversations.conversation_id'
-            )
-            ->join(
-                'messages',
-                'messages.conversation_id',
-                '=',
-                'conversations.id'
-            )
-            ->where('conversations.id', '=', $conversation->id)
-            ->whereRaw('messages.created_at < shared_conversations.created_at')
-            ->orderBy('messages.created_at')
-            ->select(['messages.user_message', 'messages.agent_message'])
-            ->get();
+        $conversation = Conversation::query()->find($shared->conversation_id);
 
         return Inertia::render('Chat', [
             'messages' => $messages,
@@ -371,29 +354,11 @@ class ConversationController extends Controller
     {
         $conversation = Conversation::query()->where('url_id', $id)->first();
 
-        if (!$conversation) {
+        $messages = ChatController::getMessagesForPeek($id);
+
+        if (!$messages) {
             return redirect('/');
         }
-
-        $messages = Message::query()
-            ->leftJoin(
-                'conversations',
-                'conversations.id',
-                '=',
-                'messages.conversation_id'
-            )
-            ->leftJoin('modules', 'modules.id', '=', 'conversations.module_id')
-            ->leftJoin('agents', 'agents.id', '=', 'conversations.agent_id')
-            ->where('messages.conversation_id', '=', $conversation->id)
-            ->orderBy('messages.created_at')
-            ->select([
-                'messages.*',
-                'conversations.id AS conversation_id',
-                'conversations.name AS conversation_name',
-                'modules.name AS module_name',
-                'agents.name AS agent_name',
-            ])
-            ->get();
 
         return Inertia::render('Chat', [
             'messages' => $messages,
