@@ -22,6 +22,10 @@ class EnsureIsAdmin
                 'App: User with ID {user-id} tried to access the admin area'
             );
 
+            if($request->route()->getName() == 'peek.messages.fetch') {
+                return \response()->json(['message' => 'Unauthorized'], 403);
+            }
+
             return redirect('/');
         }
 
