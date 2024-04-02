@@ -62,6 +62,10 @@ onBeforeMount(() => {
     messages.value.map((message) => {
         message.agent_message = processAgentMessage(message.agent_message);
     });
+
+    if (!page.props.messages.next_page_url) {
+        hasMoreMessages.value = false;
+    }
 });
 
 onMounted(() => {
@@ -100,34 +104,32 @@ const fetchMessages = (share, peek) => {
     axios
         .get(url)
         .then((result) => {
-            if (result.data.data.length > 0) {
-                const previousScrollHeight = scrollContainer.value.scrollHeight;
+            const previousScrollHeight = scrollContainer.value.scrollHeight;
 
-                messages.value = [
-                    ...result.data.data.reverse().map((message) => ({
-                        ...message,
-                        agent_message: processAgentMessage(
-                            message.agent_message,
-                        ),
-                    })),
-                    ...messages.value,
-                ];
+            messages.value = [
+                ...result.data.data.reverse().map((message) => ({
+                    ...message,
+                    agent_message: processAgentMessage(message.agent_message),
+                })),
+                ...messages.value,
+            ];
 
-                messagesRaw.value = [
-                    ...result.data.data.reverse(),
-                    ...messagesRaw.value,
-                ];
+            messagesRaw.value = [
+                ...result.data.data.reverse(),
+                ...messagesRaw.value,
+            ];
 
-                nextTick(() => {
-                    const newScrollHeight = scrollContainer.value.scrollHeight;
-                    scrollContainer.value.scrollTop +=
-                        newScrollHeight - previousScrollHeight;
-
-                    currentPage.value++;
-                });
-            } else {
+            if (!result.data.next_page_url) {
                 hasMoreMessages.value = false;
             }
+
+            nextTick(() => {
+                const newScrollHeight = scrollContainer.value.scrollHeight;
+                scrollContainer.value.scrollTop +=
+                    newScrollHeight - previousScrollHeight;
+
+                currentPage.value++;
+            });
         })
         .catch((error) => {
             toast.add({
@@ -363,13 +365,7 @@ const displayName = computed(() => {
             >
                 <div class="w-full max-w-[48rem]">
                     <div>
-                        <LoadingDots
-                            v-show="
-                                isFetchingMessages &&
-                                $page.props.messages.total !==
-                                    $page.props.messages.data.length
-                            "
-                        />
+                        <LoadingDots v-show="isFetchingMessages" />
                     </div>
                     <div v-for="(message, index) in messages">
                         <div class="mt-6 flex gap-3">
