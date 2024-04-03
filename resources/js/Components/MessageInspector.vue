@@ -11,9 +11,6 @@ const page = usePage();
 
 const data = {
     "Message ID": "id",
-    "Conversation ID": "conversation_id",
-    "Conversation Name": "conversation_name",
-    "Module": "module_name",
     "Language Model": "openai_language_model",
     "Prompt Tokens": "prompt_tokens",
     "Completion Tokens": "completion_tokens",

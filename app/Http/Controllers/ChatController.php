@@ -135,23 +135,8 @@ class ChatController extends Controller
         }
 
         return Message::query()
-            ->leftJoin(
-                'conversations',
-                'conversations.id',
-                '=',
-                'messages.conversation_id'
-            )
-            ->leftJoin('modules', 'modules.id', '=', 'conversations.module_id')
-            ->leftJoin('agents', 'agents.id', '=', 'conversations.agent_id')
-            ->where('messages.conversation_id', '=', $conversation->id)
-            ->orderBy('messages.created_at', 'desc')
-            ->select([
-                'messages.*',
-                'conversations.id AS conversation_id',
-                'conversations.name AS conversation_name',
-                'modules.name AS module_name',
-                'agents.name AS agent_name',
-            ])
+            ->where('conversation_id', '=', $conversation->id)
+            ->orderBy('created_at', 'desc')
             ->paginate(
                 HomeController::isMobile(\request()->userAgent())
                     ? config('chat.messages_per_page_mobile')
