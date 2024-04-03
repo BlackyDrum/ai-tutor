@@ -42,21 +42,16 @@ class Costs extends Value
                 true
             );
 
-            $messagePrice = self::calculatePrice(
-                $messageTokens['prompt_tokens'],
-                $messageTokens['completion_tokens'],
+            $costs = self::calculatePrice(
+                $messageTokens['prompt_tokens'] +
+                    $conversationNameTokens['prompt_tokens'],
+                $messageTokens['completion_tokens'] +
+                    $conversationNameTokens['completion_tokens'],
                 $model->input,
                 $model->output
             );
 
-            $namePrice = self::calculatePrice(
-                $conversationNameTokens['prompt_tokens'],
-                $conversationNameTokens['completion_tokens'],
-                $model->input,
-                $model->output
-            );
-
-            $totalPrice += $messagePrice + $namePrice;
+            $totalPrice += $costs;
         }
 
         $result = number_format($totalPrice, 2);
@@ -81,8 +76,7 @@ class Costs extends Value
     ) {
         // This method distinguishes between tokens used for messages and conversation titles/names.
         // If '$getTokensForConversationName' is true, it queries the 'conversations' table to calculate
-        // the total number of prompt and completion tokens used specifically for creating conversation titles
-        // for a specific language model.
+        // the total number of prompt and completion tokens used specifically for creating conversation titles.
         // Conversely, if false, it targets the 'messages' table to compute the total tokens used for all messages
         // associated with a given language model.
 
@@ -117,8 +111,6 @@ class Costs extends Value
         $models = OpenAI::models();
         $totalPrice = 0;
 
-        // Here we calculate the total costs either per user or conversation
-        // based on the provided parameter
         foreach ($models as $model) {
             $queryBase = Message::query()
                 ->join(
@@ -168,19 +160,16 @@ class Costs extends Value
                 ])
                 ->first();
 
-            $totalPrice +=
-                Costs::calculatePrice(
-                    $messagesTokens->messages_prompt_tokens,
-                    $messagesTokens->messages_completion_tokens,
-                    $model->input,
-                    $model->output
-                ) +
-                Costs::calculatePrice(
+            $costs = Costs::calculatePrice(
+                $messagesTokens->messages_prompt_tokens +
                     $conversationNameTokens->conversations_prompt_tokens,
+                $messagesTokens->messages_completion_tokens +
                     $conversationNameTokens->conversations_completion_tokens,
-                    $model->input,
-                    $model->output
-                );
+                $model->input,
+                $model->output
+            );
+
+            $totalPrice += $costs;
         }
 
         return '$' . number_format($totalPrice, 2);

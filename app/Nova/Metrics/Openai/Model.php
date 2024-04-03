@@ -15,33 +15,31 @@ abstract class Model extends Partition
     {
         parent::__construct($component);
 
-        $messageTokens = Costs::getTokens($this->name);
+        $tokens = $this->getTokens();
 
-        $conversationNameTokens = Costs::getTokens(
-            modelName: $this->name,
-            getTokensForConversationName: true
-        );
-
-        $messageCosts = Costs::calculatePrice(
-            $messageTokens['prompt_tokens'],
-            $messageTokens['completion_tokens'],
+        $costs = Costs::calculatePrice(
+            $tokens['prompt_tokens'],
+            $tokens['completion_tokens'],
             $this->input,
             $this->output
         );
 
-        $nameCosts = Costs::calculatePrice(
-            $conversationNameTokens['prompt_tokens'],
-            $conversationNameTokens['completion_tokens'],
-            $this->input,
-            $this->output
-        );
-
-        $costs = number_format($messageCosts + $nameCosts, 2);
+        $costs = number_format($costs, 2);
 
         $this->helpText = "Input: \${$this->input} / 1M tokens<br>Output: \${$this->output} / 1M tokens<br><b>Total costs: \$$costs</b>";
     }
 
     public function calculate(NovaRequest $request)
+    {
+        $tokens = $this->getTokens();
+
+        return $this->result([
+            'Prompt Tokens' => $tokens['prompt_tokens'],
+            'Completion Tokens' => $tokens['completion_tokens'],
+        ]);
+    }
+
+    private function getTokens()
     {
         $messageTokens = Costs::getTokens($this->name);
 
@@ -50,13 +48,13 @@ abstract class Model extends Partition
             getTokensForConversationName: true
         );
 
-        return $this->result([
-            'Prompt Tokens' =>
+        return [
+            'prompt_tokens' =>
                 $messageTokens['prompt_tokens'] + $nameTokens['prompt_tokens'],
-            'Completion Tokens' =>
+            'completion_tokens' =>
                 $messageTokens['completion_tokens'] +
                 $nameTokens['completion_tokens'],
-        ]);
+        ];
     }
 
     /**
