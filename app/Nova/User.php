@@ -2,9 +2,13 @@
 
 namespace App\Nova;
 
+use App\Nova\Dashboards\OpenAI;
 use App\Nova\Filters\ModuleFilter;
+use App\Nova\Metrics\Openai\TotalCosts;
 use App\Nova\Metrics\Users;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
@@ -73,7 +77,14 @@ class User extends Resource
                 })
                 ->help('Maximum number of requests per day'),
 
-            Boolean::make('Admin'),
+            Boolean::make('Admin')->onlyOnDetail(),
+
+            Number::make('Total Costs Generated', function ($user) {
+                return $this->calculateTotalCosts($user->id);
+            })
+                ->hideWhenUpdating()
+                ->hideWhenCreating()
+                ->sortable(),
 
             BelongsTo::make('Module', 'module', Module::class)
                 ->nullable()
@@ -104,6 +115,63 @@ class User extends Resource
     public function authorizedToReplicate(Request $request)
     {
         return false;
+    }
+
+    private function calculateTotalCosts($userId)
+    {
+        $models = OpenAI::models();
+
+        $totalPrice = 0;
+
+        foreach ($models as $model) {
+            $messagesTokens = \App\Models\Message::query()
+                ->join(
+                    'conversations',
+                    'conversations.id',
+                    '=',
+                    'messages.conversation_id'
+                )
+                ->where('conversations.user_id', '=', $userId)
+                ->where('messages.openai_language_model', '=', $model->name)
+                ->select([
+                    DB::raw(
+                        'SUM(messages.prompt_tokens) AS messages_prompt_tokens'
+                    ),
+                    DB::raw(
+                        'SUM(messages.completion_tokens) AS messages_completion_tokens'
+                    ),
+                ])
+                ->first();
+
+            $conversationTokens = \App\Models\Conversation::query()
+                ->where('user_id', '=', $userId)
+                ->where('openai_language_model', '=', $model->name)
+                ->select([
+                    DB::raw(
+                        'SUM(prompt_tokens) AS conversations_prompt_tokens'
+                    ),
+                    DB::raw(
+                        'SUM(completion_tokens) AS conversations_completion_tokens'
+                    ),
+                ])
+                ->first();
+
+            $totalPrice +=
+                TotalCosts::calculatePrice(
+                    $messagesTokens->messages_prompt_tokens,
+                    $messagesTokens->messages_completion_tokens,
+                    $model->input,
+                    $model->output
+                ) +
+                TotalCosts::calculatePrice(
+                    $conversationTokens->conversations_prompt_tokens,
+                    $conversationTokens->conversations_completion_tokens,
+                    $model->input,
+                    $model->output
+                );
+        }
+
+        return '$' . number_format($totalPrice, 2);
     }
 
     /**
