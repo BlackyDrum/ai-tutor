@@ -7,6 +7,7 @@ use App\Nova\Filters\CollectionFilter;
 use App\Nova\Filters\ModuleFilter;
 use App\Nova\Filters\UserFilter;
 use App\Nova\Metrics\ConversationsPerDay;
+use App\Nova\Metrics\Openai\Costs;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -80,7 +81,7 @@ class Conversation extends Resource
             Boolean::make('Name Edited')->onlyOnDetail(),
 
             Number::make('Total Costs', function ($conversation) {
-                return User::calculateTotalCosts(
+                return Costs::calculateCostsByConversationOrUser(
                     conversationId: $conversation->id
                 );
             }),
