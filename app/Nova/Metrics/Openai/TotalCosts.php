@@ -73,27 +73,18 @@ class TotalCosts extends Value
         $range = 'ALL',
         $getTokensForConversationName = false
     ) {
-        $totalPromptTokens = ($getTokensForConversationName
+        $totalTokens = ($getTokensForConversationName
             ? Conversation::query()
             : Message::query()
         )
             ->where('openai_language_model', $modelName)
-            ->select(DB::raw('SUM(prompt_tokens) AS total'));
-
-        $totalCompletionTokens = ($getTokensForConversationName
-            ? Conversation::query()
-            : Message::query()
-        )
-            ->where('openai_language_model', $modelName)
-            ->select(DB::raw('SUM(completion_tokens) AS total'));
+            ->select([
+                DB::raw('SUM(prompt_tokens) AS prompt_tokens'),
+                DB::raw('SUM(completion_tokens) AS completion_tokens'),
+            ]);
 
         if ($range != 'ALL') {
-            $totalPromptTokens->where(
-                'created_at',
-                '>=',
-                Carbon::now()->subDays($range)
-            );
-            $totalCompletionTokens->where(
+            $totalTokens->where(
                 'created_at',
                 '>=',
                 Carbon::now()->subDays($range)
@@ -101,8 +92,8 @@ class TotalCosts extends Value
         }
 
         return [
-            'completion_tokens' => $totalCompletionTokens->first()->total,
-            'prompt_tokens' => $totalPromptTokens->first()->total,
+            'completion_tokens' => $totalTokens->first()->completion_tokens,
+            'prompt_tokens' => $totalTokens->first()->prompt_tokens,
         ];
     }
 

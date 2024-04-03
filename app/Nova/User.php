@@ -143,7 +143,7 @@ class User extends Resource
                 ])
                 ->first();
 
-            $conversationTokens = \App\Models\Conversation::query()
+            $conversationNameTokens = \App\Models\Conversation::query()
                 ->where('user_id', '=', $userId)
                 ->where('openai_language_model', '=', $model->name)
                 ->select([
@@ -164,8 +164,8 @@ class User extends Resource
                     $model->output
                 ) +
                 TotalCosts::calculatePrice(
-                    $conversationTokens->conversations_prompt_tokens,
-                    $conversationTokens->conversations_completion_tokens,
+                    $conversationNameTokens->conversations_prompt_tokens,
+                    $conversationNameTokens->conversations_completion_tokens,
                     $model->input,
                     $model->output
                 );
