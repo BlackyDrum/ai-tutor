@@ -117,7 +117,11 @@ class ChatController extends Controller
             ->whereRaw('messages.created_at < shared_conversations.created_at')
             ->orderBy('messages.created_at', 'desc')
             ->select(['messages.user_message', 'messages.agent_message'])
-            ->paginate(config('chat.messages_per_page'));
+            ->paginate(
+                HomeController::isMobile(\request()->userAgent())
+                    ? config('chat.messages_per_page_mobile')
+                    : config('chat.messages_per_page_desktop')
+            );
     }
 
     public static function getMessagesForPeek($conversation_id)
@@ -148,7 +152,11 @@ class ChatController extends Controller
                 'modules.name AS module_name',
                 'agents.name AS agent_name',
             ])
-            ->paginate(config('chat.messages_per_page'));
+            ->paginate(
+                HomeController::isMobile(\request()->userAgent())
+                    ? config('chat.messages_per_page_mobile')
+                    : config('chat.messages_per_page_desktop')
+            );
     }
 
     public static function getMessagesForChat($conversation_id)
@@ -165,7 +173,11 @@ class ChatController extends Controller
             ->where('conversation_id', '=', $conversation->id)
             ->orderBy('created_at', 'desc')
             ->select(['id', 'user_message', 'agent_message', 'helpful'])
-            ->paginate(config('chat.messages_per_page'));
+            ->paginate(
+                HomeController::isMobile(\request()->userAgent())
+                    ? config('chat.messages_per_page_mobile')
+                    : config('chat.messages_per_page_desktop')
+            );
     }
 
     public function chat(Request $request)

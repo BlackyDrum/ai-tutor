@@ -12,7 +12,8 @@ return [
 
     // Specifies the number of chat messages to load per request for efficient pagination
     // Older messages are fetched automatically as the user scrolls
-    'messages_per_page' => 15,
+    'messages_per_page_desktop' => 15,
+    'messages_per_page_mobile' => 10,
 
     // Note: 'max_requests' can be adjusted on a per-user basis
 ];
