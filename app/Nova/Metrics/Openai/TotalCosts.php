@@ -73,6 +73,13 @@ class TotalCosts extends Value
         $range = 'ALL',
         $getTokensForConversationName = false
     ) {
+        // This method distinguishes between tokens used for messages and conversation titles/names.
+        // If '$getTokensForConversationName' is true, it queries the 'conversations' table to calculate
+        // the total number of prompt and completion tokens used specifically for creating conversation titles
+        // for a specific language model.
+        // Conversely, if false, it targets the 'messages' table to compute the total tokens used for all messages
+        // associated with a given language model.
+
         $totalTokens = ($getTokensForConversationName
             ? Conversation::query()
             : Message::query()
