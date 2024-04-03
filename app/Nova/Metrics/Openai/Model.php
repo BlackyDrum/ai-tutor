@@ -15,20 +15,20 @@ abstract class Model extends Partition
     {
         parent::__construct($component);
 
-        $messageTokens = TotalCosts::getTokens($this->name);
-        $conversationNameTokens = TotalCosts::getTokens(
+        $messageTokens = Costs::getTokens($this->name);
+        $conversationNameTokens = Costs::getTokens(
             modelName: $this->name,
             getTokensForConversationName: true
         );
 
-        $messageCosts = TotalCosts::calculatePrice(
+        $messageCosts = Costs::calculatePrice(
             $messageTokens['prompt_tokens'],
             $messageTokens['completion_tokens'],
             $this->input,
             $this->output
         );
 
-        $nameCosts = TotalCosts::calculatePrice(
+        $nameCosts = Costs::calculatePrice(
             $conversationNameTokens['prompt_tokens'],
             $conversationNameTokens['completion_tokens'],
             $this->input,
@@ -42,9 +42,9 @@ abstract class Model extends Partition
 
     public function calculate(NovaRequest $request)
     {
-        $messageTokens = TotalCosts::getTokens($this->name);
+        $messageTokens = Costs::getTokens($this->name);
 
-        $nameTokens = TotalCosts::getTokens(
+        $nameTokens = Costs::getTokens(
             modelName: $this->name,
             getTokensForConversationName: true
         );

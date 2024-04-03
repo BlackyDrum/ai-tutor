@@ -9,7 +9,7 @@ use App\Nova\Metrics\Openai\Models\gpt_4_0125_preview;
 use App\Nova\Metrics\Openai\Models\gpt_4_1106_preview;
 use App\Nova\Metrics\Openai\Models\gpt_4_1106_vision_preview;
 use App\Nova\Metrics\Openai\Models\gpt_4_32k;
-use App\Nova\Metrics\Openai\TotalCosts;
+use App\Nova\Metrics\Openai\Costs;
 use Laravel\Nova\Dashboard;
 
 class OpenAI extends Dashboard
@@ -21,7 +21,7 @@ class OpenAI extends Dashboard
      */
     public function cards()
     {
-        return [new TotalCosts(), ...self::models()];
+        return [new Costs(), ...self::models()];
     }
 
     public $showRefreshButton = true;

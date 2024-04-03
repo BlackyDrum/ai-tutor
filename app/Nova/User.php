@@ -4,7 +4,7 @@ namespace App\Nova;
 
 use App\Nova\Dashboards\OpenAI;
 use App\Nova\Filters\ModuleFilter;
-use App\Nova\Metrics\Openai\TotalCosts;
+use App\Nova\Metrics\Openai\Costs;
 use App\Nova\Metrics\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -174,13 +174,13 @@ class User extends Resource
                 ->first();
 
             $totalPrice +=
-                TotalCosts::calculatePrice(
+                Costs::calculatePrice(
                     $messagesTokens->messages_prompt_tokens,
                     $messagesTokens->messages_completion_tokens,
                     $model->input,
                     $model->output
                 ) +
-                TotalCosts::calculatePrice(
+                Costs::calculatePrice(
                     $conversationNameTokens->conversations_prompt_tokens,
                     $conversationNameTokens->conversations_completion_tokens,
                     $model->input,

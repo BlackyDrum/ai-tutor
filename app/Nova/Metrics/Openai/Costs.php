@@ -11,11 +11,13 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 use Laravel\Nova\Nova;
 
-class TotalCosts extends Value
+class Costs extends Value
 {
     public $width = 'full';
 
     public $icon = 'currency-dollar';
+
+    public $name = 'Total Costs';
 
     /**
      * Calculate the value of the metric.
