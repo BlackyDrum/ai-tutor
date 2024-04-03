@@ -24,7 +24,7 @@ class ChromaController extends Controller
         $queryResponse = $chromaCollection->query(
             queryTexts: [$message],
             nResults: $collection->max_results,
-            include: []
+            include: [] // No need for includes, because we only need the ids
         );
 
         // TODO: The PHP Adapter we are currently using for ChromaDB (see https://github.com/CodeWithKyrian/chromadb-php)
@@ -34,7 +34,9 @@ class ChromaController extends Controller
         $enhancedMessage = "\nUser Message:\n" . $message . "\n\n";
 
         foreach ($queryResponse->ids[0] as $id) {
-            $embedding = Embedding::query()->where('embedding_id', '=', $id)->first();
+            $embedding = Embedding::query()
+                ->where('embedding_id', '=', $id)
+                ->first();
 
             $count = ConversationHasDocument::query()
                 ->where('conversation_id', '=', $conversation->id)
@@ -52,7 +54,8 @@ class ChromaController extends Controller
             ]);
 
             $enhancedMessage .= "\n\"\"\"\n";
-            $enhancedMessage .= "Context Document:\n" . $embedding->content . "\n";
+            $enhancedMessage .=
+                "Context Document:\n" . $embedding->content . "\n";
             $enhancedMessage .= "\"\"\"\n";
         }
 
@@ -376,10 +379,12 @@ class ChromaController extends Controller
         $allDocuments = [];
 
         foreach ($embeddings as $embedding) {
-            $replicate = $embedding->replicate(['created_at', 'updated_at'])->fill([
-                'embedding_id' => Str::orderedUuid()->toString(),
-                'collection_id' => $copy->id,
-            ]);
+            $replicate = $embedding
+                ->replicate(['created_at', 'updated_at'])
+                ->fill([
+                    'embedding_id' => Str::orderedUuid()->toString(),
+                    'collection_id' => $copy->id,
+                ]);
 
             $result = $originalCollection->get(
                 ids: [$embedding->embedding_id],
@@ -417,10 +422,7 @@ class ChromaController extends Controller
 
         $embeddingFunction = self::getEmbeddingFunction();
 
-        return $chromaDB->getCollection(
-            $name,
-            $embeddingFunction
-        );
+        return $chromaDB->getCollection($name, $embeddingFunction);
     }
 
     public static function getEmbeddingFunction()
