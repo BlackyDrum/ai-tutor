@@ -90,10 +90,10 @@ class LtiController extends Controller
         return $this->redirectWithError();
     }
 
-    private function redirectWithError($reason = null)
+    private function redirectWithError($reason = '')
     {
         Log::info('Auth: LTI launch failed. Reason: {reason}', [
-            'reason' => $reason ?? '',
+            'reason' => $reason,
         ]);
 
         return redirect('/login')->withErrors(
