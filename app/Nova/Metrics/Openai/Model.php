@@ -16,6 +16,7 @@ abstract class Model extends Partition
         parent::__construct($component);
 
         $messageTokens = Costs::getTokens($this->name);
+
         $conversationNameTokens = Costs::getTokens(
             modelName: $this->name,
             getTokensForConversationName: true

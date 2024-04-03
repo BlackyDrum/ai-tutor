@@ -35,23 +35,27 @@ class Costs extends Value
 
         foreach ($models as $model) {
             $messageTokens = self::getTokens($model->name, $range);
+
             $conversationNameTokens = self::getTokens(
                 $model->name,
                 $range,
                 true
             );
+
             $messagePrice = self::calculatePrice(
                 $messageTokens['prompt_tokens'],
                 $messageTokens['completion_tokens'],
                 $model->input,
                 $model->output
             );
+
             $namePrice = self::calculatePrice(
                 $conversationNameTokens['prompt_tokens'],
                 $conversationNameTokens['completion_tokens'],
                 $model->input,
                 $model->output
             );
+
             $totalPrice += $messagePrice + $namePrice;
         }
 
@@ -106,8 +110,10 @@ class Costs extends Value
         ];
     }
 
-    public static function calculateCostsByConversationOrUser($conversationId = null, $userId = null)
-    {
+    public static function calculateCostsByConversationOrUser(
+        $conversationId = null,
+        $userId = null
+    ) {
         $models = OpenAI::models();
         $totalPrice = 0;
 
