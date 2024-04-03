@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Nova\Agent;
 use App\Nova\Collection;
 use App\Nova\Conversation;
+use App\Nova\ConversationHasDocument;
 use App\Nova\Dashboards\Main;
 use App\Nova\Dashboards\OpenAI;
 use App\Nova\Embedding;
@@ -55,6 +56,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Conversation::class),
                     MenuItem::resource(Message::class),
                     MenuItem::resource(SharedConversation::class),
+                    MenuItem::resource(ConversationHasDocument::class)->name('Documents in Conversation'),
                 ])->icon('annotation')->collapsable(),
 
                 MenuSection::make('Users', [
