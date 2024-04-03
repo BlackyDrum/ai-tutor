@@ -27,6 +27,10 @@ class ChromaController extends Controller
             include: []
         );
 
+        // TODO: The PHP Adapter we are currently using for ChromaDB (see https://github.com/CodeWithKyrian/chromadb-php)
+        //       does not yet offer details on embedding query metrics like prompt- and total_tokens.
+        //       Consider enhancing the Adapter to include this functionality.
+
         $enhancedMessage = "\nUser Message:\n" . $message . "\n\n";
 
         foreach ($queryResponse->ids[0] as $id) {
