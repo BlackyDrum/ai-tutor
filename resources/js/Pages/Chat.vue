@@ -55,6 +55,7 @@ onBeforeMount(() => {
     messages.value = JSON.parse(
         JSON.stringify(page.props.messages.data),
     ).reverse();
+
     messagesRaw.value = JSON.parse(
         JSON.stringify(page.props.messages.data),
     ).reverse();
