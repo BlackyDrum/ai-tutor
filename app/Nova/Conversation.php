@@ -8,12 +8,12 @@ use App\Nova\Filters\ModuleFilter;
 use App\Nova\Filters\UserFilter;
 use App\Nova\Metrics\ConversationsPerDay;
 use Illuminate\Http\Request;
-use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -78,6 +78,12 @@ class Conversation extends Resource
                 ->onlyOnDetail(),
 
             Boolean::make('Name Edited')->onlyOnDetail(),
+
+            Number::make('Total Costs', function ($conversation) {
+                return User::calculateTotalCosts(
+                    conversationId: $conversation->id
+                );
+            }),
 
             BelongsTo::make('Module')->sortable(),
 

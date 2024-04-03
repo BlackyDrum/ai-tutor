@@ -80,7 +80,7 @@ class User extends Resource
             Boolean::make('Admin')->onlyOnDetail(),
 
             Number::make('Total Costs Generated', function ($user) {
-                return $this->calculateTotalCosts($user->id);
+                return self::calculateTotalCosts(userId: $user->id);
             })
                 ->hideWhenUpdating()
                 ->hideWhenCreating()
@@ -117,22 +117,40 @@ class User extends Resource
         return false;
     }
 
-    private function calculateTotalCosts($userId)
+    public static function calculateTotalCosts($conversationId = null, $userId = null)
     {
         $models = OpenAI::models();
-
         $totalPrice = 0;
 
+        // Here we calculate the total costs either per user or conversation
+        // based on the provided parameter
         foreach ($models as $model) {
-            $messagesTokens = \App\Models\Message::query()
+            $queryBase = \App\Models\Message::query()
                 ->join(
                     'conversations',
                     'conversations.id',
                     '=',
                     'messages.conversation_id'
                 )
-                ->where('conversations.user_id', '=', $userId)
-                ->where('messages.openai_language_model', '=', $model->name)
+                ->where('messages.openai_language_model', '=', $model->name);
+
+            if ($conversationId) {
+                $queryBase->where('conversations.id', '=', $conversationId);
+                $conversationQueryBase = \App\Models\Conversation::query()->where(
+                    'id',
+                    '=',
+                    $conversationId
+                );
+            } else {
+                $queryBase->where('conversations.user_id', '=', $userId);
+                $conversationQueryBase = \App\Models\Conversation::query()->where(
+                    'user_id',
+                    '=',
+                    $userId
+                );
+            }
+
+            $messagesTokens = $queryBase
                 ->select([
                     DB::raw(
                         'SUM(messages.prompt_tokens) AS messages_prompt_tokens'
@@ -143,8 +161,7 @@ class User extends Resource
                 ])
                 ->first();
 
-            $conversationNameTokens = \App\Models\Conversation::query()
-                ->where('user_id', '=', $userId)
+            $conversationNameTokens = $conversationQueryBase
                 ->where('openai_language_model', '=', $model->name)
                 ->select([
                     DB::raw(
