@@ -9,6 +9,7 @@ use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 use Codewithkyrian\ChromaDB\Embeddings\OpenAIEmbeddingFunction;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ChromaController extends Controller
@@ -22,7 +23,8 @@ class ChromaController extends Controller
 
         $queryResponse = $chromaCollection->query(
             queryTexts: [$message],
-            nResults: $collection->max_results
+            nResults: $collection->max_results,
+            include: []
         );
 
         $enhancedMessage = "\nUser Message:\n" . $message . "\n\n";
