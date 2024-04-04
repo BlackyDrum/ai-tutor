@@ -75,7 +75,7 @@ class User extends Resource
                 ->default(function () {
                     return config('chat.max_requests');
                 })
-                ->help('Maximum number of requests per day'),
+                ->help('Maximum number of messages per day'),
 
             Boolean::make('Admin')->onlyOnDetail(),
 
