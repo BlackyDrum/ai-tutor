@@ -5,7 +5,6 @@ namespace App\Nova;
 use App\Nova\Filters\AgentFilter;
 use App\Nova\Filters\CollectionFilter;
 use App\Nova\Filters\ModuleFilter;
-use App\Nova\Filters\UserFilter;
 use App\Nova\Metrics\ConversationsPerDay;
 use App\Nova\Metrics\Openai\Costs;
 use Illuminate\Http\Request;
@@ -92,7 +91,9 @@ class Conversation extends Resource
 
             BelongsTo::make('Collection')->sortable(),
 
-            BelongsTo::make('Owner', 'user', User::class)->sortable(),
+            BelongsTo::make('Owner', 'user', User::class)
+                ->sortable()
+                ->filterable(),
 
             HasMany::make('Messages'),
 
@@ -137,11 +138,6 @@ class Conversation extends Resource
 
     public function filters(NovaRequest $request)
     {
-        return [
-            new ModuleFilter(),
-            new CollectionFilter(),
-            new AgentFilter(),
-            new UserFilter(),
-        ];
+        return [new ModuleFilter(), new CollectionFilter(), new AgentFilter()];
     }
 }
