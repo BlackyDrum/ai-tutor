@@ -24,11 +24,6 @@ import MessageInspector from "@/Components/MessageInspector.vue";
 import Message from "primevue/message";
 import Avatar from "primevue/avatar";
 
-defineProps({
-    conversation_id: String,
-    conversation_name: String,
-});
-
 const appName = import.meta.env.VITE_APP_NAME;
 
 const page = usePage();
