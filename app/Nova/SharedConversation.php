@@ -51,6 +51,8 @@ class SharedConversation extends Resource
 
             Text::make('Shared URL ID', 'shared_url_id'),
 
+            BelongsTo::make('Conversation'),
+
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
@@ -61,8 +63,6 @@ class SharedConversation extends Resource
                 ->hideWhenUpdating()
                 ->onlyOnDetail()
                 ->sortable(),
-
-            BelongsTo::make('Conversation'),
         ];
     }
 
