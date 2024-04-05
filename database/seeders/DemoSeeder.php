@@ -80,7 +80,5 @@ class DemoSeeder extends Seeder
                 throw $exception;
             }
         }
-
-        Conversation::factory()->count(100)->create();
     }
 }
