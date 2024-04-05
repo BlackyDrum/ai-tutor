@@ -122,21 +122,21 @@ class Embedding extends Resource
         $name = $model->name;
         $collectionId = $model->collection_id;
 
-        $document = Document::query()->create([
+        $newDocument = Document::query()->create([
             'name' => $model->name,
             'collection_id' => $model->collection_id,
         ]);
 
         try {
-            ChromaController::createEmbedding($model, $document);
+            ChromaController::createEmbedding($model, $newDocument);
 
-            $document = Document::query()
+            $oldDocument = Document::query()
                 ->where('name', '=', $name)
                 ->where('collection_id', '=', $collectionId)
-                ->whereNot('id', '=', $document->id)
+                ->whereNot('id', '=', $newDocument->id)
                 ->first();
 
-            $document?->delete();
+            $oldDocument?->delete();
 
             Log::info('App: User with ID {user-id} created an embedding', [
                 'id' => $model->id,
