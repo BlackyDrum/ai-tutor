@@ -239,13 +239,12 @@ This command checks if `ChromaDB's` data is in sync with the relational database
 
 ### Sync ChromaDB with Relational Database
 
-Should the validation indicate a discrepancy, or if you wish to manually synchronize `ChromaDB` with the relational database, execute the command below:
+Should the validation indicate a discrepancy, or if you wish to manually synchronize `ChromaDB` with the relational database, execute the command below.
+You need to specify the `authoritative` data source by using `--source=chroma` for `ChromaDB` or `--source=relational` for the relational database. The selected source's data will be replicated to the other database, and existing data in the target database will be overwritten or removed.
 
 ```
-$ php artisan chroma:sync
+$ php artisan chroma:sync --source=chroma # or --source=relational
 ```
-
-This step is crucial, especially in scenarios where `ChromaDB` holds data that has not yet been updated or reflected in the relational database. It ensures both databases are aligned.
 
 ### Clearing ChromaDB Data
 

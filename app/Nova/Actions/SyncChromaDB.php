@@ -6,9 +6,11 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Actions\ActionResponse;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class SyncChromaDB extends Action
@@ -17,7 +19,7 @@ class SyncChromaDB extends Action
 
     public $name = 'Synchronize Databases';
 
-    public $confirmText = 'This action will synchronize ChromaDB with the relational database. This will assume that the data in ChromaDB is correct and replicate its contents into the relational database';
+    public $confirmText = "This action will synchronize ChromaDB with the relational database. You need to specify the authoritative data source. The selected source's data will be replicated to the other database, and existing data in the target database will be overwritten or removed.";
 
     public $standalone = true;
 
@@ -32,11 +34,16 @@ class SyncChromaDB extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        Artisan::call('chroma:sync');
+        $result = Artisan::call("chroma:sync --source={$fields->get('source')}");
 
-        return ActionResponse::message(
-            'Synced ChromaDB with the relational database'
-        );
+        if ($result == 0) {
+            return ActionResponse::message(
+                'Synced ChromaDB with the relational database'
+            );
+        }
+        else {
+            return ActionResponse::danger('Syncing failed');
+        }
     }
 
     /**
@@ -47,6 +54,11 @@ class SyncChromaDB extends Action
      */
     public function fields(NovaRequest $request)
     {
-        return [];
+        return [
+            Select::make('Source')->options([
+                'relational' => 'Relational Database',
+                'chroma' => 'ChromaDB'
+            ])
+        ];
     }
 }

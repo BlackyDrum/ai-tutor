@@ -334,7 +334,7 @@ class ChromaController extends Controller
 
         $collection = self::getCollection($collection);
 
-        $embedding = $collection->get(ids: [$model->embedding_id]);
+        $embedding = $collection->get(ids: [$model->embedding_id . 'asd']);
 
         // We need to throw an exception here by ourselves, because the
         // ChromaDB PHP adapter we are using doesn't do that

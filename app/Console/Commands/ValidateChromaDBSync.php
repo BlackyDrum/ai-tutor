@@ -35,7 +35,7 @@ class ValidateChromaDBSync extends Command
         $error = false;
 
         $failMessage =
-            "Relational Database is NOT in sync with ChromaDB.\nConsider running 'php artisan chroma:sync' to sync the databases. This will assume that the data in ChromaDB is correct and replicate its contents into the relational database";
+            "Relational Database is NOT in sync with ChromaDB.\nConsider running 'php artisan chroma:sync' to sync the databases.";
 
         $client = ChromaController::getClient();
 

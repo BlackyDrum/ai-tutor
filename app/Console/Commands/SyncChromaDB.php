@@ -15,7 +15,7 @@ class SyncChromaDB extends Command
      *
      * @var string
      */
-    protected $signature = 'chroma:sync';
+    protected $signature = 'chroma:sync {--source=}';
 
     /**
      * The console command description.
@@ -29,87 +29,142 @@ class SyncChromaDB extends Command
      */
     public function handle()
     {
+        $warnMessage =
+            "Please specify the authoritative data source by using '--source=chroma' for ChromaDB or '--source=relational' for the relational database. The selected source's data will be replicated to the other database, and existing data in the target database will be overwritten or removed.";
+        $option = $this->option('source');
+
+        if ($option != 'chroma' && $option != 'relational') {
+            $this->warn($warnMessage);
+            return -1;
+        }
+
         $this->info('Syncing...');
 
         $client = ChromaController::getClient();
 
-        $chromaCollections = $client->listCollections();
+        if ($option == 'relational') {
+            $relationalCollections = Collection::all();
 
-        $collectionNames = [];
+            $client->deleteAllCollections();
 
-        foreach ($chromaCollections as $chromaCollection) {
-            $collection = Collection::query()->updateOrCreate(
-                [
-                    'name' => $chromaCollection->name,
-                ],
-                [
-                    'max_results' => $chromaCollection->metadata['max_results'],
-                ]
-            );
+            foreach ($relationalCollections as $relationalCollection) {
+                ChromaController::createCollection($relationalCollection);
 
-            $collectionNames[] = $collection->name;
-        }
+                $collection = ChromaController::getCollection(
+                    $relationalCollection->name
+                );
 
-        Collection::query()
-            ->whereNotIn('name', $collectionNames)
-            ->forceDelete();
+                $relationalEmbeddings = Embedding::query()
+                    ->where('collection_id', '=', $relationalCollection->id)
+                    ->get();
 
-        $relationalCollections = Collection::all();
+                $ids = [];
+                $metadatas = [];
+                $documents = [];
+                foreach ($relationalEmbeddings as $relationalEmbedding) {
+                    $metadata = [
+                        'name' => $relationalEmbedding->name,
+                        'size' => $relationalEmbedding->size,
+                        'document' => Document::query()->find(
+                            $relationalEmbedding->document_id
+                        )->name,
+                    ];
 
-        foreach ($relationalCollections as $relationalCollection) {
-            $collection = ChromaController::getCollection(
-                $relationalCollection->name
-            );
+                    $ids[] = $relationalEmbedding->embedding_id;
+                    $documents[] = $relationalEmbedding->content;
+                    $metadatas[] = $metadata;
+                }
 
-            $data = $collection->get(
-                include: ['embeddings', 'metadatas', 'documents']
-            );
+                if (!empty($ids)) {
+                    $collection->add(
+                        ids: $ids,
+                        metadatas: $metadatas,
+                        documents: $documents
+                    );
+                }
+            }
+        } else {
+            $chromaCollections = $client->listCollections();
 
-            $documents = $data->documents;
-            $metadata = $data->metadatas;
-            $ids = $data->ids;
+            $collectionNames = [];
 
-            $embeddingIds = [];
-
-            $documentIds = [];
-
-            foreach ($ids as $key => $id) {
-                $document = Document::query()->firstOrCreate([
-                    'name' => $metadata[$key]['document'],
-                    'collection_id' => $relationalCollection->id,
-                ]);
-
-                $documentIds[] = $document->id;
-
-                $embedding = Embedding::query()->updateOrCreate(
+            foreach ($chromaCollections as $chromaCollection) {
+                $collection = Collection::query()->updateOrCreate(
                     [
-                        'embedding_id' => $id,
+                        'name' => $chromaCollection->name,
                     ],
                     [
-                        'name' => $metadata[$key]['name'],
-                        'content' => $documents[$key],
-                        'size' => $metadata[$key]['size'],
-                        'collection_id' => $relationalCollection->id,
-                        'document_id' => $document->id,
+                        'max_results' =>
+                            $chromaCollection->metadata['max_results'],
                     ]
                 );
 
-                $embeddingIds[] = $embedding->embedding_id;
+                $collectionNames[] = $collection->name;
             }
 
-            Document::query()
-                ->where('collection_id', '=', $relationalCollection->id)
-                ->whereNotIn('id', array_unique($documentIds))
-                ->delete();
-
-            Embedding::query()
-                ->where('collection_id', '=', $relationalCollection->id)
-                ->whereNotIn('embedding_id', $embeddingIds)
+            Collection::query()
+                ->whereNotIn('name', $collectionNames)
                 ->forceDelete();
+
+            $relationalCollections = Collection::all();
+
+            foreach ($relationalCollections as $relationalCollection) {
+                $collection = ChromaController::getCollection(
+                    $relationalCollection->name
+                );
+
+                $data = $collection->get(
+                    include: ['embeddings', 'metadatas', 'documents']
+                );
+
+                $documents = $data->documents;
+                $metadata = $data->metadatas;
+                $ids = $data->ids;
+
+                $embeddingIds = [];
+
+                $documentIds = [];
+
+                foreach ($ids as $key => $id) {
+                    $document = Document::query()->firstOrCreate([
+                        'name' => $metadata[$key]['document'],
+                        'collection_id' => $relationalCollection->id,
+                    ]);
+
+                    $documentIds[] = $document->id;
+
+                    $embedding = Embedding::query()->updateOrCreate(
+                        [
+                            'embedding_id' => $id,
+                        ],
+                        [
+                            'name' => $metadata[$key]['name'],
+                            'content' => $documents[$key],
+                            'size' => $metadata[$key]['size'],
+                            'collection_id' => $relationalCollection->id,
+                            'document_id' => $document->id,
+                        ]
+                    );
+
+                    $embeddingIds[] = $embedding->embedding_id;
+                }
+
+                Document::query()
+                    ->where('collection_id', '=', $relationalCollection->id)
+                    ->whereNotIn('id', array_unique($documentIds))
+                    ->delete();
+
+                Embedding::query()
+                    ->where('collection_id', '=', $relationalCollection->id)
+                    ->whereNotIn('embedding_id', $embeddingIds)
+                    ->forceDelete();
+            }
         }
 
         $this->info(
             'Synced ChromaDB with relational database. Run \'php artisan chroma:check\' to validate.'
         );
+
+        return 0;
     }
 }
