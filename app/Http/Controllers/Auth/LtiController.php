@@ -77,6 +77,7 @@ class LtiController extends Controller
             );
 
             $user->module_id = $module->id;
+            $user->context_title = $contextTitle;
             $user->save();
 
             Auth::login($user);
