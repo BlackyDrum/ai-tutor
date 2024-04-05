@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\ChromaController;
 use App\Models\Collection;
+use App\Models\Document;
 use App\Models\Embedding;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ValidateChromaDBSync extends Command
 {
@@ -81,7 +83,7 @@ class ValidateChromaDBSync extends Command
                 $collection->metadata['max_results']
             ) {
                 $this->error(
-                    "'Max Results' doesn't match for collection {$collection->name}"
+                    "'Max Results' doesn't match for collection {$collection->name}. RelationalDB: {$relationalCollection->max_results}, ChromaDB: {$collection->metadata['max_results']}"
                 );
 
                 $error = true;
@@ -167,7 +169,7 @@ class ValidateChromaDBSync extends Command
                 $name = $embedding->metadatas[0]['name'];
                 if ($name != $relationalEmbedding->name) {
                     $this->error(
-                        "Name of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB Name: {$relationalEmbedding->name}, ChromaDB Name: $name"
+                        "Name of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$relationalEmbedding->name}, ChromaDB: $name"
                     );
                     $error = true;
                     $collectionError = true;
@@ -176,7 +178,36 @@ class ValidateChromaDBSync extends Command
                 $size = $embedding->metadatas[0]['size'];
                 if ($size != $relationalEmbedding->size) {
                     $this->error(
-                        "Size of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB Name: {$relationalEmbedding->size}, ChromaDB Name: $size"
+                        "Size of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$relationalEmbedding->size}, ChromaDB: $size"
+                    );
+                    $error = true;
+                    $collectionError = true;
+                }
+
+                $documentName = $embedding->metadatas[0]['document'];
+                try {
+                    $document = Document::query()->findOrFail(
+                        $relationalEmbedding->document_id
+                    );
+                    if ($documentName != $document->name) {
+                        $this->error(
+                            "Document of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$document->name}, ChromaDB: $documentName"
+                        );
+                        $error = true;
+                        $collectionError = true;
+                    } elseif (
+                        $document->collection_id !=
+                        $relationalEmbedding->collection_id
+                    ) {
+                        $this->error(
+                            "Document Name matches, but collection doesn't match for {$relationalEmbedding->embedding_id}. Document Collection ID: {$document->collection_id}, Embedding Collection ID: {$relationalEmbedding->collection_id}"
+                        );
+                        $error = true;
+                        $collectionError = true;
+                    }
+                } catch (ModelNotFoundException $exception) {
+                    $this->error(
+                        "Cannot find relational document for {$relationalEmbedding->embedding_id}. Document: {$documentName}"
                     );
                     $error = true;
                     $collectionError = true;

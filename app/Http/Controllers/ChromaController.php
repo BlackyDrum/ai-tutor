@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Collection;
 use App\Models\ConversationHasDocument;
+use App\Models\Document;
 use App\Models\Embedding;
 use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 use Codewithkyrian\ChromaDB\Embeddings\OpenAIEmbeddingFunction;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ChromaController extends Controller
@@ -62,7 +61,7 @@ class ChromaController extends Controller
         return $enhancedMessage;
     }
 
-    public static function createEmbedding($model)
+    public static function createEmbedding($model, $document)
     {
         $pathToFile = storage_path() . '/app/' . $model->embedding_id;
 
@@ -72,7 +71,7 @@ class ChromaController extends Controller
         if (str_ends_with($filename, 'pptx')) {
             $slides = self::parsePPTX($pathToFile);
 
-            $result = self::createEmbeddingFromJson($slides, $model);
+            $result = self::createEmbeddingFromJson($slides, $model, $document);
 
             // After processing the file into separate slides/pages, we don't
             // need the uploaded file anymore. So, we delete the model to avoid
@@ -85,7 +84,7 @@ class ChromaController extends Controller
         } elseif (str_ends_with($filename, 'json')) {
             $json = json_decode(file_get_contents($pathToFile), true);
 
-            $result = self::createEmbeddingFromJson($json, $model);
+            $result = self::createEmbeddingFromJson($json, $model, $document);
 
             $model->forceDelete();
 
@@ -96,6 +95,7 @@ class ChromaController extends Controller
             $text = file_get_contents($pathToFile);
 
             $model->content = $text ?? '';
+            $model->document_id = $document->id;
 
             $ids = [$model->embedding_id];
             $documents = [$text];
@@ -103,6 +103,7 @@ class ChromaController extends Controller
                 [
                     'name' => $model->name,
                     'size' => $model->size,
+                    'document' => $model->name,
                 ],
             ];
 
@@ -110,7 +111,7 @@ class ChromaController extends Controller
         } elseif (str_ends_with($filename, 'md')) {
             $markdown = file_get_contents($pathToFile);
 
-            $result = self::createEmbeddingFromMarkdown($markdown, $model);
+            $result = self::createEmbeddingFromMarkdown($markdown, $model, $document);
 
             $model->forceDelete();
 
@@ -123,15 +124,17 @@ class ChromaController extends Controller
             );
         }
 
-        $collection = Collection::query()->find($collectionId)->name;
+        if (!empty($ids)) {
+            $collection = Collection::query()->find($collectionId)->name;
 
-        $collection = self::getCollection($collection);
+            $collection = self::getCollection($collection);
 
-        $collection->add(
-            ids: $ids,
-            metadatas: $metadata,
-            documents: $documents
-        );
+            $collection->add(
+                ids: $ids,
+                metadatas: $metadata,
+                documents: $documents
+            );
+        }
     }
 
     private static function parsePPTX($pathToFile)
@@ -201,7 +204,7 @@ class ChromaController extends Controller
         }
     }
 
-    private static function createAndStoreSlide($model, $title, $body, $index)
+    private static function createAndStoreSlide($model, $title, $body, $index, $document)
     {
         $embedding_id = Str::orderedUuid()->toString();
         $contentOnSlide = "Title: $title\n$body";
@@ -212,11 +215,13 @@ class ChromaController extends Controller
             'content' => $contentOnSlide,
             'size' => strlen($contentOnSlide),
             'collection_id' => $model->collection_id,
+            'document_id' => $document->id,
         ]);
 
         $metadata = [
             'name' => $model->name . " Slide $index",
             'size' => strlen($contentOnSlide),
+            'document' => $model->name,
         ];
 
         return [
@@ -226,7 +231,7 @@ class ChromaController extends Controller
         ];
     }
 
-    private static function createEmbeddingFromMarkdown($markdown, $model)
+    private static function createEmbeddingFromMarkdown($markdown, $model, $document)
     {
         $markdown = preg_replace('/---/s', '', $markdown);
 
@@ -254,7 +259,8 @@ class ChromaController extends Controller
                 model: $model,
                 title: substr($slide[0], 2),
                 body: implode("\n", array_slice($slide, 1)),
-                index: $index
+                index: $index,
+                document: $document,
             );
 
             $ids[] = $result['id'];
@@ -271,7 +277,7 @@ class ChromaController extends Controller
         ];
     }
 
-    private static function createEmbeddingFromJson($json, $model)
+    private static function createEmbeddingFromJson($json, $model, $document)
     {
         $ids = [];
         $documents = [];
@@ -282,7 +288,7 @@ class ChromaController extends Controller
             $title = $content['title'];
             $body = implode("\n", $content['content']);
 
-            $result = self::createAndStoreSlide($model, $title, $body, $index);
+            $result = self::createAndStoreSlide($model, $title, $body, $index, $document);
 
             $ids[] = $result['id'];
             $documents[] = $result['document'];
@@ -310,6 +316,8 @@ class ChromaController extends Controller
                 [
                     'name' => $model->name,
                     'size' => strlen($model->content),
+                    'document' => Document::query()->find($model->document_id)
+                        ->name,
                 ],
             ],
             documents: [$model->content]
@@ -379,11 +387,18 @@ class ChromaController extends Controller
         $allDocuments = [];
 
         foreach ($embeddings as $embedding) {
+            $document = Document::query()->firstOrCreate([
+                'name' => Document::query()->find($embedding->document_id)
+                    ->name,
+                'collection_id' => $copy->id,
+            ]);
+
             $replicate = $embedding
                 ->replicate(['created_at', 'updated_at'])
                 ->fill([
                     'embedding_id' => Str::orderedUuid()->toString(),
                     'collection_id' => $copy->id,
+                    'document_id' => $document->id,
                 ]);
 
             $result = $originalCollection->get(
@@ -399,14 +414,16 @@ class ChromaController extends Controller
             $replicate->save();
         }
 
-        $copiedCollection = self::getCollection($copy->name);
+        if (!empty($ids)) {
+            $copiedCollection = self::getCollection($copy->name);
 
-        $copiedCollection->add(
-            ids: $ids,
-            embeddings: $allEmbeddings,
-            metadatas: $allMetadata,
-            documents: $allDocuments
-        );
+            $copiedCollection->add(
+                ids: $ids,
+                embeddings: $allEmbeddings,
+                metadatas: $allMetadata,
+                documents: $allDocuments
+            );
+        }
     }
 
     public static function deleteCollection($model)

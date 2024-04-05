@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\ChromaController;
 use App\Models\Collection;
+use App\Models\Document;
 use App\Models\Embedding;
 use Illuminate\Console\Command;
 
@@ -70,7 +71,16 @@ class SyncChromaDB extends Command
 
             $embeddingIds = [];
 
+            $documentIds = [];
+
             foreach ($ids as $key => $id) {
+                $document = Document::query()->firstOrCreate([
+                    'name' => $metadata[$key]['document'],
+                    'collection_id' => $relationalCollection->id,
+                ]);
+
+                $documentIds[] = $document->id;
+
                 $embedding = Embedding::query()->updateOrCreate(
                     [
                         'embedding_id' => $id,
@@ -80,11 +90,17 @@ class SyncChromaDB extends Command
                         'content' => $documents[$key],
                         'size' => $metadata[$key]['size'],
                         'collection_id' => $relationalCollection->id,
+                        'document_id' => $document->id,
                     ]
                 );
 
                 $embeddingIds[] = $embedding->embedding_id;
             }
+
+            Document::query()
+                ->where('collection_id', '=', $relationalCollection->id)
+                ->whereNotIn('id', array_unique($documentIds))
+                ->delete();
 
             Embedding::query()
                 ->where('collection_id', '=', $relationalCollection->id)

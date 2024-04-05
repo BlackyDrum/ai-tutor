@@ -3,14 +3,14 @@
 namespace App\Nova;
 
 use App\Http\Controllers\ChromaController;
+use App\Models\Document;
 use App\Nova\Filters\CollectionFilter;
 use App\Nova\Metrics\Embeddings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
-use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\File;
@@ -70,18 +70,7 @@ class Embedding extends Resource
                 ->disableDownload()
                 ->hideFromDetail()
                 ->hideWhenUpdating()
-                ->rules('required', 'extensions:txt,pptx,json,md', function (
-                    $attribute,
-                    $value,
-                    $fail
-                ) {
-                    if (
-                        str_contains($value->getClientOriginalName(), '/') ||
-                        str_contains($value->getClientOriginalName(), '\\')
-                    ) {
-                        $fail('The filename cannot contain the "/" character.');
-                    }
-                })
+                ->rules('required', 'extensions:txt,pptx,json,md')
                 ->storeOriginalName('name')
                 ->storeSize('size')
                 ->readonly(function () {
@@ -93,6 +82,11 @@ class Embedding extends Resource
                 ->hideWhenUpdating()
                 ->hideWhenCreating()
                 ->sortable(),
+
+            BelongsTo::make('Document')
+                ->sortable()
+                ->hideWhenUpdating()
+                ->hideWhenCreating(),
 
             BelongsTo::make('Collection')
                 ->sortable()
@@ -125,8 +119,24 @@ class Embedding extends Resource
     {
         $pathToFile = storage_path() . '/app/' . $model->embedding_id;
 
+        $name = $model->name;
+        $collectionId = $model->collection_id;
+
+        $document = Document::query()->create([
+            'name' => $model->name,
+            'collection_id' => $model->collection_id,
+        ]);
+
         try {
-            ChromaController::createEmbedding($model);
+            ChromaController::createEmbedding($model, $document);
+
+            $document = Document::query()
+                ->where('name', '=', $name)
+                ->where('collection_id', '=', $collectionId)
+                ->whereNot('id', '=', $document->id)
+                ->first();
+
+            $document?->delete();
 
             Log::info('App: User with ID {user-id} created an embedding', [
                 'id' => $model->id,
@@ -173,6 +183,15 @@ class Embedding extends Resource
         try {
             ChromaController::deleteEmbedding($model);
 
+            $count = \App\Models\Embedding::query()
+                ->where('document_id', '=', $model->document_id)
+                ->count();
+
+            if ($count == 0) {
+                $document = Document::query()->find($model->document_id);
+                $document?->delete();
+            }
+
             Log::info('App: User with ID {user-id} deleted an embedding', [
                 'id' => $model->id,
                 'name' => $model->name,
@@ -213,7 +232,10 @@ class Embedding extends Resource
 
     public static function softDeletes()
     {
-        if (static::authorizable() and Gate::check('restore', get_class(static::newModel()))) {
+        if (
+            static::authorizable() and
+            Gate::check('restore', get_class(static::newModel()))
+        ) {
             return parent::softDeletes();
         }
 

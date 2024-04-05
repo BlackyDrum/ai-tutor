@@ -20,6 +20,7 @@ class Embedding extends Model
         'collection_id',
         'embedding_id',
         'content',
+        'document_id',
     ];
 
     public function collection()
@@ -30,5 +31,10 @@ class Embedding extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function document()
+    {
+        return $this->belongsTo(Document::class, 'document_id');
     }
 }

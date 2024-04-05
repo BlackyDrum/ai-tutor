@@ -7,6 +7,7 @@ use App\Nova\Collection;
 use App\Nova\Conversation;
 use App\Nova\Dashboards\Main;
 use App\Nova\Dashboards\OpenAI;
+use App\Nova\Document;
 use App\Nova\Embedding;
 use App\Nova\Message;
 use App\Nova\Module;
@@ -48,6 +49,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::make('ChromaDB', [
                     MenuItem::resource(Collection::class),
                     MenuItem::resource(Embedding::class),
+                    MenuItem::resource(Document::class),
                 ])->icon('database')->collapsable(),
 
                 MenuSection::make('Chat', [
