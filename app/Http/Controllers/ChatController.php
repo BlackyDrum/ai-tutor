@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Collection;
 use App\Models\ConversationHasDocument;
 use App\Models\Conversation;
+use App\Models\Document;
 use App\Models\Message;
+use App\Models\Module;
 use App\Models\SharedConversation;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
@@ -29,6 +32,12 @@ class ChatController extends Controller
             return redirect('/');
         }
 
+        $date = Document::query()
+            ->where('collection_id', '=', $conversation->collection_id)
+            ->orderBy('updated_at', 'desc')
+            ->first()
+            ->updated_at ?? null;
+
         return Inertia::render('Chat', [
             'messages' => $messages,
             'conversation_id' => $id,
@@ -37,6 +46,8 @@ class ChatController extends Controller
             'showOptions' => true,
             'username' => null,
             'info' => session()->pull('info_message_remaining_messages'),
+            'current_module' => Module::query()->find($conversation->module_id)->name,
+            'data_from' => $date
         ]);
     }
 

@@ -104,10 +104,14 @@ const handleInput = () => {
         </form>
     </div>
     <div class="p-1 pb-2 text-center text-xs">
-        Bachelor thesis project by <strong>Gani Aytan</strong>. Please contact
-        <a class="underline" href="mailto:gani.aytan@alumni.fh-aachen.de"
-            >gani.aytan@alumni.fh-aachen.de</a
+        <strong>{{
+            $page.component === "Home"
+                ? $page.props.auth.user.context_title
+                : $page.props.current_module
+        }}</strong>
+        <span v-if="$page.props.data_from"
+            >- Data updated at
+            {{ new Date($page.props.data_from).toDateString() }}</span
         >
-        for questions or technical assistance.
     </div>
 </template>
