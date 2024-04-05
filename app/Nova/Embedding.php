@@ -123,7 +123,7 @@ class Embedding extends Resource
         $collectionId = $model->collection_id;
 
         $document = Document::query()->create([
-            'name' => substr($model->name, 0, strrpos($model->name, '.')),
+            'name' => $model->name,
             'collection_id' => $model->collection_id,
         ]);
 
