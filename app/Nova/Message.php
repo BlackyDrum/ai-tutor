@@ -57,7 +57,7 @@ class Message extends Resource
 
             BelongsTo::make('Conversation')->readonly()->hideWhenUpdating(),
 
-            Textarea::make('User Message')->alwaysShow(),
+            Textarea::make('User Message')->alwaysShow()->showOnPreview(),
 
             Markdown::make('Agent Message', 'agent_message', function () {
                 return htmlspecialchars_decode($this->resource->agent_message);
@@ -118,6 +118,8 @@ class Message extends Resource
     }
 
     public static $globallySearchable = false;
+
+    public static $clickAction = 'preview';
 
     /**
      * Get the cards available for the request.
