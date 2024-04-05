@@ -77,7 +77,7 @@ class User extends Resource
                 })
                 ->help('Maximum number of messages per day'),
 
-            Boolean::make('Admin')->onlyOnDetail(),
+            Boolean::make('Admin')->hideFromIndex(),
 
             Number::make('Total Costs Generated', function ($user) {
                 return Costs::calculateCostsByConversationOrUser(userId: $user->id);
