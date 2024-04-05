@@ -137,12 +137,6 @@ class Embedding extends Resource
                 ->first();
 
             $oldDocument?->delete();
-
-            Log::info('App: User with ID {user-id} created an embedding', [
-                'id' => $model->id,
-                'name' => $model->name,
-                'embedding-id' => $model->embedding_id,
-            ]);
         } catch (\Exception $exception) {
             $model->forceDelete();
 
