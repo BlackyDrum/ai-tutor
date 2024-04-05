@@ -110,12 +110,13 @@ const handleInput = () => {
                     ? $page.props.auth.user.context_title
                     : $page.props.current_module
             }}
-            -
         </strong>
-        <span v-if="$page.props.data_from"
-            >Data updated at
+        <span v-if="$page.props.data_from">
+            - Data updated at
             {{ new Date($page.props.data_from).toDateString() }}</span
         >
-        <span v-else>Date not available</span>
+        <span v-else-if="$page.component !== 'Home'">
+            - Date not available</span
+        >
     </div>
 </template>
