@@ -57,7 +57,7 @@ class Message extends Resource
 
             BelongsTo::make('Conversation')->readonly()->hideWhenUpdating(),
 
-            Textarea::make('User Message'),
+            Textarea::make('User Message')->alwaysShow(),
 
             Markdown::make('Agent Message', 'agent_message', function () {
                 return htmlspecialchars_decode($this->resource->agent_message);
@@ -96,7 +96,8 @@ class Message extends Resource
             DateTime::make('Created At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
-                ->sortable(),
+                ->sortable()
+                ->filterable(),
 
             DateTime::make('Updated At')
                 ->hideWhenCreating()
