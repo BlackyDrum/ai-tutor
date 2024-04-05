@@ -41,7 +41,7 @@ const acceptTerms = () => {
 
 <template>
     <Dialog
-        class="w-[90%] break-words lg:w-1/2"
+        class="scroll-container w-[90%] break-words lg:w-1/2"
         :visible="!$page.props.auth.user.terms_accepted_at"
         :closable="false"
         :draggable="false"
@@ -56,6 +56,23 @@ const acceptTerms = () => {
             <em class="font-medium">{{ appName }}</em> erklären Sie sich mit
             diesen Nutzungsbedingungen einverstanden. Bitte lesen Sie sie
             sorgfältig durch.
+        </p>
+
+        <br />
+
+        <p>
+            Bitte beachten Sie, dass die Informationen und Antworten, die Sie
+            durch
+            <em class="font-medium">{{ appName }}</em> erhalten, lediglich als
+            Hilfestellung dienen. Es liegt in Ihrer Verantwortung, die Antworten
+            immer zu überprüfen und zu validieren. Die Inhalte in den
+            offiziellen Vorlesungsunterlagen und die dort angegebenen
+            Informationen haben Vorrang vor den durch
+            <em class="font-medium">{{ appName }}</em>
+            bereitgestellten Antworten. Wir bemühen uns um Aktualität und
+            Korrektheit der Informationen, können jedoch keine Garantie für die
+            Vollständigkeit oder Richtigkeit der bereitgestellten Daten
+            übernehmen.
         </p>
 
         <br />
