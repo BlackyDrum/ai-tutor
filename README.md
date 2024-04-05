@@ -374,7 +374,8 @@ With the `collections` in place, the next step is to populate them with `embeddi
 ```md
 # This is a title from the first slide
 
-This is a first paragraph on the first slide This is a second paragraph on the first slide
+This is a first paragraph on the first slide
+This is a second paragraph on the first slide
 ---
 
 # This is a title from the second slide

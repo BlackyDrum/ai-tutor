@@ -252,8 +252,8 @@ class ChromaController extends Controller
 
             $result = self::createAndStoreSlide(
                 model: $model,
-                title: substr($slide[0], 1),
-                body: $slide[1],
+                title: substr($slide[0], 2),
+                body: implode("\n", array_slice($slide, 1)),
                 index: $index
             );
 
