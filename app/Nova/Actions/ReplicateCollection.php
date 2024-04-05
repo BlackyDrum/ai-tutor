@@ -24,12 +24,12 @@ class ReplicateCollection extends Action
      * @param  \Illuminate\Support\Collection  $models
      * @return mixed
      */
-    public function handle(ActionFields $fields, Collection $models)
+    public function handle(ActionFields $fields, $models)
     {
         $model = $models[0];
 
         $replication = Collection::query()->create([
-            'name' => $model->name . time(),
+            'name' => $model->name . '_' . time(),
             'max_results' => $model->max_results,
             'active' => false,
             'module_id' => $model->module_id,
