@@ -192,12 +192,6 @@ class Embedding extends Resource
                 $document?->delete();
             }
 
-            Log::info('App: User with ID {user-id} deleted an embedding', [
-                'id' => $model->id,
-                'name' => $model->name,
-                'embedding-id' => $model->embedding_id,
-            ]);
-
             $model->forceDelete();
         } catch (\Exception $exception) {
             Log::error(
