@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Actions\ActionResponse;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class ReplicateCollection extends Action
 {
@@ -29,14 +31,17 @@ class ReplicateCollection extends Action
         $model = $models[0];
 
         $replication = Collection::query()->create([
-            'name' => $model->name . '_' . time(),
+            'name' => $fields->get('name'),
             'max_results' => $model->max_results,
             'active' => false,
             'module_id' => $model->module_id,
         ]);
 
         try {
-            ChromaController::replicateCollection(original: $model, copy: $replication);
+            ChromaController::replicateCollection(
+                original: $model,
+                copy: $replication
+            );
 
             Log::info(
                 'User with ID {user-id} replicated a collection with name {name}',
@@ -63,5 +68,25 @@ class ReplicateCollection extends Action
                 "Failed to replicate collection. Reason: {$exception->getMessage()}"
             );
         }
+    }
+
+    public function fields(NovaRequest $request)
+    {
+        return [
+            Text::make('Name')->rules(
+                'required',
+                'string',
+                'unique:collections,name',
+                function ($attribute, $value, $fail) {
+                    if (
+                        $message = \App\Nova\Collection::checkInvalidCollectionName(
+                            $value
+                        )
+                    ) {
+                        $fail($message);
+                    }
+                }
+            ),
+        ];
     }
 }

@@ -59,6 +59,7 @@ class SyncChromaDB extends Action
                 'relational' => 'Relational Database',
                 'chroma' => 'ChromaDB'
             ])
+            ->rules('required')
         ];
     }
 }

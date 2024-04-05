@@ -206,7 +206,7 @@ class Collection extends Resource
         }
     }
 
-    private static function checkInvalidCollectionName($name)
+    public static function checkInvalidCollectionName($name)
     {
         if (
             !preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_.-]{1,61}[a-zA-Z0-9]$/', $name)
