@@ -37,6 +37,7 @@ class LtiController extends Controller
             $abbreviation = $tool->userResult->ltiUserId;
             $role = $tool->getRawParameters()['roles'] ?? null;
             $refId = $tool->resourceLink->getId();
+            $contextTitle = $tool->context->title;
 
             $validator = Validator::make(
                 [
@@ -44,12 +45,14 @@ class LtiController extends Controller
                     'abbreviation' => $abbreviation,
                     'role' => $role,
                     'refId' => $refId,
+                    'context_title' => $contextTitle,
                 ],
                 [
                     'name' => 'required|string|max:64',
                     'abbreviation' => 'required|string|max:64',
                     'role' => 'required|string',
                     'refId' => 'required|integer|exists:modules,ref_id',
+                    'context_title' => 'required|string'
                 ]
             );
 
@@ -68,6 +71,7 @@ class LtiController extends Controller
                     'password' => Hash::make(Str::random(40)),
                     'admin' => $role == 'Instructor',
                     'module_id' => $module->id,
+                    'context_title' => $contextTitle,
                     'max_requests' => config('chat.max_requests'),
                 ]
             );

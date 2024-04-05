@@ -80,11 +80,15 @@ class User extends Resource
             Boolean::make('Admin')->hideFromIndex(),
 
             Number::make('Total Costs Generated', function ($user) {
-                return Costs::calculateCostsByConversationOrUser(userId: $user->id);
+                return Costs::calculateCostsByConversationOrUser(
+                    userId: $user->id
+                );
             })
                 ->hideWhenUpdating()
                 ->hideWhenCreating()
                 ->sortable(),
+
+            Text::make('Context Title')->nullable()->sortable(),
 
             BelongsTo::make('Module', 'module', Module::class)
                 ->nullable()

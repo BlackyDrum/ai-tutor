@@ -25,6 +25,7 @@ class User extends Authenticatable
         'max_requests',
         'module_id',
         'admin',
+        'context_title'
     ];
 
     /**
