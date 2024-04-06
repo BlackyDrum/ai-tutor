@@ -14,6 +14,7 @@
         "php": "^8.2",
         "ext-simplexml": "*",
         "ext-zip": "*",
+        "appstract/laravel-opcache": "^4.0",
         "codewithkyrian/chromadb-php": "^0.2.0",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^1.0",
