@@ -121,7 +121,10 @@ class Embedding extends Resource
         // If the same exact file was uploaded, we just clean up return
         if ($document) {
             $model->forceDelete();
-            unlink($pathToFile);
+
+            if (file_exists($pathToFile)) {
+                unlink($pathToFile);
+            }
 
             return;
         }
