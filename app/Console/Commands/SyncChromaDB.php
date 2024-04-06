@@ -50,7 +50,7 @@ class SyncChromaDB extends Command
             foreach ($relationalCollections as $relationalCollection) {
                 ChromaController::createCollection($relationalCollection);
 
-                $collection = ChromaController::getCollection(
+                $chromaCollection = ChromaController::getCollection(
                     $relationalCollection->name
                 );
 
@@ -76,7 +76,7 @@ class SyncChromaDB extends Command
                 }
 
                 if (!empty($ids)) {
-                    $collection->add(
+                    $chromaCollection->add(
                         ids: $ids,
                         metadatas: $metadatas,
                         documents: $documents
@@ -109,11 +109,11 @@ class SyncChromaDB extends Command
             $relationalCollections = Collection::all();
 
             foreach ($relationalCollections as $relationalCollection) {
-                $collection = ChromaController::getCollection(
+                $chromaCollection = ChromaController::getCollection(
                     $relationalCollection->name
                 );
 
-                $data = $collection->get(
+                $data = $chromaCollection->get(
                     include: ['embeddings', 'metadatas', 'documents']
                 );
 
@@ -122,7 +122,6 @@ class SyncChromaDB extends Command
                 $ids = $data->ids;
 
                 $embeddingIds = [];
-
                 $documentIds = [];
 
                 foreach ($ids as $key => $id) {
