@@ -85,10 +85,6 @@ $ composer install
 
 4. Create a copy of the `.env.example` file and rename it to `.env`. Update the necessary configuration values:
 
-```
-$ cp .env.example .env
-```
-
 5. Generate an `application key`:
 
 ```
