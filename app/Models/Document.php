@@ -3,25 +3,21 @@
 namespace App\Models;
 
 use App\Nova\Embedding;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Document extends Model
 {
-    use HasFactory;
-
     protected $fillable = ['name', 'collection_id'];
 
     public function collection()
     {
-        return $this->belongsTo(Collection::class, 'collection_id');
+        return $this->belongsTo(Collection::class);
     }
 
     public function embeddings()
     {
-        return $this->hasMany(\App\Models\Embedding::class, 'document_id');
+        return $this->hasMany(\App\Models\Embedding::class);
     }
 
     protected static function boot()

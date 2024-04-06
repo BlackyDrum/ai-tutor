@@ -2,25 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Embedding extends Model
 {
-    use HasFactory, SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
-        'id',
-        'name',
-        'path',
-        'size',
-        'mime',
-        'user_id',
-        'collection_id',
         'embedding_id',
+        'name',
         'content',
+        'size',
         'document_id',
+        'collection_id',
     ];
 
     public function collection()
@@ -35,6 +30,6 @@ class Embedding extends Model
 
     public function document()
     {
-        return $this->belongsTo(Document::class, 'document_id');
+        return $this->belongsTo(Document::class);
     }
 }

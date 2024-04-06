@@ -10,29 +10,28 @@ class Conversation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'agent_id',
-        'url_id',
-        'user_id',
-        'module_id',
         'name',
-        'collection_id',
+        'url_id',
+        'openai_language_model',
         'prompt_tokens',
         'completion_tokens',
-        'openai_language_model',
         'name_edited',
+        'agent_id',
+        'user_id',
+        'module_id',
+        'collection_id',
     ];
 
     protected $hidden = [
         'id',
-        'module_id',
-        'agent_id',
-        'temperature',
-        'user_id',
-        'collection_id',
+        'openai_language_model',
         'prompt_tokens',
         'completion_tokens',
-        'openai_language_model',
         'name_edited',
+        'agent_id',
+        'user_id',
+        'module_id',
+        'collection_id',
         'updated_at',
         'created_at',
     ];
@@ -44,21 +43,21 @@ class Conversation extends Model
 
     public function module()
     {
-        return $this->belongsTo(Module::class, 'module_id');
+        return $this->belongsTo(Module::class);
     }
 
     public function agent()
     {
-        return $this->belongsTo(Agent::class, 'agent_id');
+        return $this->belongsTo(Agent::class);
     }
 
     public function collection()
     {
-        return $this->belongsTo(Collection::class, 'collection_id');
+        return $this->belongsTo(Collection::class);
     }
 
     public function messages()
     {
-        return $this->hasMany(Message::class, 'conversation_id');
+        return $this->hasMany(Message::class);
     }
 }

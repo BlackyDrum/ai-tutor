@@ -23,9 +23,9 @@ class User extends Authenticatable
         'password',
         'terms_accepted_at',
         'max_requests',
-        'module_id',
         'admin',
-        'context_title'
+        'context_title',
+        'module_id',
     ];
 
     /**
@@ -34,9 +34,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
         'id',
-        'ref_id',
+        'password',
         'max_requests',
         'module_id',
         'created_at',
@@ -53,6 +52,16 @@ class User extends Authenticatable
         'terms_accepted_at' => 'datetime',
     ];
 
+    public function module()
+    {
+        return $this->belongsTo(Module::class);
+    }
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class);
+    }
+
     public function messages()
     {
         return $this->hasManyThrough(
@@ -61,15 +70,5 @@ class User extends Authenticatable
             '',
             'conversation_id'
         );
-    }
-
-    public function conversations()
-    {
-        return $this->hasMany(Conversation::class, 'user_id');
-    }
-
-    public function module()
-    {
-        return $this->belongsTo(Module::class, 'module_id');
     }
 }

@@ -3,35 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Vinkla\Hashids\Facades\Hashids;
 
 class Message extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'user_message',
         'agent_message',
         'user_message_with_context',
+        'openai_language_model',
         'prompt_tokens',
         'completion_tokens',
-        'openai_language_model',
-        'conversation_id',
         'helpful',
+        'conversation_id',
         'created_at',
-        'updated_at',
     ];
 
     public function conversation()
     {
-        return $this->belongsTo(Conversation::class, 'conversation_id');
+        return $this->belongsTo(Conversation::class);
     }
 
     protected function id(): Attribute
     {
+        // We obfuscate the auto-incremented id here for the user
         return Attribute::make(
             get: fn(string $value) => str_contains(
                 request()->route()->getName(),

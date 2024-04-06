@@ -3,32 +3,31 @@
 namespace App\Models;
 
 use App\Http\Controllers\ChromaController;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 
 class Collection extends Model
 {
-    use HasFactory, SoftDeletes;
+    use SoftDeletes;
 
-    protected $fillable = ['name', 'max_results', 'module_id', 'active'];
+    protected $fillable = ['name', 'max_results', 'active', 'module_id'];
 
     protected $hidden = ['deleted_at'];
 
+    public function module()
+    {
+        return $this->belongsTo(Module::class);
+    }
+
     public function embedding()
     {
-        return $this->hasMany(Embedding::class, 'collection_id');
+        return $this->hasMany(Embedding::class);
     }
 
     public function conversations()
     {
-        return $this->hasMany(Conversation::class, 'collection_id');
-    }
-
-    public function module()
-    {
-        return $this->belongsTo(Module::class, 'module_id');
+        return $this->hasMany(Conversation::class);
     }
 
     protected static function boot()
