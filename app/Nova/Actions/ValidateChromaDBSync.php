@@ -34,7 +34,7 @@ class ValidateChromaDBSync extends Action
     {
         $exitCode = Artisan::call('chroma:check');
 
-        if ($exitCode == 1) {
+        if ($exitCode == 0) {
             $message = 'Relational database is in sync with ChromaDB';
             return ActionResponse::message($message);
         } else {
