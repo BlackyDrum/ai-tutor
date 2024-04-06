@@ -2,6 +2,7 @@
 
 namespace App\Nova\Dashboards;
 
+use App\Nova\Cards\LatestMessages;
 use App\Nova\Metrics\Collections;
 use App\Nova\Metrics\ConversationsPerDay;
 use App\Nova\Metrics\Embeddings;
@@ -26,8 +27,7 @@ class Main extends Dashboard
             new ConversationsPerDay(),
             new MessagesPerDay(),
             new Ratings(),
-            new Collections(),
-            new Embeddings(),
+            (new LatestMessages())->style('tight')
         ];
     }
 

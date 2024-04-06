@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ef78448308371733cba30a9ad1c37a80",
+    "content-hash": "85b53b39b73efbf6a11373ac4ece9f19",
     "packages": [
         {
             "name": "brick/math",
@@ -7270,6 +7270,52 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "whitespacecode/nova-table-card",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/whitespacecode/nova-table-card.git",
+                "reference": "af7727b04d25d4bea5cc3164badbc6d133b46a34"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/whitespacecode/nova-table-card/zipball/af7727b04d25d4bea5cc3164badbc6d133b46a34",
+                "reference": "af7727b04d25d4bea5cc3164badbc6d133b46a34",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": "^4.0",
+                "php": "^8.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Whitespacecode\\TableCard\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Whitespacecode\\TableCard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Nova table card. Show your latest data (orders, posts,...) as card or data you prefer.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "support": {
+                "issues": "https://github.com/whitespacecode/nova-table-card/issues",
+                "source": "https://github.com/whitespacecode/nova-table-card/tree/1.0.3"
+            },
+            "time": "2023-05-31T07:15:31+00:00"
         }
     ],
     "packages-dev": [

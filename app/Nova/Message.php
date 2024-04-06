@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Cards\LatestMessages;
 use App\Nova\Filters\LanguageModelFilter;
 use App\Nova\Filters\RatingFilter;
 use App\Nova\Metrics\MessagesPerDay;
@@ -76,7 +77,7 @@ class Message extends Resource
                         ]);
                     }
                 }
-            ),
+            )->showOnPreview(),
 
             Textarea::make('User Message with Context')->hideWhenUpdating(),
 
@@ -126,7 +127,7 @@ class Message extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [new MessagesPerDay()];
+        return [(new LatestMessages())->style('tight')];
     }
 
     public function filters(NovaRequest $request)
