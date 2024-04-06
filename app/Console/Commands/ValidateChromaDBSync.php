@@ -43,12 +43,13 @@ class ValidateChromaDBSync extends Command
         $this->info("ChromaDB Database: {$client->database}");
         $this->info("ChromaDB Tenant: {$client->tenant}\n");
 
-        $collections = $client->listCollections();
-        $chromaCollectionCount = count($collections);
+        $chromaCollections = $client->listCollections();
+        $chromaCollectionCount = count($chromaCollections);
 
         $relationalCollections = Collection::all();
 
         $this->info('Validating collections...');
+
         if ($relationalCollections->count() != $chromaCollectionCount) {
             $this->error(
                 "Count of collections doesn't match: RelationalDB: {$relationalCollections->count()}, ChromaDB: $chromaCollectionCount\n"
@@ -63,14 +64,14 @@ class ValidateChromaDBSync extends Command
 
         // Check if all ChromaDB collections have a corresponding
         // collection in the relational database
-        foreach ($collections as $collection) {
+        foreach ($chromaCollections as $chromaCollection) {
             $relationalCollection = Collection::query()
-                ->where('name', '=', $collection->name)
+                ->where('name', '=', $chromaCollection->name)
                 ->first();
 
             if (!$relationalCollection) {
                 $this->error(
-                    "Cannot find RelationalDB Collection for {$collection->name}"
+                    "Cannot find RelationalDB Collection for {$chromaCollection->name}"
                 );
 
                 $this->error($failMessage);
@@ -80,26 +81,26 @@ class ValidateChromaDBSync extends Command
 
             if (
                 $relationalCollection->max_results !=
-                $collection->metadata['max_results']
+                $chromaCollection->metadata['max_results']
             ) {
                 $this->error(
-                    "'Max Results' doesn't match for collection {$collection->name}. RelationalDB: {$relationalCollection->max_results}, ChromaDB: {$collection->metadata['max_results']}"
+                    "'Max Results' doesn't match for collection {$chromaCollection->name}. RelationalDB: {$relationalCollection->max_results}, ChromaDB: {$chromaCollection->metadata['max_results']}"
                 );
 
                 $error = true;
             }
 
-            $names[] = $collection->name;
+            $names[] = $chromaCollection->name;
         }
 
         // Check if all RelationalDB collections have a corresponding
         // collection in ChromaDB
-        foreach ($relationalCollections as $collection) {
+        foreach ($relationalCollections as $relationalCollection) {
             try {
-                ChromaController::getCollection($collection->name);
+                ChromaController::getCollection($relationalCollection->name);
             } catch (\Exception $exception) {
                 $this->error(
-                    "Cannot find ChromaDB Collection for {$collection->name}"
+                    "Cannot find ChromaDB Collection for {$relationalCollection->name}"
                 );
 
                 $this->error($failMessage);
@@ -114,42 +115,46 @@ class ValidateChromaDBSync extends Command
 
             $this->info("Validating collection $collectionName...");
 
-            $collection = ChromaController::getCollection($collectionName);
+            $chromaCollection = ChromaController::getCollection(
+                $collectionName
+            );
 
             $collectionId = Collection::query()
                 ->where('name', '=', $collectionName)
                 ->first()->id;
 
-            $relationalDB = Embedding::query()
+            $relationalEmbeddings = Embedding::query()
                 ->where('collection_id', '=', $collectionId)
                 ->get();
 
-            $relationalDBCount = $relationalDB->count();
+            $relationalDBCount = $relationalEmbeddings->count();
 
-            if ($collection->count() != $relationalDBCount) {
+            if ($chromaCollection->count() != $relationalDBCount) {
                 $this->error(
-                    "Count of embeddings doesn't match: RelationalDB: $relationalDBCount, ChromaDB: {$collection->count()}"
+                    "Count of embeddings doesn't match: RelationalDB: $relationalDBCount, ChromaDB: {$chromaCollection->count()}"
                 );
                 $error = true;
                 $collectionError = true;
             } else {
                 $this->info(
-                    "Count of embeddings matches: RelationalDB: $relationalDBCount, ChromaDB: {$collection->count()}"
+                    "Count of embeddings matches: RelationalDB: $relationalDBCount, ChromaDB: {$chromaCollection->count()}"
                 );
             }
 
-            $this->info("Validating embeddings for $collectionName...");
+            $this->info(
+                'Checking if all embeddings in the relational database have a corresponding embedding in ChromaDB...'
+            );
 
             // Check if all embeddings in our relational database
             // have a corresponding embedding in ChromaDB. If found,
             // we additionally check the metadata, e.g size, content...
-            foreach ($relationalDB as $relationalEmbedding) {
-                $embedding = $collection->get(
+            foreach ($relationalEmbeddings as $relationalEmbedding) {
+                $chromaEmbedding = $chromaCollection->get(
                     ids: [$relationalEmbedding->embedding_id],
                     include: ['documents', 'metadatas']
                 );
 
-                if (!$embedding->ids) {
+                if (!$chromaEmbedding->ids) {
                     $this->error(
                         "Cannot find ChromaDB Embedding for {$relationalEmbedding->embedding_id}"
                     );
@@ -158,7 +163,10 @@ class ValidateChromaDBSync extends Command
                     continue;
                 }
 
-                if ($embedding->documents[0] != $relationalEmbedding->content) {
+                if (
+                    $chromaEmbedding->documents[0] !=
+                    $relationalEmbedding->content
+                ) {
                     $this->error(
                         "Content of {$relationalEmbedding->embedding_id} doesn't match."
                     );
@@ -166,48 +174,52 @@ class ValidateChromaDBSync extends Command
                     $collectionError = true;
                 }
 
-                $name = $embedding->metadatas[0]['name'];
-                if ($name != $relationalEmbedding->name) {
+                $chromaEmbeddingName = $chromaEmbedding->metadatas[0]['name'];
+                if ($chromaEmbeddingName != $relationalEmbedding->name) {
                     $this->error(
-                        "Name of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$relationalEmbedding->name}, ChromaDB: $name"
+                        "Name of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$relationalEmbedding->name}, ChromaDB: $chromaEmbeddingName"
                     );
                     $error = true;
                     $collectionError = true;
                 }
 
-                $size = $embedding->metadatas[0]['size'];
-                if ($size != $relationalEmbedding->size) {
+                $chromaEmbeddingSize = $chromaEmbedding->metadatas[0]['size'];
+                if ($chromaEmbeddingSize != $relationalEmbedding->size) {
                     $this->error(
-                        "Size of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$relationalEmbedding->size}, ChromaDB: $size"
+                        "Size of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$relationalEmbedding->size}, ChromaDB: $chromaEmbeddingSize"
                     );
                     $error = true;
                     $collectionError = true;
                 }
 
-                $documentName = $embedding->metadatas[0]['document'];
+                $chromaEmbeddingDocumentName =
+                    $chromaEmbedding->metadatas[0]['document'];
                 try {
-                    $document = Document::query()->findOrFail(
+                    $relationalDocument = Document::query()->findOrFail(
                         $relationalEmbedding->document_id
                     );
-                    if ($documentName != $document->name) {
+                    if (
+                        $chromaEmbeddingDocumentName !=
+                        $relationalDocument->name
+                    ) {
                         $this->error(
-                            "Document of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$document->name}, ChromaDB: $documentName"
+                            "Document Name of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$relationalDocument->name}, ChromaDB: $chromaEmbeddingDocumentName"
                         );
                         $error = true;
                         $collectionError = true;
                     } elseif (
-                        $document->collection_id !=
+                        $relationalDocument->collection_id !=
                         $relationalEmbedding->collection_id
                     ) {
                         $this->error(
-                            "Document Name matches, but collection doesn't match for {$relationalEmbedding->embedding_id}. Document Collection ID: {$document->collection_id}, Embedding Collection ID: {$relationalEmbedding->collection_id}"
+                            "Document Name matches, but collection doesn't match for {$relationalEmbedding->embedding_id}. Document Collection ID: {$relationalDocument->collection_id}, Embedding Collection ID: {$relationalEmbedding->collection_id}"
                         );
                         $error = true;
                         $collectionError = true;
                     }
                 } catch (ModelNotFoundException $exception) {
                     $this->error(
-                        "Cannot find relational document for {$relationalEmbedding->embedding_id}. Document: {$documentName}"
+                        "Cannot find relational document for {$relationalEmbedding->embedding_id}. Document: {$chromaEmbeddingDocumentName}"
                     );
                     $error = true;
                     $collectionError = true;
@@ -215,23 +227,23 @@ class ValidateChromaDBSync extends Command
             }
 
             $this->info(
-                "Additionally checking ChromaDB for $collectionName..."
+                "Additionally checking if all embeddings in ChromaDB have a corresponding embedding in the relational database..."
             );
 
-            $embeddings = $collection->get();
+            $chromaEmbeddings = $chromaCollection->get();
 
             // Check if all embeddings in ChromaDB have a corresponding
             // embedding in the relational database. We just need to check
             // they exist because we've already confirmed the metadata matches
             // if they exist in both databases
-            foreach ($embeddings->ids as $embedding) {
-                $e = Embedding::query()
-                    ->where('embedding_id', '=', $embedding)
+            foreach ($chromaEmbeddings->ids as $chromaEmbeddingId) {
+                $relationalEmbedding = Embedding::query()
+                    ->where('embedding_id', '=', $chromaEmbeddingId)
                     ->first();
 
-                if (!$e) {
+                if (!$relationalEmbedding) {
                     $this->error(
-                        "Cannot find RelationalDB Embedding for {$embedding}"
+                        "Cannot find RelationalDB Embedding for {$chromaEmbeddingId}"
                     );
                     $error = true;
                     $collectionError = true;
