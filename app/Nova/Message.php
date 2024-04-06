@@ -21,6 +21,10 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class Message extends Resource
 {
+    public static $globallySearchable = false;
+
+    public static $clickAction = 'preview';
+
     /**
      * The model the resource corresponds to.
      *
@@ -55,7 +59,7 @@ class Message extends Resource
                 ->sortable()
                 ->resolveUsing(fn($value) => Hashids::decode($value)),
 
-            BelongsTo::make('Conversation')->readonly()->hideWhenUpdating(),
+            BelongsTo::make('Conversation')->hideWhenUpdating(),
 
             Textarea::make('User Message')->alwaysShow()->showOnPreview(),
 
@@ -100,10 +104,7 @@ class Message extends Resource
                 ->filterable(),
 
             DateTime::make('Updated At')
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->onlyOnDetail()
-                ->sortable(),
+                ->onlyOnDetail(),
         ];
     }
 
@@ -116,10 +117,6 @@ class Message extends Resource
     {
         return false;
     }
-
-    public static $globallySearchable = false;
-
-    public static $clickAction = 'preview';
 
     /**
      * Get the cards available for the request.

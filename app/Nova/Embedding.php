@@ -84,29 +84,20 @@ class Embedding extends Resource
                 ->sortable(),
 
             BelongsTo::make('Document')
-                ->sortable()
                 ->hideWhenUpdating()
-                ->hideWhenCreating(),
+                ->hideWhenCreating()
+                ->sortable(),
 
             BelongsTo::make('Collection')
-                ->sortable()
                 ->withoutTrashed()
                 ->hideWhenUpdating()
-                ->readonly(function () {
-                    return (bool) $this->resource->id;
-                }),
+                ->sortable(),
 
             DateTime::make('Created At')
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->onlyOnDetail()
-                ->sortable(),
+                ->onlyOnDetail(),
 
             DateTime::make('Updated At')
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->onlyOnDetail()
-                ->sortable(),
+                ->onlyOnDetail(),
         ];
     }
 

@@ -9,6 +9,7 @@ use App\Nova\Metrics\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
@@ -60,9 +61,11 @@ class User extends Resource
 
             Text::make('Abbreviation')
                 ->sortable()
-                ->rules('required', 'max:255')
-                ->creationRules('unique:users,name')
-                ->updateRules('unique:users,name,{{resourceId}}'),
+                ->rules(
+                    'required',
+                    'max:255',
+                    Rule::unique('users', 'abbreviation')->ignore($this->resource->id)
+                ),
 
             Password::make('Password')
                 ->onlyOnForms()
@@ -105,10 +108,7 @@ class User extends Resource
                 ->sortable(),
 
             DateTime::make('Updated At')
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->onlyOnDetail()
-                ->sortable(),
+                ->onlyOnDetail(),
 
             HasMany::make('Conversations'),
 

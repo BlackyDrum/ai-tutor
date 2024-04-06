@@ -42,14 +42,4 @@ class Users extends Value
             'ALL' => Nova::__('All Time'),
         ];
     }
-
-    /**
-     * Determine the amount of time the results of the metric should be cached.
-     *
-     * @return \DateTimeInterface|\DateInterval|float|int|null
-     */
-    public function cacheFor()
-    {
-        // return now()->addMinutes(5);
-    }
 }

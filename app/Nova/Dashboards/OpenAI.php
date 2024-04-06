@@ -14,6 +14,8 @@ use Laravel\Nova\Dashboard;
 
 class OpenAI extends Dashboard
 {
+    public $showRefreshButton = true;
+
     /**
      * Get the cards for the dashboard.
      *
@@ -23,8 +25,6 @@ class OpenAI extends Dashboard
     {
         return [new Costs(), ...self::models()];
     }
-
-    public $showRefreshButton = true;
 
     public function name()
     {

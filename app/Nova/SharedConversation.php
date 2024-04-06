@@ -59,10 +59,7 @@ class SharedConversation extends Resource
                 ->sortable(),
 
             DateTime::make('Updated At')
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->onlyOnDetail()
-                ->sortable(),
+                ->onlyOnDetail(),
         ];
     }
 

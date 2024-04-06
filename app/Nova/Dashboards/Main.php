@@ -12,6 +12,8 @@ use Laravel\Nova\Dashboards\Main as Dashboard;
 
 class Main extends Dashboard
 {
+    public $showRefreshButton = true;
+
     /**
      * Get the cards for the dashboard.
      *
@@ -33,6 +35,4 @@ class Main extends Dashboard
     {
         return 'App';
     }
-
-    public $showRefreshButton = true;
 }

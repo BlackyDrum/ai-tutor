@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -58,17 +59,20 @@ class Collection extends Resource
             ID::make()->sortable(),
 
             Text::make('Name')
-                ->rules('required', 'string', function (
-                    $attribute,
-                    $value,
-                    $fail
-                ) {
-                    if ($message = self::checkInvalidCollectionName($value)) {
-                        $fail($message);
-                    }
-                })
-                ->creationRules('unique:collections,name')
-                ->updateRules('unique:collections,name,{{resourceId}}')
+                ->rules(
+                    'required',
+                    'string',
+                    function ($attribute, $value, $fail) {
+                        if (
+                            $message = self::checkInvalidCollectionName($value)
+                        ) {
+                            $fail($message);
+                        }
+                    },
+                    Rule::unique('collections', 'name')->ignore(
+                        $this->resource->id
+                    )
+                )
                 ->sortable(),
 
             Number::make('Max Results')

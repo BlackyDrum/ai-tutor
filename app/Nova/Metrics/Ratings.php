@@ -36,16 +36,6 @@ class Ratings extends Partition
     }
 
     /**
-     * Determine the amount of time the results of the metric should be cached.
-     *
-     * @return \DateTimeInterface|\DateInterval|float|int|null
-     */
-    public function cacheFor()
-    {
-        // return now()->addMinutes(5);
-    }
-
-    /**
      * Get the URI key for the metric.
      *
      * @return string

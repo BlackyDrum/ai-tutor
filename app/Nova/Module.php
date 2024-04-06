@@ -5,6 +5,7 @@ namespace App\Nova;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
@@ -47,28 +48,25 @@ class Module extends Resource
 
             Text::make('Name')
                 ->sortable()
-                ->rules('required')
-                ->creationRules('unique:modules,name')
-                ->updateRules('unique:modules,name,{{resourceId}}'),
+                ->rules(
+                    'required',
+                    Rule::unique('modules', 'name')->ignore($this->resource->id)
+                ),
 
             Text::make('Ref ID')
-                ->sortable()
-                ->rules('required', 'integer')
-                ->creationRules('unique:modules,ref_id')
-                ->updateRules('unique:modules,ref_id,{{resourceId}}')
-                ->help('Unique Ref ID for an ILIAS course'),
+                ->rules(
+                    'required',
+                    'integer',
+                    Rule::unique('modules', 'ref_id')->ignore($this->resource->id)
+                )
+                ->help('Unique Ref ID for an ILIAS course')
+                ->sortable(),
 
             DateTime::make('Created At')
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->onlyOnDetail()
-                ->sortable(),
+                ->onlyOnDetail(),
 
             DateTime::make('Updated At')
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->onlyOnDetail()
-                ->sortable(),
+                ->onlyOnDetail(),
 
             HasMany::make('Conversations'),
 
