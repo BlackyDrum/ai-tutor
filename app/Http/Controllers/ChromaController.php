@@ -94,6 +94,7 @@ class ChromaController extends Controller
         } elseif (str_ends_with($filename, 'txt')) {
             $text = file_get_contents($pathToFile);
 
+            $model->embedding_id = Str::orderedUuid()->toString();
             $model->content = $text ?? '';
             $model->document_id = $document->id;
 
@@ -103,7 +104,8 @@ class ChromaController extends Controller
                 [
                     'name' => $model->name,
                     'size' => $model->size,
-                    'document' => $model->name,
+                    'document' => $document->name,
+                    'document_md5' => $document->md5,
                 ],
             ];
 
@@ -111,7 +113,11 @@ class ChromaController extends Controller
         } elseif (str_ends_with($filename, 'md')) {
             $markdown = file_get_contents($pathToFile);
 
-            $result = self::createEmbeddingFromMarkdown($markdown, $model, $document);
+            $result = self::createEmbeddingFromMarkdown(
+                $markdown,
+                $model,
+                $document
+            );
 
             $model->forceDelete();
 
@@ -204,8 +210,13 @@ class ChromaController extends Controller
         }
     }
 
-    private static function createAndStoreSlide($model, $title, $body, $index, $document)
-    {
+    private static function createAndStoreSlide(
+        $model,
+        $title,
+        $body,
+        $index,
+        $document
+    ) {
         $embedding_id = Str::orderedUuid()->toString();
         $contentOnSlide = "Title: $title\n$body";
 
@@ -221,7 +232,8 @@ class ChromaController extends Controller
         $metadata = [
             'name' => $model->name . " Slide $index",
             'size' => strlen($contentOnSlide),
-            'document' => $model->name,
+            'document' => $document->name,
+            'document_md5' => $document->md5,
         ];
 
         return [
@@ -231,8 +243,11 @@ class ChromaController extends Controller
         ];
     }
 
-    private static function createEmbeddingFromMarkdown($markdown, $model, $document)
-    {
+    private static function createEmbeddingFromMarkdown(
+        $markdown,
+        $model,
+        $document
+    ) {
         $markdown = preg_replace('/---/s', '', $markdown);
 
         $slides = preg_split('/\n# /', $markdown, -1, PREG_SPLIT_NO_EMPTY);
@@ -260,7 +275,7 @@ class ChromaController extends Controller
                 title: substr($slide[0], 2),
                 body: implode("\n", array_slice($slide, 1)),
                 index: $index,
-                document: $document,
+                document: $document
             );
 
             $ids[] = $result['id'];
@@ -288,7 +303,13 @@ class ChromaController extends Controller
             $title = $content['title'];
             $body = implode("\n", $content['content']);
 
-            $result = self::createAndStoreSlide($model, $title, $body, $index, $document);
+            $result = self::createAndStoreSlide(
+                $model,
+                $title,
+                $body,
+                $index,
+                $document
+            );
 
             $ids[] = $result['id'];
             $documents[] = $result['document'];
@@ -310,14 +331,16 @@ class ChromaController extends Controller
 
         $collection = self::getCollection($collection);
 
+        $document = Document::query()->find($model->document_id);
+
         $collection->update(
             ids: [$model->embedding_id],
             metadatas: [
                 [
                     'name' => $model->name,
                     'size' => strlen($model->content),
-                    'document' => Document::query()->find($model->document_id)
-                        ->name,
+                    'document' => $document->name,
+                    'document_md5' => $document->md5,
                 ],
             ],
             documents: [$model->content]
@@ -387,10 +410,11 @@ class ChromaController extends Controller
         $allDocuments = [];
 
         foreach ($embeddings as $embedding) {
+            $originDocument = Document::query()->find($embedding->document_id);
             $document = Document::query()->firstOrCreate([
-                'name' => Document::query()->find($embedding->document_id)
-                    ->name,
+                'name' => $originDocument->name,
                 'collection_id' => $copy->id,
+                'md5' => $originDocument->md5,
             ]);
 
             $replicate = $embedding

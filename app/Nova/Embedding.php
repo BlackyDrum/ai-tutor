@@ -93,11 +93,9 @@ class Embedding extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            DateTime::make('Created At')
-                ->onlyOnDetail(),
+            DateTime::make('Created At')->onlyOnDetail(),
 
-            DateTime::make('Updated At')
-                ->onlyOnDetail(),
+            DateTime::make('Updated At')->onlyOnDetail(),
         ];
     }
 
@@ -113,9 +111,25 @@ class Embedding extends Resource
         $name = $model->name;
         $collectionId = $model->collection_id;
 
+        $hash = md5_file($pathToFile);
+
+        $document = Document::query()
+            ->where('md5', '=', $hash)
+            ->where('collection_id', '=', $collectionId)
+            ->first();
+
+        // If the same exact file was uploaded, we just clean up return
+        if ($document) {
+            $model->forceDelete();
+            unlink($pathToFile);
+
+            return;
+        }
+
         $newDocument = Document::query()->create([
-            'name' => $model->name,
-            'collection_id' => $model->collection_id,
+            'name' => $name,
+            'collection_id' => $collectionId,
+            'md5' => $hash,
         ]);
 
         try {

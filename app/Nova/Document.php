@@ -54,6 +54,9 @@ class Document extends Resource
             Text::make('Name')
                 ->sortable(),
 
+            Text::make('MD5')
+                ->sortable(),
+
             BelongsTo::make('Collection')
                 ->sortable(),
 

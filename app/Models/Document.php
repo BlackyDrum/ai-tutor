@@ -8,7 +8,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Document extends Model
 {
-    protected $fillable = ['name', 'collection_id'];
+    protected $fillable = ['name', 'md5', 'collection_id'];
 
     public function collection()
     {

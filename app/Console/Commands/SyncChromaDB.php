@@ -62,12 +62,14 @@ class SyncChromaDB extends Command
                 $metadatas = [];
                 $documents = [];
                 foreach ($relationalEmbeddings as $relationalEmbedding) {
+                    $document = Document::query()->find(
+                        $relationalEmbedding->document_id
+                    );
                     $metadata = [
                         'name' => $relationalEmbedding->name,
                         'size' => $relationalEmbedding->size,
-                        'document' => Document::query()->find(
-                            $relationalEmbedding->document_id
-                        )->name,
+                        'document' => $document->name,
+                        'document_md5' => $document->md5,
                     ];
 
                     $ids[] = $relationalEmbedding->embedding_id;
@@ -127,6 +129,7 @@ class SyncChromaDB extends Command
                 foreach ($ids as $key => $id) {
                     $document = Document::query()->firstOrCreate([
                         'name' => $metadata[$key]['document'],
+                        'md5' => $metadata[$key]['document_md5'],
                         'collection_id' => $relationalCollection->id,
                     ]);
 

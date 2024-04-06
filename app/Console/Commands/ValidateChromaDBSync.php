@@ -217,6 +217,18 @@ class ValidateChromaDBSync extends Command
                         $error = true;
                         $collectionError = true;
                     }
+
+                    $chromaEmbeddingDocumentMD5 =
+                        $chromaEmbedding->metadatas[0]['document_md5'];
+                    if (
+                        $chromaEmbeddingDocumentMD5 != $relationalDocument->md5
+                    ) {
+                        $this->error(
+                            "Document Hash of {$relationalEmbedding->embedding_id} doesn't match. RelationalDB: {$relationalDocument->md5}, ChromaDB: $chromaEmbeddingDocumentMD5"
+                        );
+                        $error = true;
+                        $collectionError = true;
+                    }
                 } catch (ModelNotFoundException $exception) {
                     $this->error(
                         "Cannot find relational document for {$relationalEmbedding->embedding_id}. Document: {$chromaEmbeddingDocumentName}"
@@ -227,7 +239,7 @@ class ValidateChromaDBSync extends Command
             }
 
             $this->info(
-                "Additionally checking if all embeddings in ChromaDB have a corresponding embedding in the relational database..."
+                'Additionally checking if all embeddings in ChromaDB have a corresponding embedding in the relational database...'
             );
 
             $chromaEmbeddings = $chromaCollection->get();
