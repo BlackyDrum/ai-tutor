@@ -61,10 +61,8 @@ class ChromaController extends Controller
         return $enhancedMessage;
     }
 
-    public static function createEmbedding($model, $document)
+    public static function createEmbedding($model, $document, $pathToFile)
     {
-        $pathToFile = storage_path() . '/app/' . $model->embedding_id;
-
         $filename = $model->name;
         $collectionId = $model->collection_id;
 

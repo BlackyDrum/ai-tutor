@@ -133,7 +133,7 @@ class Embedding extends Resource
         ]);
 
         try {
-            ChromaController::createEmbedding($model, $newDocument);
+            ChromaController::createEmbedding($model, $newDocument, $pathToFile);
 
             $oldDocument = Document::query()
                 ->where('name', '=', $name)
