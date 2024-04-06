@@ -126,20 +126,20 @@ class Embedding extends Resource
             return;
         }
 
+        $oldDocument = Document::query()
+            ->where('name', '=', $name)
+            ->where('collection_id', '=', $collectionId)
+            ->first();
+
         $newDocument = Document::query()->create([
             'name' => $name,
             'collection_id' => $collectionId,
             'md5' => $hash,
+            'created_at' => $oldDocument->created_at ?? now()
         ]);
 
         try {
             ChromaController::createEmbedding($model, $newDocument, $pathToFile);
-
-            $oldDocument = Document::query()
-                ->where('name', '=', $name)
-                ->where('collection_id', '=', $collectionId)
-                ->whereNot('id', '=', $newDocument->id)
-                ->first();
 
             $oldDocument?->delete();
         } catch (\Exception $exception) {
