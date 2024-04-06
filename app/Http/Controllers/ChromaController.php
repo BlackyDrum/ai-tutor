@@ -358,7 +358,7 @@ class ChromaController extends Controller
         $chromaDB->createCollection(
             $model->name,
             $metadata,
-            embeddingFunction: $embeddingFunction
+            $embeddingFunction
         );
     }
 
