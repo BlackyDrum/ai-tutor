@@ -63,7 +63,6 @@ class Document extends Resource
             HasMany::make('Embeddings'),
 
             DateTime::make('Created At')
-                ->onlyOnDetail()
                 ->sortable(),
 
             DateTime::make('Updated At')
