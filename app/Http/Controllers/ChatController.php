@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AppSupportTraits;
 use App\Models\Collection;
 use App\Models\ConversationHasDocument;
 use App\Models\Conversation;
@@ -23,7 +24,7 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class ChatController extends Controller
 {
-    use OpenAICommunication;
+    use OpenAICommunication, AppSupportTraits;
 
     public function show(string $id)
     {
@@ -132,7 +133,7 @@ class ChatController extends Controller
             ->orderBy('messages.created_at', 'desc')
             ->select(['messages.user_message', 'messages.agent_message'])
             ->paginate(
-                HomeController::isMobile(\request()->userAgent())
+                self::isMobile(\request()->userAgent())
                     ? config('chat.messages_per_page_mobile')
                     : config('chat.messages_per_page_desktop')
             );
@@ -152,7 +153,7 @@ class ChatController extends Controller
             ->where('conversation_id', '=', $conversation->id)
             ->orderBy('created_at', 'desc')
             ->paginate(
-                HomeController::isMobile(\request()->userAgent())
+                self::isMobile(\request()->userAgent())
                     ? config('chat.messages_per_page_mobile')
                     : config('chat.messages_per_page_desktop')
             );
@@ -173,7 +174,7 @@ class ChatController extends Controller
             ->orderBy('created_at', 'desc')
             ->select(['id', 'user_message', 'agent_message', 'helpful'])
             ->paginate(
-                HomeController::isMobile(\request()->userAgent())
+                self::isMobile(\request()->userAgent())
                     ? config('chat.messages_per_page_mobile')
                     : config('chat.messages_per_page_desktop')
             );
@@ -197,9 +198,7 @@ class ChatController extends Controller
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
-        $appCheckResults = HomeController::validateAppFunctionality(
-            $conversation
-        );
+        $appCheckResults = $this->validateAppFunctionality($conversation);
 
         if (!$appCheckResults) {
             return response()->json(

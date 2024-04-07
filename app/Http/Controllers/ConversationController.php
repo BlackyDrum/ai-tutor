@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AppSupportTraits;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Module;
@@ -19,7 +20,7 @@ use Inertia\Inertia;
 
 class ConversationController extends Controller
 {
-    use OpenAICommunication;
+    use OpenAICommunication, AppSupportTraits;
 
     public function createConversation(Request $request)
     {
@@ -28,7 +29,7 @@ class ConversationController extends Controller
                 'required|string|max:' . config('chat.max_message_length'),
         ]);
 
-        $appCheckResults = HomeController::validateAppFunctionality();
+        $appCheckResults = $this->validateAppFunctionality();
 
         if (!$appCheckResults) {
             return response()->json(
