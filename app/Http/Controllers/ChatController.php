@@ -57,7 +57,6 @@ class ChatController extends Controller
     }
 
     public function fetchMessagesForChat(
-        Request $request,
         string $conversation_id
     ) {
         $messages = self::getMessagesForChat($conversation_id);
@@ -73,7 +72,6 @@ class ChatController extends Controller
     }
 
     public function fetchMessagesForPeek(
-        Request $request,
         string $conversation_id
     ) {
         $messages = self::getMessagesForPeek($conversation_id);
@@ -89,7 +87,6 @@ class ChatController extends Controller
     }
 
     public function fetchMessagesForShare(
-        Request $request,
         string $conversation_id
     ) {
         $messages = self::getMessagesForShare($conversation_id);
