@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\AppSupportTraits;
 use App\Classes\ChromaDB;
-use App\HandlesMessageLimits;
 use App\Models\Conversation;
 use App\Models\ConversationHasDocument;
 use App\Models\Document;
 use App\Models\Message;
 use App\Models\Module;
-use App\OpenAICommunication;
 use App\Rules\ValidateConversationOwner;
+use App\Traits\AppSupportTraits;
+use App\Traits\HandlesMessageLimits;
+use App\Traits\OpenAICommunication;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

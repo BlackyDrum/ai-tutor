@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\AppSupportTraits;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\SharedConversation;
+use App\Traits\AppSupportTraits;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
