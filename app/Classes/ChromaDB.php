@@ -329,6 +329,8 @@ abstract class ChromaDB
         $collection = self::getCollection($collection);
 
         $document = Document::query()->find($model->document_id);
+        $document->updated_at = now();
+        $document->save();
 
         $collection->update(
             ids: [$model->embedding_id],

@@ -62,7 +62,12 @@ class Embedding extends Resource
 
             Textarea::make('Content')
                 ->hideWhenCreating()
-                ->updateRules('required'),
+                ->updateRules('required')
+                ->help(
+                    $request->isUpdateOrUpdateAttachedRequest()
+                        ? '<strong>Attention</strong>: Updating the resource will invalidate the current hash of the document. So, if you make changes here but then upload the document with the content identical to that before the changes, the file will not be uploaded although the documents are not identical anymore. Therefore, please ensure that any modifications made here are also reflected in the document. <strong>You may also make the necessary changes to the document itself and then upload it again instead of editing the contents here.</strong>'
+                        : ''
+                ),
 
             File::make('File', 'embedding_id')
                 ->acceptedTypes('.txt,.pptx,.json,.md')
@@ -137,7 +142,7 @@ class Embedding extends Resource
             'name' => $name,
             'collection_id' => $collectionId,
             'md5' => $hash,
-            'created_at' => $oldDocument->created_at ?? now()
+            'created_at' => $oldDocument->created_at ?? now(),
         ]);
 
         try {
@@ -208,6 +213,11 @@ class Embedding extends Resource
 
             abort(500, $exception->getMessage());
         }
+    }
+
+    public function authorizedToUpdate(Request $request)
+    {
+        return false;
     }
 
     public function authorizedToForceDelete(Request $request)
