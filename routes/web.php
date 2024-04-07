@@ -56,17 +56,17 @@ Route::middleware(['auth'])->group(function () {
         ->group(function () {
             Route::delete('/', [
                 ConversationController::class,
-                'deleteConversation',
+                'delete',
             ])->name('delete');
 
             Route::delete('/all', [
                 ConversationController::class,
-                'deleteAllConversations',
+                'deleteAll',
             ])->name('delete.all');
 
             Route::patch('/name', [
                 ConversationController::class,
-                'renameConversation',
+                'rename',
             ])->name('rename');
         });
 
@@ -105,7 +105,7 @@ Route::middleware(['auth'])->group(function () {
             ])->group(function () {
                 Route::post('/create-conversation', [
                     ConversationController::class,
-                    'createConversation',
+                    'create',
                 ])->name('conversation.create');
 
                 Route::post('/chat-agent', [

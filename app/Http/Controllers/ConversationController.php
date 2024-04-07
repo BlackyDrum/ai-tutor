@@ -22,7 +22,7 @@ class ConversationController extends Controller
 {
     use OpenAICommunication, AppSupportTraits;
 
-    public function createConversation(Request $request)
+    public function create(Request $request)
     {
         $request->validate([
             'message' =>
@@ -195,7 +195,7 @@ class ConversationController extends Controller
         return response()->json(['id' => $conversation->url_id]);
     }
 
-    public function deleteConversation(Request $request)
+    public function delete(Request $request)
     {
         $request->validate([
             'conversation_id' => [
@@ -221,14 +221,14 @@ class ConversationController extends Controller
         return response()->json(['id' => $request->input('conversation_id')]);
     }
 
-    public function deleteAllConversations(Request $request)
+    public function deleteAll(Request $request)
     {
         Conversation::query()->where('user_id', '=', Auth::id())->delete();
 
         return response()->json(['ok' => true]);
     }
 
-    public function renameConversation(Request $request)
+    public function rename(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:64',
