@@ -267,7 +267,7 @@ class ConversationController extends Controller
     {
         $conversation = Conversation::query()->where('url_id', $id)->first();
 
-        $messages = ChatController::getMessagesForPeek($id);
+        $messages = MessageController::getMessagesForPeek($id);
 
         if (!$messages) {
             return redirect('/');

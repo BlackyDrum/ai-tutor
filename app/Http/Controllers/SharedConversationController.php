@@ -14,7 +14,7 @@ class SharedConversationController extends Controller
 {
     public function show(string $id)
     {
-        $messages = ChatController::getMessagesForShare($id);
+        $messages = MessageController::getMessagesForShare($id);
 
         if (!$messages) {
             return redirect('/');

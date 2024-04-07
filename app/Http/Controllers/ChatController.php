@@ -31,17 +31,16 @@ class ChatController extends Controller
     {
         $conversation = Conversation::query()->where('url_id', $id)->first();
 
-        $messages = self::getMessagesForChat($id);
+        $messages = MessageController::getMessagesForChat($id);
 
         if (!$messages) {
             return redirect('/');
         }
 
         $date = Document::query()
-            ->where('collection_id', '=', $conversation->collection_id)
-            ->orderBy('updated_at', 'desc')
-            ->first()
-            ->updated_at ?? null;
+                ->where('collection_id', '=', $conversation->collection_id)
+                ->orderBy('updated_at', 'desc')
+                ->first()->updated_at ?? null;
 
         return Inertia::render('Chat', [
             'messages' => $messages,
@@ -52,130 +51,8 @@ class ChatController extends Controller
             'username' => null,
             'info' => session()->pull('info_message_remaining_messages'),
             'current_module' => Module::query()->find($conversation->module_id)->name,
-            'data_from' => $date
+            'data_from' => $date,
         ]);
-    }
-
-    public function fetchMessagesForChat(
-        string $conversation_id
-    ) {
-        $messages = self::getMessagesForChat($conversation_id);
-
-        if (!$messages) {
-            return response()->json(
-                ['message' => 'The selected conversation id is invalid'],
-                422
-            );
-        }
-
-        return response()->json($messages);
-    }
-
-    public function fetchMessagesForPeek(
-        string $conversation_id
-    ) {
-        $messages = self::getMessagesForPeek($conversation_id);
-
-        if (!$messages) {
-            return response()->json(
-                ['message' => 'The selected conversation id is invalid'],
-                422
-            );
-        }
-
-        return response()->json($messages);
-    }
-
-    public function fetchMessagesForShare(
-        string $conversation_id
-    ) {
-        $messages = self::getMessagesForShare($conversation_id);
-
-        if (!$messages) {
-            return response()->json(
-                ['message' => 'The selected conversation id is invalid'],
-                422
-            );
-        }
-
-        return response()->json($messages);
-    }
-
-    public static function getMessagesForShare($conversation_id)
-    {
-        $shared = SharedConversation::query()
-            ->where('shared_conversations.shared_url_id', '=', $conversation_id)
-            ->first();
-
-        if (!$shared) {
-            return false;
-        }
-
-        $conversation = Conversation::query()->find($shared->conversation_id);
-
-        return SharedConversation::query()
-            ->join(
-                'conversations',
-                'conversations.id',
-                '=',
-                'shared_conversations.conversation_id'
-            )
-            ->join(
-                'messages',
-                'messages.conversation_id',
-                '=',
-                'conversations.id'
-            )
-            ->where('conversations.id', '=', $conversation->id)
-            ->whereRaw('messages.created_at < shared_conversations.created_at')
-            ->orderBy('messages.created_at', 'desc')
-            ->select(['messages.user_message', 'messages.agent_message'])
-            ->paginate(
-                self::isMobile(\request()->userAgent())
-                    ? config('chat.messages_per_page_mobile')
-                    : config('chat.messages_per_page_desktop')
-            );
-    }
-
-    public static function getMessagesForPeek($conversation_id)
-    {
-        $conversation = Conversation::query()
-            ->where('url_id', $conversation_id)
-            ->first();
-
-        if (!$conversation) {
-            return false;
-        }
-
-        return Message::query()
-            ->where('conversation_id', '=', $conversation->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(
-                self::isMobile(\request()->userAgent())
-                    ? config('chat.messages_per_page_mobile')
-                    : config('chat.messages_per_page_desktop')
-            );
-    }
-
-    public static function getMessagesForChat($conversation_id)
-    {
-        $conversation = Conversation::query()
-            ->where('url_id', $conversation_id)
-            ->first();
-
-        if (!$conversation || $conversation->user_id !== Auth::id()) {
-            return false;
-        }
-
-        return Message::query()
-            ->where('conversation_id', '=', $conversation->id)
-            ->orderBy('created_at', 'desc')
-            ->select(['id', 'user_message', 'agent_message', 'helpful'])
-            ->paginate(
-                self::isMobile(\request()->userAgent())
-                    ? config('chat.messages_per_page_mobile')
-                    : config('chat.messages_per_page_desktop')
-            );
     }
 
     public function chat(Request $request)
@@ -318,52 +195,5 @@ class ChatController extends Controller
         }
 
         return response()->json($message);
-    }
-
-    public function updateRating(Request $request)
-    {
-        $request->validate([
-            'helpful' => 'required|boolean',
-            'message_id' => 'required|string',
-        ]);
-
-        $id = Hashids::decode($request->input('message_id'));
-
-        try {
-            Message::query()->findOrFail($id);
-        } catch (ModelNotFoundException $exception) {
-            return response()->json(
-                ['message_id' => 'The selected message id is invalid'],
-                404
-            );
-        }
-
-        $message = Message::query()
-            ->where('messages.id', '=', $id)
-            ->join(
-                'conversations',
-                'conversations.id',
-                '=',
-                'messages.conversation_id'
-            )
-            ->where('conversations.user_id', '=', Auth::id())
-            ->select(['messages.*'])
-            ->first();
-
-        if (!$message) {
-            return response()->json(
-                ['message' => 'The selected message id is invalid'],
-                404
-            );
-        }
-
-        $message->update([
-            'helpful' => $request->input('helpful'),
-        ]);
-
-        return response()->json([
-            'id' => $request->input('message_id'),
-            'helpful' => $request->input('helpful'),
-        ]);
     }
 }

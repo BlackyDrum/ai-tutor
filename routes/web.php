@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SharedConversationController;
 use App\Http\Middleware\CheckAcceptedTerms;
 use App\Http\Middleware\EnsureIsAdmin;
@@ -36,7 +37,7 @@ Route::middleware(['auth'])->group(function () {
             ])->name('show');
 
             Route::get('/messages/{conversation_id}', [
-                ChatController::class,
+                MessageController::class,
                 'fetchMessagesForShare',
             ])->name('messages.fetch');
 
@@ -54,10 +55,9 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('conversation')
         ->name('conversation.')
         ->group(function () {
-            Route::delete('/', [
-                ConversationController::class,
-                'delete',
-            ])->name('delete');
+            Route::delete('/', [ConversationController::class, 'delete'])->name(
+                'delete'
+            );
 
             Route::delete('/all', [
                 ConversationController::class,
@@ -79,7 +79,7 @@ Route::middleware(['auth'])->group(function () {
             );
 
             Route::get('/messages/{conversation_id}', [
-                ChatController::class,
+                MessageController::class,
                 'fetchMessagesForPeek',
             ])->name('messages.fetch');
         });
@@ -90,12 +90,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{id}', [ChatController::class, 'show'])->name('show');
 
             Route::patch('/rating', [
-                ChatController::class,
+                MessageController::class,
                 'updateRating',
             ])->name('rate');
 
             Route::get('/messages/{conversation_id}', [
-                ChatController::class,
+                MessageController::class,
                 'fetchMessagesForChat',
             ])->name('messages.fetch');
 
