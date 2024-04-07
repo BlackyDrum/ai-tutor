@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 trait AppSupportTraits
 {
-    public function validateAppFunctionality($conversation = null)
+    public function validateChatFunctionality($conversation = null)
     {
         $moduleId = Auth::user()->module_id;
 

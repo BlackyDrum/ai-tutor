@@ -67,7 +67,7 @@ class ChatController extends Controller
             ->where('url_id', '=', $request->input('conversation_id'))
             ->first();
 
-        $appCheckResults = $this->validateAppFunctionality($conversation);
+        $appCheckResults = $this->validateChatFunctionality($conversation);
 
         if (!$appCheckResults) {
             return $this->returnInternalServerError();

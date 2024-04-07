@@ -30,7 +30,7 @@ class ConversationController extends Controller
                 'required|string|max:' . config('chat.max_message_length'),
         ]);
 
-        $appCheckResults = $this->validateAppFunctionality();
+        $appCheckResults = $this->validateChatFunctionality();
 
         if (!$appCheckResults) {
             return $this->returnInternalServerError();
