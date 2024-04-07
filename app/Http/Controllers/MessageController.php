@@ -77,7 +77,7 @@ class MessageController extends Controller
     public static function getMessagesForShare($conversation_id)
     {
         $shared = SharedConversation::query()
-            ->where('shared_conversations.shared_url_id', '=', $conversation_id)
+            ->where('shared_url_id', '=', $conversation_id)
             ->first();
 
         if (!$shared) {
@@ -144,7 +144,7 @@ class MessageController extends Controller
         } catch (ModelNotFoundException $exception) {
             return response()->json(
                 ['message_id' => 'The selected message id is invalid'],
-                404
+                422
             );
         }
 
@@ -163,7 +163,7 @@ class MessageController extends Controller
         if (!$message) {
             return response()->json(
                 ['message' => 'The selected message id is invalid'],
-                404
+                422
             );
         }
 

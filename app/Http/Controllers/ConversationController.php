@@ -61,8 +61,9 @@ class ConversationController extends Controller
             'collection_id' => $collection->id,
         ]);
 
-        // Get the current time and save it in the 'created_at' field for messages.
-        // This is done before we add records to the 'conversation_has_document'
+        // Get the current time and save it in the 'created_at' field when
+        // we create the message at the bottom of this function.
+        // This current timestamp is saved before we add records to the 'conversation_has_document'
         // table in the 'createPromptWithContext' function. It's important because
         // it helps us know which message added which documents to the context window.
         // Later, if a message falls outside the context window, we can remove
@@ -82,7 +83,6 @@ class ConversationController extends Controller
                 [
                     'message' => $exception->getMessage(),
                     'collection' => $collection->name,
-                    'conversation-id' => $conversation->id,
                 ]
             );
 
@@ -132,6 +132,8 @@ class ConversationController extends Controller
             'api.openai_conversation_title_creator_model'
         );
 
+        // Here we take the first agent and user message and send them
+        // back to OpenAI to create a conversation title
         $response2 = $this->sendMessageToOpenAI(
             systemMessage: $systemMessage,
             userMessage: $request->input('message'),

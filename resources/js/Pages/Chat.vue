@@ -156,22 +156,15 @@ const handleMessageSubmission = (userMessage) => {
 
     isSendingRequest.value = true;
 
-    // We need to use a promise here, because we have to wait for the messages
-    // prop to fully re-render, in order to scroll to the bottom.
-    // Another option would be to use a timeout.
-    new Promise((resolve, reject) => {
-        messages.value.push({
-            agent_message: "",
-            conversation_id: page.props.conversation_id,
-            created_at: null,
-            id: null,
-            updated_at: null,
-            user_message: userMessage,
-        });
-        resolve();
-    }).then(() => {
-        scroll();
+    messages.value.push({
+        agent_message: "",
+        id: null,
+        user_message: userMessage,
     });
+
+    nextTick(() => {
+        scroll();
+    })
 
     window.axios
         .post("/chat/chat-agent", {
@@ -181,14 +174,9 @@ const handleMessageSubmission = (userMessage) => {
         .then((result) => {
             const lastMessage = messages.value[messages.value.length - 1];
 
-            const { agent_message, created_at, id, updated_at } = result.data;
+            const { agent_message, id } = result.data;
 
-            Object.assign(lastMessage, {
-                created_at,
-                id,
-                updated_at,
-            });
-
+            lastMessage.id = id;
             lastMessage.agent_message = processAgentMessage(agent_message);
 
             if (typeof result.data.info !== "undefined") {
@@ -202,10 +190,7 @@ const handleMessageSubmission = (userMessage) => {
 
             messagesRaw.value.push({
                 agent_message: agent_message,
-                conversation_id: page.props.conversation_id,
-                created_at: created_at,
                 id: id,
-                updated_at: updated_at,
                 user_message: userMessage,
             });
         })

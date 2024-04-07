@@ -4,24 +4,18 @@ namespace App\Http\Controllers;
 
 use App\AppSupportTraits;
 use App\HandlesMessageLimits;
-use App\Models\Collection;
 use App\Models\ConversationHasDocument;
 use App\Models\Conversation;
 use App\Models\Document;
 use App\Models\Message;
 use App\Models\Module;
-use App\Models\SharedConversation;
 use App\OpenAICommunication;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-use Vinkla\Hashids\Facades\Hashids;
 
 class ChatController extends Controller
 {
@@ -186,14 +180,16 @@ class ChatController extends Controller
             'created_at' => $now,
         ]);
 
+        $responseData = $message->only(['user_message', 'agent_message', 'id']);
+
         DB::commit();
 
         $remaining = $this->checkRemainingMessages();
 
         if ($remaining) {
-            $message['info'] = $remaining;
+            $responseData['info'] = $remaining;
         }
 
-        return response()->json($message);
+        return response()->json($responseData);
     }
 }
