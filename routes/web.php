@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\ChromaController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SharedConversationController;
 use App\Http\Middleware\CheckAcceptedTerms;
 use App\Http\Middleware\EnsureIsAdmin;
 use App\Http\Middleware\ValidateRemainingRequests;
@@ -31,9 +30,10 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('share')
         ->name('share.')
         ->group(function () {
-            Route::get('/{id}', [ConversationController::class, 'share'])->name(
-                'show'
-            );
+            Route::get('/{id}', [
+                SharedConversationController::class,
+                'show',
+            ])->name('show');
 
             Route::get('/messages/{conversation_id}', [
                 ChatController::class,
@@ -41,13 +41,13 @@ Route::middleware(['auth'])->group(function () {
             ])->name('messages.fetch');
 
             Route::post('/', [
-                ConversationController::class,
-                'createShare',
+                SharedConversationController::class,
+                'create',
             ])->name('create');
 
             Route::delete('/', [
-                ConversationController::class,
-                'deleteShare',
+                SharedConversationController::class,
+                'delete',
             ])->name('delete');
         });
 
