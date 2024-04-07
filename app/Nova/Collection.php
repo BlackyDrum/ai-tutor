@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Http\Controllers\ChromaController;
+use App\Classes\ChromaDB;
 use App\Nova\Actions\DestroyChromaDB;
 use App\Nova\Actions\ReplicateCollection;
 use App\Nova\Actions\SyncChromaDB;
@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
@@ -117,7 +116,7 @@ class Collection extends Resource
     public static function afterCreate(NovaRequest $request, Model $model)
     {
         try {
-            ChromaController::createCollection($model);
+            ChromaDB::createCollection($model);
 
             self::changeActiveStatus($model);
 
@@ -156,7 +155,7 @@ class Collection extends Resource
     public static function afterDelete(NovaRequest $request, Model $model)
     {
         try {
-            ChromaController::deleteCollection($model);
+            ChromaDB::deleteCollection($model);
 
             $model->forceDelete();
         } catch (\Exception $exception) {

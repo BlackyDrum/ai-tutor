@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\ChromaController;
+use App\Classes\ChromaDB;
 use App\Models\Collection;
 use App\Models\Document;
 use App\Models\Embedding;
@@ -37,7 +37,7 @@ class ValidateChromaDBSync extends Command
         $failMessage =
             "Relational Database is NOT in sync with ChromaDB.\nConsider running 'php artisan chroma:sync' to sync the databases.";
 
-        $client = ChromaController::getClient();
+        $client = ChromaDB::getClient();
 
         $this->info("ChromaDB Version: {$client->version()}");
         $this->info("ChromaDB Database: {$client->database}");
@@ -97,7 +97,7 @@ class ValidateChromaDBSync extends Command
         // collection in ChromaDB
         foreach ($relationalCollections as $relationalCollection) {
             try {
-                ChromaController::getCollection($relationalCollection->name);
+                ChromaDB::getCollection($relationalCollection->name);
             } catch (\Exception $exception) {
                 $this->error(
                     "Cannot find ChromaDB Collection for {$relationalCollection->name}"
@@ -115,7 +115,7 @@ class ValidateChromaDBSync extends Command
 
             $this->info("Validating collection $collectionName...");
 
-            $chromaCollection = ChromaController::getCollection(
+            $chromaCollection = ChromaDB::getCollection(
                 $collectionName
             );
 

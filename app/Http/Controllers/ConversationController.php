@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\AppSupportTraits;
+use App\Classes\ChromaDB;
 use App\HandlesMessageLimits;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Module;
-use App\Models\SharedConversation;
 use App\Models\User;
 use App\OpenAICommunication;
 use App\Rules\ValidateConversationOwner;
@@ -69,7 +69,7 @@ class ConversationController extends Controller
         $now = Carbon::now();
 
         try {
-            $promptWithContext = ChromaController::createPromptWithContext(
+            $promptWithContext = ChromaDB::createPromptWithContext(
                 $collection,
                 $request->input('message'),
                 $conversation

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\ChromaController;
+use App\Classes\ChromaDB;
 use App\Models\Collection;
 use App\Models\Document;
 use App\Models\Embedding;
@@ -40,7 +40,7 @@ class SyncChromaDB extends Command
 
         $this->info('Syncing...');
 
-        $client = ChromaController::getClient();
+        $client = ChromaDB::getClient();
 
         if ($option == 'relational') {
             $relationalCollections = Collection::all();
@@ -48,9 +48,9 @@ class SyncChromaDB extends Command
             $client->deleteAllCollections();
 
             foreach ($relationalCollections as $relationalCollection) {
-                ChromaController::createCollection($relationalCollection);
+                ChromaDB::createCollection($relationalCollection);
 
-                $chromaCollection = ChromaController::getCollection(
+                $chromaCollection = ChromaDB::getCollection(
                     $relationalCollection->name
                 );
 
@@ -111,7 +111,7 @@ class SyncChromaDB extends Command
             $relationalCollections = Collection::all();
 
             foreach ($relationalCollections as $relationalCollection) {
-                $chromaCollection = ChromaController::getCollection(
+                $chromaCollection = ChromaDB::getCollection(
                     $relationalCollection->name
                 );
 

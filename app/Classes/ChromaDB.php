@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Classes;
 
 use App\Models\Collection;
 use App\Models\ConversationHasDocument;
 use App\Models\Document;
 use App\Models\Embedding;
-use Codewithkyrian\ChromaDB\ChromaDB;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 use Codewithkyrian\ChromaDB\Embeddings\OpenAIEmbeddingFunction;
 use Illuminate\Support\Str;
 
-class ChromaController extends Controller
+abstract class ChromaDB
 {
     public static function createPromptWithContext(
         $collection,
@@ -488,7 +487,7 @@ class ChromaController extends Controller
 
     public static function getClient()
     {
-        return ChromaDB::factory()
+        return \Codewithkyrian\ChromaDB\ChromaDB::factory()
             ->withHost(config('chromadb.host'))
             ->withPort(config('chromadb.port'))
             ->withDatabase(config('chromadb.database'))

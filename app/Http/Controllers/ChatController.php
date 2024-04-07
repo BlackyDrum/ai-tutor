@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\AppSupportTraits;
+use App\Classes\ChromaDB;
 use App\HandlesMessageLimits;
-use App\Models\ConversationHasDocument;
 use App\Models\Conversation;
+use App\Models\ConversationHasDocument;
 use App\Models\Document;
 use App\Models\Message;
 use App\Models\Module;
@@ -115,7 +116,7 @@ class ChatController extends Controller
         }
 
         try {
-            $promptWithContext = ChromaController::createPromptWithContext(
+            $promptWithContext = ChromaDB::createPromptWithContext(
                 $collection,
                 $request->input('message'),
                 $conversation

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\ChromaController;
+use App\Classes\ChromaDB;
 use App\Models\Collection;
 use App\Models\Document;
 use App\Models\Embedding;
@@ -31,7 +31,7 @@ class DeleteCollections extends Command
     {
         $this->info('Deleting all collections and embeddings...');
 
-        $chromaDB = ChromaController::getClient();
+        $chromaDB = ChromaDB::getClient();
 
         $chromaDB->deleteAllCollections();
 

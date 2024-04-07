@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Http\Controllers\ChromaController;
+use App\Classes\ChromaDB;
 use App\Models\Agent;
 use App\Models\Collection;
-use App\Models\Conversation;
 use App\Models\Module;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -70,7 +69,7 @@ class DemoSeeder extends Seeder
 
         if ($collection->wasRecentlyCreated) {
             try {
-                ChromaController::createCollection($collection);
+                ChromaDB::createCollection($collection);
             } catch (\Exception $exception) {
                 $collection->forceDelete();
                 $user->delete();

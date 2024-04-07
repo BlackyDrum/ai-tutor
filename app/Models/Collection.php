@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\ChromaController;
+use App\Classes\ChromaDB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
@@ -38,7 +38,7 @@ class Collection extends Model
             $oldName = $model->getOriginal('name');
 
             try {
-                ChromaController::updateCollection($oldName, $model);
+                ChromaDB::updateCollection($oldName, $model);
             } catch (\Exception $exception) {
                 Log::error(
                     'ChromaDB: Failed to update collection with name {name}. Reason: {reason}',

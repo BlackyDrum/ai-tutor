@@ -2,7 +2,7 @@
 
 namespace App\Nova\Actions;
 
-use App\Http\Controllers\ChromaController;
+use App\Classes\ChromaDB;
 use App\Models\Collection;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -38,7 +38,7 @@ class ReplicateCollection extends Action
         ]);
 
         try {
-            ChromaController::replicateCollection(
+            ChromaDB::replicateCollection(
                 original: $model,
                 copy: $replication
             );

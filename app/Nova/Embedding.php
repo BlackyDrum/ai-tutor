@@ -2,13 +2,12 @@
 
 namespace App\Nova;
 
-use App\Http\Controllers\ChromaController;
+use App\Classes\ChromaDB;
 use App\Models\Document;
 use App\Nova\Filters\CollectionFilter;
 use App\Nova\Metrics\Embeddings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Fields\BelongsTo;
@@ -142,7 +141,7 @@ class Embedding extends Resource
         ]);
 
         try {
-            ChromaController::createEmbedding($model, $newDocument, $pathToFile);
+            ChromaDB::createEmbedding($model, $newDocument, $pathToFile);
 
             $oldDocument?->delete();
         } catch (\Exception $exception) {
@@ -159,7 +158,7 @@ class Embedding extends Resource
     public static function afterUpdate(NovaRequest $request, Model $model)
     {
         try {
-            ChromaController::updateEmbedding($model);
+            ChromaDB::updateEmbedding($model);
 
             Log::info('App: User with ID {user-id} updated an embedding', [
                 'id' => $model->id,
@@ -183,7 +182,7 @@ class Embedding extends Resource
     public static function afterDelete(NovaRequest $request, Model $model)
     {
         try {
-            ChromaController::deleteEmbedding($model);
+            ChromaDB::deleteEmbedding($model);
 
             $count = \App\Models\Embedding::query()
                 ->where('document_id', '=', $model->document_id)
