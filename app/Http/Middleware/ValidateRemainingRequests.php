@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\HandlesMessageLimits;
 use App\Http\Controllers\ChatController;
 use Carbon\Carbon;
 use Closure;
@@ -12,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ValidateRemainingRequests
 {
+    use HandlesMessageLimits;
+
     /**
      * Handle an incoming request.
      *
@@ -30,7 +33,7 @@ class ValidateRemainingRequests
             );
         }
 
-        $messages = ChatController::getUserMessagesFromLastDay();
+        $messages = $this->getUserMessagesFromLastDay();
 
         if ($messages->count() >= $maxRequests) {
             $firstMessageTime = $messages->first()->created_at;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AppSupportTraits;
+use App\HandlesMessageLimits;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Module;
@@ -20,7 +21,7 @@ use Inertia\Inertia;
 
 class ConversationController extends Controller
 {
-    use OpenAICommunication, AppSupportTraits;
+    use OpenAICommunication, AppSupportTraits, HandlesMessageLimits;
 
     public function create(Request $request)
     {
@@ -182,7 +183,7 @@ class ConversationController extends Controller
 
         DB::commit();
 
-        $remaining = ChatController::checkRemainingMessages();
+        $remaining = $this->checkRemainingMessages();
 
         if ($remaining) {
             session()->put('info_message_remaining_messages', $remaining);

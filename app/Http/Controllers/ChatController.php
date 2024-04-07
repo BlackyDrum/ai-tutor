@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AppSupportTraits;
+use App\HandlesMessageLimits;
 use App\Models\Collection;
 use App\Models\ConversationHasDocument;
 use App\Models\Conversation;
@@ -24,7 +25,7 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class ChatController extends Controller
 {
-    use OpenAICommunication, AppSupportTraits;
+    use OpenAICommunication, AppSupportTraits, HandlesMessageLimits;
 
     public function show(string $id)
     {
@@ -313,31 +314,13 @@ class ChatController extends Controller
 
         DB::commit();
 
-        $remaining = self::checkRemainingMessages();
+        $remaining = $this->checkRemainingMessages();
 
         if ($remaining) {
             $message['info'] = $remaining;
         }
 
         return response()->json($message);
-    }
-
-    public static function checkRemainingMessages()
-    {
-        $maxRequests = Auth::user()->max_requests;
-        $remainingMessagesAlertLevels = config(
-            'chat.remaining_requests_alert_levels'
-        );
-
-        $messages = self::getUserMessagesFromLastDay();
-
-        $remainingMessagesCount = $maxRequests - $messages->count();
-
-        if (in_array($remainingMessagesCount, $remainingMessagesAlertLevels)) {
-            return "You have $remainingMessagesCount messages remaining for today.";
-        }
-
-        return false;
     }
 
     public function updateRating(Request $request)
@@ -385,31 +368,5 @@ class ChatController extends Controller
             'id' => $request->input('message_id'),
             'helpful' => $request->input('helpful'),
         ]);
-    }
-
-    public static function getUserMessagesFromLastDay()
-    {
-        $now = Carbon::now();
-
-        $oneDayAgo = $now->copy()->subDay();
-
-        $maxRequests = Auth::user()->max_requests;
-
-        return Message::query()
-            ->join(
-                'conversations',
-                'messages.conversation_id',
-                '=',
-                'conversations.id'
-            )
-            ->where('conversations.user_id', '=', Auth::id())
-            ->whereBetween('messages.created_at', [$oneDayAgo, $now])
-            ->orderBy('messages.created_at', 'desc')
-            // It's important to limit the query by 'maxRequests' to avoid inconsistency
-            // in the error message if the user's 'max_requests' value is set to a lower
-            // value in production.
-            ->limit($maxRequests)
-            ->get(['messages.created_at'])
-            ->reverse();
     }
 }
