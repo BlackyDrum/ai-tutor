@@ -60,6 +60,7 @@ The chatbot is designed with the student's needs in mind, offering a range of fu
 -   **NPM: ^10.2**
 -   **Composer ^2.5**
 -   **Docker: ^24.0**
+-   **(Recommended) Laravel Idea PHPStorm Plugin**
 
 ## Installation
 
