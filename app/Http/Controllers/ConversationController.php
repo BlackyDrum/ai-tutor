@@ -7,6 +7,7 @@ use App\Models\Message;
 use App\Models\Module;
 use App\Models\SharedConversation;
 use App\Models\User;
+use App\OpenAICommunication;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,6 +19,8 @@ use Inertia\Inertia;
 
 class ConversationController extends Controller
 {
+    use OpenAICommunication;
+
     public function createConversation(Request $request)
     {
         $request->validate([
@@ -89,7 +92,7 @@ class ConversationController extends Controller
             );
         }
 
-        $response = ChatController::sendMessageToOpenAI(
+        $response = $this->sendMessageToOpenAI(
             systemMessage: $agent->instructions,
             userMessage: $promptWithContext,
             languageModel: $agent->openai_language_model,
@@ -127,7 +130,7 @@ class ConversationController extends Controller
             'api.openai_conversation_title_creator_model'
         );
 
-        $response2 = ChatController::sendMessageToOpenAI(
+        $response2 = $this->sendMessageToOpenAI(
             systemMessage: $systemMessage,
             userMessage: $request->input('message'),
             languageModel: $nameCreatorModel,

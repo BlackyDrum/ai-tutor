@@ -9,6 +9,7 @@ use App\Models\Document;
 use App\Models\Message;
 use App\Models\Module;
 use App\Models\SharedConversation;
+use App\OpenAICommunication;
 use App\Rules\ValidateConversationOwner;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -22,6 +23,8 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class ChatController extends Controller
 {
+    use OpenAICommunication;
+
     public function show(string $id)
     {
         $conversation = Conversation::query()->where('url_id', $id)->first();
@@ -270,7 +273,7 @@ class ChatController extends Controller
             );
         }
 
-        $response = self::sendMessageToOpenAI(
+        $response = $this->sendMessageToOpenAI(
             systemMessage: $agent->instructions,
             userMessage: $promptWithContext,
             languageModel: $agent->openai_language_model,
@@ -336,41 +339,6 @@ class ChatController extends Controller
         }
 
         return false;
-    }
-
-    public static function sendMessageToOpenAI(
-        $systemMessage,
-        $userMessage,
-        $languageModel,
-        $max_tokens,
-        $temperature,
-        $recentMessages = null,
-        $usesContext = true
-    ) {
-        $token = config('api.openai_api_key');
-
-        $messages = [['role' => 'system', 'content' => $systemMessage]];
-
-        if ($recentMessages) {
-            $messages = array_merge($messages, $recentMessages);
-        }
-
-        if ($usesContext) {
-            $userMessage =
-                "Use the context (if useful) from this or from previous messages to answer the user's question.\n\n" .
-                $userMessage;
-        }
-
-        $messages[] = ['role' => 'user', 'content' => $userMessage];
-
-        return Http::withToken($token)
-            ->timeout(60)
-            ->post('https://api.openai.com/v1/chat/completions', [
-                'model' => $languageModel,
-                'temperature' => (float) $temperature,
-                'max_tokens' => (int) $max_tokens,
-                'messages' => $messages,
-            ]);
     }
 
     public function updateRating(Request $request)
