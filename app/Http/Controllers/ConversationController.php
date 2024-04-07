@@ -33,10 +33,7 @@ class ConversationController extends Controller
         $appCheckResults = $this->validateAppFunctionality();
 
         if (!$appCheckResults) {
-            return response()->json(
-                ['message' => 'Internal Server Error'],
-                500
-            );
+            return $this->returnInternalServerError();
         }
 
         $agent = $appCheckResults['agent'];
@@ -88,10 +85,7 @@ class ConversationController extends Controller
 
             DB::rollBack();
 
-            return response()->json(
-                ['message' => 'Internal Server Error'],
-                500
-            );
+            return $this->returnInternalServerError();
         }
 
         $response = $this->sendMessageToOpenAI(
@@ -113,7 +107,7 @@ class ConversationController extends Controller
 
             DB::rollBack();
 
-            return response()->json($response->reason(), $response->status());
+            return $this->returnInternalServerError();
         }
 
         $systemMessage =

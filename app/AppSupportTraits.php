@@ -80,6 +80,11 @@ trait AppSupportTraits
         ];
     }
 
+    public function returnInternalServerError()
+    {
+        return response()->json(['message' => 'Internal Server Error'], 500);
+    }
+
     // Source: http://detectmobilebrowsers.com/
     public static function isMobile($useragent)
     {
