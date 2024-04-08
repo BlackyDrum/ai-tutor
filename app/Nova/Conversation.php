@@ -125,17 +125,6 @@ class Conversation extends Resource
         return false;
     }
 
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function cards(NovaRequest $request)
-    {
-        return [new ConversationsPerDay()];
-    }
-
     public function filters(NovaRequest $request)
     {
         return [new ModuleFilter(), new CollectionFilter(), new AgentFilter()];
