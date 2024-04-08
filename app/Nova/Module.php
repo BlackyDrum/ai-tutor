@@ -51,22 +51,25 @@ class Module extends Resource
                 ->rules(
                     'required',
                     Rule::unique('modules', 'name')->ignore($this->resource->id)
+                )
+                ->help(
+                    'This should follow the convention: <strong>Course Title (Course Code) - Semester Year</strong><br>Example: Datenbanken & Webtechnologien (52182) - SS 2024'
                 ),
 
             Text::make('Ref ID')
                 ->rules(
                     'required',
                     'integer',
-                    Rule::unique('modules', 'ref_id')->ignore($this->resource->id)
+                    Rule::unique('modules', 'ref_id')->ignore(
+                        $this->resource->id
+                    )
                 )
                 ->help('Unique Ref ID for an ILIAS course')
                 ->sortable(),
 
-            DateTime::make('Created At')
-                ->onlyOnDetail(),
+            DateTime::make('Created At')->onlyOnDetail(),
 
-            DateTime::make('Updated At')
-                ->onlyOnDetail(),
+            DateTime::make('Updated At')->onlyOnDetail(),
 
             HasMany::make('Conversations'),
 
