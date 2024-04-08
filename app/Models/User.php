@@ -38,6 +38,7 @@ class User extends Authenticatable
         'password',
         'max_requests',
         'module_id',
+        'last_login_at',
         'created_at',
         'updated_at',
     ];

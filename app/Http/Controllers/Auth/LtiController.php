@@ -52,7 +52,7 @@ class LtiController extends Controller
                     'abbreviation' => 'required|string|max:64',
                     'role' => 'required|string',
                     'refId' => 'required|integer|exists:modules,ref_id',
-                    'context_title' => 'required|string'
+                    'context_title' => 'required|string',
                 ]
             );
 
@@ -73,11 +73,13 @@ class LtiController extends Controller
                     'module_id' => $module->id,
                     'context_title' => $contextTitle,
                     'max_requests' => config('chat.max_requests'),
+                    'last_login_at' => now(),
                 ]
             );
 
             $user->module_id = $module->id;
             $user->context_title = $contextTitle;
+            $user->last_login_at = now();
             $user->save();
 
             Auth::login($user);

@@ -102,10 +102,13 @@ class User extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            DateTime::make('Created At')
+            DateTime::make('Last Login At')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
                 ->sortable(),
+
+            DateTime::make('Created At')
+                ->onlyOnDetail(),
 
             DateTime::make('Updated At')
                 ->onlyOnDetail(),
