@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('password');
             $table->boolean('admin')->default(false);
             $table->timestamp('terms_accepted_at')->nullable();
+            $table->dateTime('last_login_at')->nullable();
             $table->unsignedInteger('max_requests');
             $table->timestamps();
         });

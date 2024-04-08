@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agent;
 use App\Models\Collection;
+use App\Models\Module;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -15,7 +16,11 @@ class HomeController extends Controller
 {
     public function show()
     {
-        return Inertia::render('Home');
+        return Inertia::render('Home', [
+            'current_module' =>
+                Module::query()->find(Auth::user()->module_id)->name ??
+                'Not associated with a module',
+        ]);
     }
 
     public function acceptTerms(Request $request)

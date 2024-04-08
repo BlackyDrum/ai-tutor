@@ -91,8 +91,6 @@ class User extends Resource
                 ->hideWhenCreating()
                 ->sortable(),
 
-            Text::make('Context Title')->nullable()->sortable(),
-
             BelongsTo::make('Module', 'module', Module::class)
                 ->nullable()
                 ->sortable(),

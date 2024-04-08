@@ -36,7 +36,6 @@ class DemoSeeder extends Seeder
                 'admin' => true,
                 'max_requests' => 100,
                 'module_id' => $module->id,
-                'context_title' => 'Demo Module'
             ]
         );
 

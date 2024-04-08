@@ -45,7 +45,7 @@ class ChatController extends Controller
             'showOptions' => true,
             'username' => null,
             'info' => session()->pull('info_message_remaining_messages'),
-            'current_module' => Module::query()->find($conversation->module_id)->name,
+            'conversation_module' => Module::query()->find($conversation->module_id)->name,
             'data_from' => $date,
         ]);
     }

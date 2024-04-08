@@ -104,12 +104,8 @@ const handleInput = () => {
         </form>
     </div>
     <div class="p-1 pb-2 text-center text-xs">
-        <strong
-            >{{
-                $page.component === "Home"
-                    ? $page.props.auth.user.context_title
-                    : $page.props.current_module
-            }}
+        <strong>
+            {{ $page.props.current_module ?? $page.props.conversation_module }}
         </strong>
         <span v-if="$page.props.data_from">
             - Data updated at

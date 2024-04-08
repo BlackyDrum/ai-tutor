@@ -24,7 +24,6 @@ class User extends Authenticatable
         'terms_accepted_at',
         'max_requests',
         'admin',
-        'context_title',
         'module_id',
     ];
 
