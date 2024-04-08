@@ -58,6 +58,10 @@ class Embedding extends Resource
             Text::make('Name')
                 ->hideWhenCreating()
                 ->updateRules('required')
+                ->resolveUsing(function ($name) {
+                    return substr($name, 0, 64) .
+                        (strlen($name) > 64 ? '...' : '');
+                })
                 ->sortable(),
 
             Textarea::make('Content')
