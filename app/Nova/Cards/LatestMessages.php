@@ -46,7 +46,14 @@ class LatestMessages extends TableCard
 
                     return Row::make(
                         Cell::make($message['name']),
-                        Cell::make(htmlspecialchars($message['user_message']))
+                        Cell::make(
+                            htmlspecialchars(
+                                substr($message['user_message'], 0, 128) .
+                                    (strlen($message['user_message']) > 128
+                                        ? '...'
+                                        : '')
+                            )
+                        )
                     )->viewLink("/admin/resources/messages/$id");
                 })
                 ->toArray()
