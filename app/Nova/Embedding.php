@@ -155,8 +155,10 @@ class Embedding extends Resource
             $oldDocument?->delete();
 
             $collection = \App\Models\Collection::query()->find($collectionId);
-            $collection->updated_at = now();
-            $collection->save();
+            $collection::withoutEvents(function () use ($collection) {
+                $collection->updated_at = now();
+                $collection->save();
+            });
         } catch (\Exception $exception) {
             $model->forceDelete();
 
