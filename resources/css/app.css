@@ -16,7 +16,6 @@
 
 .scroll-container {
     scrollbar-width: thin;
-    scrollbar-color: var(--app-light) transparent;
 }
 
 .scroll-container:not(:hover) {
@@ -24,14 +23,12 @@
 }
 
 @media (prefers-color-scheme: light) {
-    .scroll-container, textarea {
-        scrollbar-width: thin;
+    .scroll-container {
         scrollbar-color: var(--app-light) transparent;
     }
 }
 @media (prefers-color-scheme: dark) {
-    .scroll-container, textarea {
-        scrollbar-width: thin;
+    .scroll-container {
         scrollbar-color: #ffffff transparent;
     }
 

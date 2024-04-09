@@ -75,7 +75,7 @@ const handleInput = () => {
                 @input="handleInput"
                 ref="input"
                 rows="1"
-                class="w-full resize-none overflow-y-auto rounded-lg py-4 pr-12 lg:pr-20 dark:bg-app-light dark:text-white"
+                class="scroll-container w-full resize-none overflow-y-auto rounded-lg py-4 pr-12 lg:pr-20 dark:bg-app-light dark:text-white"
                 placeholder="Type your Message..."
             />
             <Button
