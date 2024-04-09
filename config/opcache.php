@@ -3,7 +3,7 @@
 return [
     'url' => env('OPCACHE_URL', config('app.url')),
     'prefix' => 'opcache-api',
-    'verify' => true,
+    'verify' => false,
     'headers' => [],
     'directories' => [
         base_path('app'),
