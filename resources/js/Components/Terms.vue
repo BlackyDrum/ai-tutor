@@ -107,6 +107,36 @@ const acceptTerms = () => {
 
         <br />
 
+        <h1 class="text-2xl font-semibold">Missbräuchliche Nutzung</h1>
+        <p>
+            Missbräuchliche Nutzung, die zur Beeinträchtigung unserer Systeme,
+            zur Beeinträchtigung der Nutzererfahrung oder zur Verletzung unserer
+            Richtlinien führt, ist streng untersagt. Dies umfasst das Ausnutzen
+            von Sicherheitslücken, unautorisierte Angriffe auf unsere
+            Softwareinfrastruktur, das Umgehen von Zugriffsbeschränkungen oder
+            Sicherheitsmaßnahmen, den Versuch, Dienste zu überlasten oder zu
+            stören, sowie die Eingabe von missbräuchlichen oder schädlichen
+            Prompts an den Chatbot.
+        </p>
+        <br />
+        <p>
+            Missbräuchliche Prompts beinhalten, sind aber nicht beschränkt auf,
+            die Aufforderung zur Verbreitung von Hassrede, Gewalt,
+            rechtswidrigen Inhalten oder das Manipulieren des Chatbots zu
+            unethischen Zwecken. Wir überwachen die Interaktionen mit
+            <em class="font-medium">{{ appName }}</em
+            >, um solches Verhalten zu identifizieren und zu verhindern.
+        </p>
+        <br />
+        <p>
+            Bei Feststellung solcher Aktivitäten behalten wir uns das Recht vor,
+            entsprechende Maßnahmen zu ergreifen. Diese können von einer
+            Verwarnung bis hin zur dauerhaften Sperrung des Zugangs reichen,
+            abhängig von der Schwere des Verstoßes.
+        </p>
+
+        <br />
+
         <h1 class="text-2xl font-semibold">Zustimmung</h1>
         <p>
             Mit der Nutzung von
@@ -118,6 +148,15 @@ const acceptTerms = () => {
             einverstanden, dass Ihre Nachrichten zu
             <em class="font-medium">Überwachungs-</em> und
             <em class="font-medium">Verbesserungszwecken</em> mitgelesen werden.
+        </p>
+        <br />
+        <p>
+            Durch Ihre Zustimmung erkennen Sie außerdem an, dass die Nutzung des
+            Dienstes im Einklang mit unseren Richtlinien erfolgen muss. Dazu
+            gehört, dass keine missbräuchlichen, rechtswidrigen oder schädlichen
+            Inhalte übermittelt werden. Wir behalten uns das Recht vor,
+            Maßnahmen gegen Nutzer zu ergreifen, die gegen diese Richtlinien
+            verstoßen.
         </p>
 
         <br />
