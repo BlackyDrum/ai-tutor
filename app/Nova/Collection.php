@@ -164,7 +164,9 @@ class Collection extends Resource
                 ]
             );
 
-            $model->restore();
+            $model::withoutEvents(function () use ($model) {
+                $model->restore();
+            });
 
             abort(500, $exception->getMessage());
         }
