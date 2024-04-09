@@ -48,6 +48,8 @@ The chatbot is designed with the student's needs in mind, offering a range of fu
     -   [Adding Embeddings to a Collection](#adding-embeddings-to-a-collection)
     -   [Adding an Agent to a Module](#adding-an-agent-to-a-module)
 -   [Application Config Variables](#application-config-variables)
+-   [Cache](#cache)
+    -   [Managing Cache After Source Code Changes](#managing-cache-after-source-code-changes)
 -   [User Authentication via LTI 1.0](#user-authentication-via-lti-10)
     -   [How It Works](#how-it-works-1)
     -   [Setting Up LTI Integration](#setting-up-lti-integration)
@@ -423,6 +425,21 @@ return [
 
     // Note: 'max_requests' can be adjusted on a per-user basis in the database
 ];
+```
+
+## Cache
+For optimal performance, our application employs caching mechanisms with `OPCache`. For that, we leverage the `laravel-opcache` package. For detailed information about this package and its features, please visit https://github.com/appstract/laravel-opcache.
+
+### Managing Cache After Source Code Changes
+
+Whenever modifications are made to the source code, it's necessary to `manually` clear and reset the cache to ensure the changes are reflected. Execute the following commands to manage the cache:
+1. **Clear OPCache**:
+```
+php artisan opcache:clear
+```
+2. **Compile Cache**:
+```
+php artisan opcache:compile
 ```
 
 ## User Authentication via LTI 1.0
