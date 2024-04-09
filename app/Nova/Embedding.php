@@ -153,6 +153,10 @@ class Embedding extends Resource
             ChromaDB::createEmbedding($model, $newDocument, $pathToFile);
 
             $oldDocument?->delete();
+
+            $collection = \App\Models\Collection::query()->find($collectionId);
+            $collection->updated_at = now();
+            $collection->save();
         } catch (\Exception $exception) {
             $model->forceDelete();
 
