@@ -47,7 +47,7 @@ class ChatController extends Controller
             'info' => session()->pull('info_message_remaining_messages'),
             'conversation_module' => Module::query()->find(
                 $conversation->module_id
-            )->name,
+            )->name ?? 'Not available',
             'data_from' => $date,
         ]);
     }
