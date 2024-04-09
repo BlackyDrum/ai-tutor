@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Blacklist;
 use App\Models\Module;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -25,11 +26,17 @@ class LtiController extends Controller
             $request->session()->regenerateToken();
         }
 
+        $ltiFailMessage =
+            'Authentication failed. Please try again or contact us.';
+
         try {
             $tool = LtiTool::getLtiTool();
             $tool->handleRequest();
         } catch (\Exception $exception) {
-            return $this->redirectWithError($exception->getMessage());
+            return $this->redirectWithError(
+                $ltiFailMessage,
+                $exception->getMessage()
+            );
         }
 
         if ($tool->getLaunchType() === $tool::LAUNCH_TYPE_LAUNCH) {
@@ -37,6 +44,17 @@ class LtiController extends Controller
             $abbreviation = $tool->userResult->ltiUserId;
             $role = $tool->getRawParameters()['roles'] ?? null;
             $refId = $tool->resourceLink->getId();
+
+            $blacklisted = Blacklist::query()
+                ->where('abbreviation', '=', $abbreviation)
+                ->first();
+
+            if ($blacklisted) {
+                return $this->redirectWithError(
+                    'Access restricted for your account. If this seems mistaken, please contact us.',
+                    "User $name ($abbreviation) is blacklisted"
+                );
+            }
 
             $validator = Validator::make(
                 [
@@ -54,7 +72,10 @@ class LtiController extends Controller
             );
 
             if ($validator->fails()) {
-                return $this->redirectWithError($validator->errors()->toJson());
+                return $this->redirectWithError(
+                    $ltiFailMessage,
+                    $validator->errors()->toJson()
+                );
             }
 
             $module = Module::query()->where('ref_id', '=', $refId)->first();
@@ -92,10 +113,10 @@ class LtiController extends Controller
             return redirect('/');
         }
 
-        return $this->redirectWithError();
+        return $this->redirectWithError($ltiFailMessage);
     }
 
-    private function redirectWithError($reason = '')
+    private function redirectWithError($message, $reason = '')
     {
         Log::info('Auth: LTI launch failed. Reason: {reason}', [
             'reason' => $reason,
@@ -103,8 +124,7 @@ class LtiController extends Controller
 
         return redirect('/login')->withErrors(
             [
-                'message' =>
-                    'Authentication failed. Please try again or contact us.',
+                'message' => $message,
             ],
             'lti'
         );

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Nova\Agent;
+use App\Nova\Blacklist;
 use App\Nova\Collection;
 use App\Nova\Conversation;
 use App\Nova\Dashboards\Main;
@@ -61,6 +62,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
                 MenuSection::make('Users', [
                     MenuItem::resource(User::class),
+                    MenuItem::resource(Blacklist::class)->name('Blacklist'),
                 ])->icon('user')->collapsable(),
 
                 MenuSection::make('Health', [
