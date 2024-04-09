@@ -54,7 +54,7 @@ class ChatController extends Controller
     {
         $request->validate([
             'message' =>
-                'required|string|max:' . config('chat.max_message_length'),
+                'required|string|min:5|max:' . config('chat.max_message_length'),
             'conversation_id' => [
                 'bail',
                 'required',
