@@ -306,8 +306,8 @@ const updateRating = (id, helpful) => {
 const copyMessage = (id) => {
     if (copiedMessages.value.includes(id)) return;
 
-    // Accessing the messages property is necessary since the markdown
-    // content in our messages ref variable is already parsed.
+    // Accessing the 'messagesRaw' property is necessary since the markdown
+    // content in our 'messages' ref variable is already parsed.
     const message = messagesRaw.value.find((message) => message.id === id);
 
     navigator.clipboard
