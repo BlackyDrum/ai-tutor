@@ -10,6 +10,9 @@ return [
     // The maximum character count allowed per user message to maintain manageable conversation lengths
     'max_message_length' => 4096,
 
+    // The minimum character count allowed per user message
+    'min_message_length' => 5,
+
     // Specifies the number of chat messages to load per request for efficient pagination
     // Older messages are fetched automatically as the user scrolls
     'messages_per_page_desktop' => 15,

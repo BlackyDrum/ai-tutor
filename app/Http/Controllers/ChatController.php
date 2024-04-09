@@ -45,7 +45,9 @@ class ChatController extends Controller
             'showOptions' => true,
             'username' => null,
             'info' => session()->pull('info_message_remaining_messages'),
-            'conversation_module' => Module::query()->find($conversation->module_id)->name,
+            'conversation_module' => Module::query()->find(
+                $conversation->module_id
+            )->name,
             'data_from' => $date,
         ]);
     }
@@ -53,8 +55,12 @@ class ChatController extends Controller
     public function chat(Request $request)
     {
         $request->validate([
-            'message' =>
-                'required|string|min:5|max:' . config('chat.max_message_length'),
+            'message' => [
+                'required',
+                'string',
+                'min:' . config('chat.min_message_length'),
+                'max:' . config('chat.max_message_length'),
+            ],
             'conversation_id' => [
                 'bail',
                 'required',

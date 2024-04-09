@@ -26,8 +26,12 @@ class ConversationController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'message' =>
-                'required|string|min:5|max:' . config('chat.max_message_length'),
+            'message' => [
+                'required',
+                'string',
+                'min:' . config('chat.min_message_length'),
+                'max:' . config('chat.max_message_length'),
+            ],
         ]);
 
         $appCheckResults = $this->validateChatFunctionality();
