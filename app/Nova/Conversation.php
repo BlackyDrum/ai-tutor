@@ -39,7 +39,7 @@ class Conversation extends Resource
      *
      * @var array
      */
-    public static $search = ['id', 'url_id'];
+    public static $search = ['id', 'url_id', 'name'];
 
     /**
      * Get the fields displayed by the resource.
