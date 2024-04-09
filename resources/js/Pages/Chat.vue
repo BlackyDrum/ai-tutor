@@ -190,12 +190,14 @@ const handleMessageSubmission = (userMessage) => {
 
             const index = page.props.auth.history.findIndex(
                 (conversation) =>
-                    conversation.id === page.props.conversation_id,
+                    conversation.url_id === page.props.conversation_id,
             );
 
-            page.props.auth.history.unshift(
-                page.props.auth.history.splice(index, 1)[0],
-            );
+            if (index !== 0) {
+                page.props.auth.history.unshift(
+                    page.props.auth.history.splice(index, 1)[0],
+                );
+            }
 
             messagesRaw.value.push({
                 agent_message: agent_message,
