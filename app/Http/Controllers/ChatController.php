@@ -183,6 +183,9 @@ class ChatController extends Controller
 
         $responseData = $message->only(['user_message', 'agent_message', 'id']);
 
+        $conversation->updated_at = now();
+        $conversation->save();
+
         DB::commit();
 
         $remaining = $this->checkRemainingMessages();
