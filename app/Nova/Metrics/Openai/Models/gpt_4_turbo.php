@@ -4,11 +4,11 @@ namespace App\Nova\Metrics\Openai\Models;
 
 use App\Nova\Metrics\Openai\Model;
 
-class gpt_4_1106_vision_preview extends Model
+class gpt_4_turbo extends Model
 {
     // Price in dollar per million tokens
     public float $input = 10.0;
     public float $output = 30.0;
 
-    public $name = 'gpt-4-1106-vision-preview';
+    public $name = 'gpt-4-turbo';
 }

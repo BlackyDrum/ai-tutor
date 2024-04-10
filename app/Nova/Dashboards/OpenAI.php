@@ -7,7 +7,7 @@ use App\Nova\Metrics\Openai\Models\gpt_3_5_turbo_1106;
 use App\Nova\Metrics\Openai\Models\gpt_4;
 use App\Nova\Metrics\Openai\Models\gpt_4_0125_preview;
 use App\Nova\Metrics\Openai\Models\gpt_4_1106_preview;
-use App\Nova\Metrics\Openai\Models\gpt_4_1106_vision_preview;
+use App\Nova\Metrics\Openai\Models\gpt_4_turbo;
 use App\Nova\Metrics\Openai\Models\gpt_4_32k;
 use App\Nova\Metrics\Openai\Costs;
 use Laravel\Nova\Dashboard;
@@ -34,8 +34,8 @@ class OpenAI extends Dashboard
     public static function models()
     {
         return [
+            new gpt_4_turbo(),
             new gpt_4_0125_preview(),
-            new gpt_4_1106_vision_preview(),
             new gpt_4_1106_preview(),
             new gpt_4(),
             new gpt_4_32k(),
