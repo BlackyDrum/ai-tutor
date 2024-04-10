@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SharedConversationController;
 use App\Http\Middleware\CheckAcceptedTerms;
+use App\Http\Middleware\CheckBlacklist;
 use App\Http\Middleware\EnsureIsAdmin;
 use App\Http\Middleware\ValidateRemainingRequests;
 use Illuminate\Support\Facades\Route;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', CheckBlacklist::class])->group(function () {
     Route::get('/', [HomeController::class, 'show'])->name('home');
 
     Route::patch('/accept-terms', [HomeController::class, 'acceptTerms'])->name(
