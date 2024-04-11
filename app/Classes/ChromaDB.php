@@ -73,12 +73,10 @@ abstract class ChromaDB
 
                 $zip->extractTo($storePath, [$filename]);
 
-                $fileContents = $zip->getFromIndex($i);
-
                 $file = Embedding::query()->make([
                     'embedding_id' => $filename,
                     'name' => $filename,
-                    'size' => strlen($fileContents),
+                    'size' => 0,
                     'collection_id' => $model->collection_id,
                 ]);
 
@@ -137,6 +135,7 @@ abstract class ChromaDB
 
             $model->embedding_id = Str::orderedUuid()->toString();
             $model->content = $text ?? '';
+            $model->size = strlen($model->content);
             $model->document_id = $document->id;
 
             $ids = [$model->embedding_id];
