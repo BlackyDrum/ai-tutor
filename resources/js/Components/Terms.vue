@@ -48,6 +48,8 @@ const acceptTerms = () => {
         modal
         header="Terms of Use / Nutzungsbedingungen"
     >
+        <small class="italic">Version: 11.04.2024</small>
+
         <h1 class="text-2xl font-semibold">Einleitung</h1>
         <p>
             Willkommen bei <em class="font-medium">{{ appName }}</em
@@ -109,30 +111,42 @@ const acceptTerms = () => {
 
         <h1 class="text-2xl font-semibold">Missbräuchliche Nutzung</h1>
         <p>
-            Missbräuchliche Nutzung, die zur Beeinträchtigung unserer Systeme,
-            zur Beeinträchtigung der Nutzererfahrung oder zur Verletzung unserer
-            Richtlinien führt, ist streng untersagt. Dies umfasst das Ausnutzen
-            von Sicherheitslücken, unautorisierte Angriffe auf unsere
-            Softwareinfrastruktur, das Umgehen von Zugriffsbeschränkungen oder
-            Sicherheitsmaßnahmen, den Versuch, Dienste zu überlasten oder zu
-            stören, sowie die Eingabe von missbräuchlichen oder schädlichen
-            Prompts an den Chatbot.
+            <span class="font-bold">a. </span>Missbräuchliche Nutzung, die zur
+            Beeinträchtigung unserer Systeme, zur Beeinträchtigung der
+            Nutzererfahrung oder zur Verletzung unserer Richtlinien führt, ist
+            streng untersagt. Dies umfasst das Ausnutzen von Sicherheitslücken,
+            unautorisierte Angriffe auf unsere Softwareinfrastruktur, das
+            Umgehen von Zugriffsbeschränkungen oder Sicherheitsmaßnahmen, den
+            Versuch, Dienste zu überlasten oder zu stören, sowie die Eingabe von
+            missbräuchlichen oder schädlichen Prompts an den Chatbot.
         </p>
         <br />
         <p>
-            Missbräuchliche Prompts beinhalten, sind aber nicht beschränkt auf,
-            die Aufforderung zur Verbreitung von Hassrede, Gewalt,
-            rechtswidrigen Inhalten oder das Manipulieren des Chatbots zu
-            unethischen Zwecken. Wir überwachen die Interaktionen mit
-            <em class="font-medium">{{ appName }}</em
+            <span class="font-bold">b. </span>Missbräuchliche Prompts
+            beinhalten, sind aber nicht beschränkt auf, die Aufforderung zur
+            Verbreitung von Hassrede, Gewalt, rechtswidrigen Inhalten oder das
+            Manipulieren des Chatbots zu unethischen Zwecken. Wir überwachen die
+            Interaktionen mit <em class="font-medium">{{ appName }}</em
             >, um solches Verhalten zu identifizieren und zu verhindern.
         </p>
         <br />
         <p>
-            Bei Feststellung solcher Aktivitäten behalten wir uns das Recht vor,
-            entsprechende Maßnahmen zu ergreifen. Diese können von einer
-            Verwarnung bis hin zur dauerhaften Sperrung des Zugangs reichen,
-            abhängig von der Schwere des Verstoßes.
+            <span class="font-bold">c. </span>Bei Feststellung solcher
+            Aktivitäten behalten wir uns das Recht vor, entsprechende Maßnahmen
+            zu ergreifen. Diese können von einer Verwarnung bis hin zur
+            dauerhaften Sperrung des Zugangs reichen, abhängig von der Schwere
+            des Verstoßes.
+        </p>
+        <br />
+        <p>
+            <span class="font-bold">d. </span>Es ist ausschließlich gestattet,
+            Inhalte zu Themen zu stellen, die sich auf die in den Vorlesungen
+            behandelten Inhalte beziehen. Jegliche Anfragen oder Prompts, die
+            sich außerhalb dieses Bildungskontextes bewegen, können als
+            Missbrauch angesehen werden und unterliegen den gleichen Maßnahmen
+            bei einem Verstoß, wie unter den Punkten
+            <span class="font-bold">a </span> bis
+            <span class="font-bold">c </span> beschrieben.
         </p>
 
         <br />
@@ -155,8 +169,8 @@ const acceptTerms = () => {
             Dienstes im Einklang mit unseren Richtlinien erfolgen muss. Dazu
             gehört, dass keine missbräuchlichen, rechtswidrigen oder schädlichen
             Inhalte übermittelt werden. Wir behalten uns das Recht vor,
-            Maßnahmen gegen Nutzer zu ergreifen, die gegen diese Richtlinien
-            verstoßen.
+            Maßnahmen gegen Nutzer:innen zu ergreifen, die gegen diese
+            Richtlinien verstoßen.
         </p>
 
         <br />
