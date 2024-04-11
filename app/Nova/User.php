@@ -91,7 +91,7 @@ class User extends Resource
                 ->hideWhenCreating()
                 ->sortable(),
 
-            BelongsTo::make('Module', 'module', Module::class)
+            BelongsTo::make('Active Module', 'module', Module::class)
                 ->nullable()
                 ->sortable(),
 
