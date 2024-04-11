@@ -17,7 +17,7 @@ class ValidateChromaDBSync extends Action
 
     public $name = 'Check Synchronization';
 
-    public $confirmText = 'This action will verify the synchronization of collections and embeddings between our relational database and ChromaDB';
+    public $confirmText = 'This action will verify the synchronization of collections and embeddings between our relational database and ChromaDB. Please note that this operation might not succeed because it could take too long to execute. You should use a console and run \'php artisan chroma:check\' instead.';
 
     public $standalone = true;
 

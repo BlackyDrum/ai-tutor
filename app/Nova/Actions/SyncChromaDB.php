@@ -19,7 +19,7 @@ class SyncChromaDB extends Action
 
     public $name = 'Synchronize Databases';
 
-    public $confirmText = "This action will synchronize ChromaDB with the relational database. You need to specify the authoritative data source. The selected source's data will be replicated to the other database, and existing data in the target database will be overwritten or removed.";
+    public $confirmText = "This action will synchronize ChromaDB with the relational database. You need to specify the authoritative data source. The selected source's data will be replicated to the other database, and existing data in the target database will be overwritten or removed. Please note that this operation might not succeed because it could take too long to execute. You should use a console and run 'php artisan chroma:sync --source=chroma' or 'php artisan chroma:sync --source=relational' instead.";
 
     public $standalone = true;
 
