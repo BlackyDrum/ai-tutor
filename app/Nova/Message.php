@@ -96,7 +96,8 @@ class Message extends Resource
                 ])
                 ->addTypes([
                     null => 'invisible',
-                ]),
+                ])
+                ->sortable(),
 
             DateTime::make('Created At')
                 ->hideWhenCreating()
