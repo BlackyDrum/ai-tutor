@@ -345,7 +345,7 @@ In our application, each module should have an associated collection within `Chr
 
 ### Adding Embeddings to a Collection
 
-With the `collections` in place, the next step is to populate them with `embeddings`. `Embeddings` are created by processing `documents` or `files`, which can then be retrieved based on `semantic similarity` to queries. Our application supports uploading files in various formats including `.pptx`, `.json`, `.md`, and `.txt`. Special attention should be paid to `.json` and `.md` files, as they require a specific format to ensure successful embedding:
+With the `collections` in place, the next step is to populate them with `embeddings`. `Embeddings` are created by processing `documents` or `files`, which can then be retrieved based on `semantic similarity` to queries. Our application supports uploading files in various formats including `.pptx`, `.json`, `.md`, `.txt` and `.zip`. Special attention should be paid to `.json` and `.md` files, as they require a specific format to ensure successful embedding:
 
 -   `json`
 
@@ -381,6 +381,8 @@ This is a second paragraph on the first slide
 This is a first paragraph from the second slide
 ---
 ```
+
+To upload several files simultaneously, compress the files into a `zip` archive and then upload the `zip`.
 
 ### Adding an Agent to a Module
 

@@ -9,6 +9,7 @@ use App\Models\Embedding;
 use Codewithkyrian\ChromaDB\Embeddings\JinaEmbeddingFunction;
 use Codewithkyrian\ChromaDB\Embeddings\OpenAIEmbeddingFunction;
 use Illuminate\Support\Str;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 abstract class ChromaDB
 {
@@ -60,6 +61,35 @@ abstract class ChromaDB
         return $enhancedMessage;
     }
 
+    public static function createEmbeddingFromZip($model, $pathToZip)
+    {
+        $zip = new \ZipArchive();
+
+        $storePath = storage_path() . '/app/';
+
+        if ($zip->open($pathToZip)) {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $filename = $zip->getNameIndex($i);
+
+                $zip->extractTo($storePath, [$filename]);
+
+                $fileContents = $zip->getFromIndex($i);
+
+                $file = Embedding::query()->make([
+                    'embedding_id' => $filename,
+                    'name' => $filename,
+                    'size' => strlen($fileContents),
+                    'collection_id' => $model->collection_id,
+                ]);
+
+                \App\Nova\Embedding::afterCreate(new NovaRequest(), $file);
+            }
+            $zip->close();
+        } else {
+            throw new \Exception('Cannot open zip archive');
+        }
+    }
+
     public static function createEmbedding($model, $document, $pathToFile)
     {
         $filename = $model->name;
@@ -88,25 +118,6 @@ abstract class ChromaDB
             $ids = $result['ids'];
             $documents = $result['documents'];
             $metadata = $result['metadata'];
-        } elseif (str_ends_with($filename, 'txt')) {
-            $text = file_get_contents($pathToFile);
-
-            $model->embedding_id = Str::orderedUuid()->toString();
-            $model->content = $text ?? '';
-            $model->document_id = $document->id;
-
-            $ids = [$model->embedding_id];
-            $documents = [$text];
-            $metadata = [
-                [
-                    'name' => $model->name,
-                    'size' => $model->size,
-                    'document' => $document->name,
-                    'document_md5' => $document->md5,
-                ],
-            ];
-
-            $model->save();
         } elseif (str_ends_with($filename, 'md')) {
             $markdown = file_get_contents($pathToFile);
 
@@ -121,6 +132,25 @@ abstract class ChromaDB
             $ids = $result['ids'];
             $documents = $result['documents'];
             $metadata = $result['metadata'];
+        } elseif (str_ends_with($filename, 'txt')) {
+            $text = file_get_contents($pathToFile);
+
+            $model->embedding_id = Str::orderedUuid()->toString();
+            $model->content = $text ?? '';
+            $model->document_id = $document->id;
+
+            $ids = [$model->embedding_id];
+            $documents = [$model->content];
+            $metadata = [
+                [
+                    'name' => $model->name,
+                    'size' => $model->size,
+                    'document' => $document->name,
+                    'document_md5' => $document->md5,
+                ],
+            ];
+
+            $model->save();
         } else {
             throw new \Exception(
                 'Attempted to process a file with the wrong format'

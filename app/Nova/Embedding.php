@@ -74,11 +74,11 @@ class Embedding extends Resource
                 ),
 
             File::make('File', 'embedding_id')
-                ->acceptedTypes('.txt,.pptx,.json,.md')
+                ->acceptedTypes('.txt,.pptx,.json,.md,.zip')
                 ->disableDownload()
                 ->hideFromDetail()
                 ->hideWhenUpdating()
-                ->rules('required', 'extensions:txt,pptx,json,md')
+                ->rules('required', 'extensions:txt,pptx,json,md,zip')
                 ->storeOriginalName('name')
                 ->storeSize('size')
                 ->readonly(function () {
@@ -118,6 +118,22 @@ class Embedding extends Resource
 
         $name = $model->name;
         $collectionId = $model->collection_id;
+
+        if (str_ends_with($name, 'zip')) {
+            try {
+                ChromaDB::createEmbeddingFromZip($model, $pathToFile);
+            } catch (\Exception $exception) {
+                abort(500, $exception->getMessage());
+            } finally {
+                $model->forceDelete();
+
+                if (file_exists($pathToFile)) {
+                    unlink($pathToFile);
+                }
+            }
+
+            return;
+        }
 
         $hash = md5_file($pathToFile);
 
