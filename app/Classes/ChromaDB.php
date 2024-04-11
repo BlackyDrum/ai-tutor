@@ -156,6 +156,12 @@ abstract class ChromaDB
                 $xmlData = $zip->getFromIndex($xmlIndex);
                 $xml = simplexml_load_string($xmlData);
 
+                // Check if a slide is marked as hidden
+                if (isset($xml['show']) && $xml['show'] == '0') {
+                    $slideNumber++;
+                    continue;
+                }
+
                 $namespaces = $xml->getNamespaces(true);
                 $slideData = [
                     'content' => [],
