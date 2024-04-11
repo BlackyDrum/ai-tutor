@@ -90,7 +90,7 @@ abstract class ChromaDB
         }
     }
 
-    public static function createEmbedding($model, $document, $pathToFile)
+    public static function createEmbeddingFromFile($model, $document, $pathToFile)
     {
         $filename = $model->name;
         $collectionId = $model->collection_id;

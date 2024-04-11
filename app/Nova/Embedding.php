@@ -166,7 +166,7 @@ class Embedding extends Resource
         ]);
 
         try {
-            ChromaDB::createEmbedding($model, $newDocument, $pathToFile);
+            ChromaDB::createEmbeddingFromFile($model, $newDocument, $pathToFile);
 
             $oldDocument?->delete();
 
