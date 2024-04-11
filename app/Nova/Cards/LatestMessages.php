@@ -33,7 +33,12 @@ class LatestMessages extends TableCard
                 'messages.conversation_id'
             )
             ->join('users', 'users.id', '=', 'conversations.user_id')
-            ->select(['messages.user_message', 'messages.id', 'users.name'])
+            ->select([
+                'messages.user_message',
+                'messages.id',
+                'users.name',
+                'conversations.url_id',
+            ])
             ->latest('messages.created_at')
             ->paginate(5);
 
@@ -42,8 +47,6 @@ class LatestMessages extends TableCard
         $this->data(
             $messages
                 ->map(function ($message) {
-                    $id = Hashids::decode($message['id'])[0];
-
                     return Row::make(
                         Cell::make($message['name']),
                         Cell::make(
@@ -54,7 +57,7 @@ class LatestMessages extends TableCard
                                         : '')
                             )
                         )
-                    )->viewLink("/admin/resources/messages/$id");
+                    )->viewLink("/peek/$message->url_id");
                 })
                 ->toArray()
         );
