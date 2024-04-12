@@ -70,6 +70,11 @@ abstract class ChromaDB
         if ($zip->open($pathToZip)) {
             for ($i = 0; $i < $zip->numFiles; $i++) {
                 $filename = $zip->getNameIndex($i);
+                $fileInfo = $zip->statIndex($i);
+
+                if ($fileInfo['size'] == 0 || str_contains($filename, '_MACOSX/')) {
+                    continue;
+                }
 
                 $zip->extractTo($storePath, [$filename]);
 
