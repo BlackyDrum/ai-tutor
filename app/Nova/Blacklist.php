@@ -2,8 +2,12 @@
 
 namespace App\Nova;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -36,9 +40,7 @@ class Blacklist extends Resource
      *
      * @var array
      */
-    public static $search = [
-        'id',
-    ];
+    public static $search = ['id'];
 
     /**
      * Get the fields displayed by the resource.
@@ -52,21 +54,40 @@ class Blacklist extends Resource
             ID::make()->sortable(),
 
             Text::make('Abbreviation')
-                ->rules('required', Rule::unique('blacklist', 'abbreviation')->ignore($this->resource->id))
+                ->rules(
+                    'required',
+                    Rule::unique('blacklist', 'abbreviation')->ignore(
+                        $this->resource->id
+                    )
+                )
                 ->help('ILIAS Username, e.g <strong>ga9102s</strong>')
                 ->showOnPreview()
                 ->sortable(),
 
             Textarea::make('Reason')->nullable()->showOnPreview()->alwaysShow(),
 
-            DateTime::make('Created At')
+            BelongsTo::make('Banned By', 'user', User::class)
+                ->hideWhenUpdating()
+                ->hideWhenCreating()
+                ->nullable(),
+
+            DateTime::make('Banned At', 'created_at')
                 ->hideWhenCreating()
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            DateTime::make('Updated At')
-                ->onlyOnDetail(),
+            DateTime::make('Updated At')->onlyOnDetail(),
         ];
+    }
+
+    public static function afterCreate(NovaRequest $request, Model $model)
+    {
+        $model->user_id = Auth::id();
+        $model->save();
+
+        Log::info('App: User with ID {user-id} banned {banned-user}', [
+            'banned-user' => $model->abbreviation
+        ]);
     }
 
     public function authorizedToReplicate(Request $request)
