@@ -29,7 +29,9 @@ const appName = import.meta.env.VITE_APP_NAME;
 const page = usePage();
 const toast = useToast();
 
-let converter = new showdown.Converter();
+let converter = new showdown.Converter({
+    literalMidWordUnderscores: true,
+});
 const forbidTags = ["img"];
 
 const copiedMessages = ref([]);
