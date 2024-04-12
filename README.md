@@ -19,8 +19,6 @@
 ## Description
 
 This project is the result of a bachelor thesis project at `FH Aachen` aimed at developing a `chatbot/tutor` to aid students in their studies. It leverages `artificial intelligence` to provide real-time `assistance` and `tutoring`, making it easier for students to understand complex `subjects`, prepare for `exams`, and get instant help with their `coursework`.
-<br><br>
-The chatbot is designed with the student's needs in mind, offering a range of functionalities from `answering questions` to `providing explanations` on various topics. Built on a robust technology stack, including `Laravel`, `ChromaDB`, and `OpenAI's` powerful language models, this project represents a significant step towards enhancing educational tools and resources available to students.
 
 ## Table of Contents
 
