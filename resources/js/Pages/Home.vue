@@ -34,6 +34,8 @@ const handleCreateConversation = (userMessage) => {
         .catch((error) => {
             isSendingRequest.value = false;
 
+            promptComponent.value.focusInput();
+
             toast.add({
                 severity: "error",
                 summary: "Error",
