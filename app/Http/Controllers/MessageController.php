@@ -112,7 +112,7 @@ class MessageController extends Controller
 
     public static function getMessagesForPeek($conversation_id)
     {
-        $conversation = Conversation::query()
+        $conversation = Conversation::withTrashed()
             ->where('url_id', $conversation_id)
             ->first();
 

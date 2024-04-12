@@ -44,7 +44,7 @@ class SharedConversationController extends Controller
                 'bail',
                 'required',
                 'string',
-                'exists:conversations,url_id',
+                'exists:conversations,url_id,deleted_at,NULL',
                 new ValidateConversationOwner(),
             ],
         ]);
@@ -86,7 +86,7 @@ class SharedConversationController extends Controller
                 'bail',
                 'required',
                 'string',
-                'exists:conversations,url_id',
+                'exists:conversations,url_id,deleted_at,NULL',
                 new ValidateConversationOwner(),
             ],
         ]);

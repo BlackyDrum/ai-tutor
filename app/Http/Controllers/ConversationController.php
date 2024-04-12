@@ -6,6 +6,7 @@ use App\Classes\ChromaDB;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Module;
+use App\Models\SharedConversation;
 use App\Models\User;
 use App\Rules\ValidateConversationOwner;
 use App\Traits\AppSupportTraits;
@@ -203,14 +204,24 @@ class ConversationController extends Controller
                 'bail',
                 'required',
                 'string',
-                'exists:conversations,url_id',
+                'exists:conversations,url_id,deleted_at,NULL',
                 new ValidateConversationOwner(),
             ],
         ]);
 
-        Conversation::query()
+        DB::beginTransaction();
+
+        $conversation = Conversation::query()
             ->where('url_id', '=', $request->input('conversation_id'))
+            ->first();
+
+        SharedConversation::query()
+            ->where('conversation_id', '=', $conversation->id)
             ->delete();
+
+        $conversation->delete();
+
+        DB::commit();
 
         Log::info(
             'App: User with ID {user-id} deleted a conversation with ID {conversation-id}',
@@ -224,7 +235,21 @@ class ConversationController extends Controller
 
     public function deleteAll(Request $request)
     {
-        Conversation::query()->where('user_id', '=', Auth::id())->delete();
+        $conversations = Conversation::query()
+            ->where('user_id', '=', Auth::id())
+            ->get();
+
+        DB::beginTransaction();
+
+        foreach ($conversations as $conversation) {
+            SharedConversation::query()
+                ->where('conversation_id', '=', $conversation->id)
+                ->delete();
+
+            $conversation->delete();
+        }
+
+        DB::commit();
 
         return response()->json(['ok' => true]);
     }
@@ -237,7 +262,7 @@ class ConversationController extends Controller
                 'bail',
                 'required',
                 'string',
-                'exists:conversations,url_id',
+                'exists:conversations,url_id,deleted_at,NULL',
                 new ValidateConversationOwner(),
             ],
         ]);
@@ -265,7 +290,7 @@ class ConversationController extends Controller
 
     public function peek(string $id)
     {
-        $conversation = Conversation::query()->where('url_id', $id)->first();
+        $conversation = Conversation::withTrashed()->where('url_id', $id)->first();
 
         $messages = MessageController::getMessagesForPeek($id);
 

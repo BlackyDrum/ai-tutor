@@ -64,7 +64,9 @@ class User extends Resource
                 ->rules(
                     'required',
                     'max:255',
-                    Rule::unique('users', 'abbreviation')->ignore($this->resource->id)
+                    Rule::unique('users', 'abbreviation')->ignore(
+                        $this->resource->id
+                    )
                 ),
 
             Password::make('Password')
@@ -105,11 +107,9 @@ class User extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            DateTime::make('Created At')
-                ->onlyOnDetail(),
+            DateTime::make('Created At')->onlyOnDetail(),
 
-            DateTime::make('Updated At')
-                ->onlyOnDetail(),
+            DateTime::make('Updated At')->onlyOnDetail(),
 
             HasMany::make('Conversations'),
 

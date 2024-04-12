@@ -81,7 +81,7 @@ class Costs extends Value
         // associated with a given language model.
 
         $totalTokens = ($getTokensForConversationName
-            ? Conversation::query()
+            ? Conversation::withTrashed()
             : Message::query()
         )
             ->where('openai_language_model', $modelName)
@@ -123,14 +123,14 @@ class Costs extends Value
 
             if ($conversationId) {
                 $queryBase->where('conversations.id', '=', $conversationId);
-                $conversationQueryBase = Conversation::query()->where(
+                $conversationQueryBase = Conversation::withTrashed()->where(
                     'id',
                     '=',
                     $conversationId
                 );
             } else {
                 $queryBase->where('conversations.user_id', '=', $userId);
-                $conversationQueryBase = Conversation::query()->where(
+                $conversationQueryBase = Conversation::withTrashed()->where(
                     'user_id',
                     '=',
                     $userId

@@ -20,7 +20,7 @@ class ValidateConversationOwner implements ValidationRule
             ->where('url_id', $value)
             ->first();
 
-        if ($conversation->user_id !== Auth::id()) {
+        if (!$conversation || $conversation->user_id !== Auth::id()) {
             $fail('The selected conversation id is invalid.');
         }
     }
