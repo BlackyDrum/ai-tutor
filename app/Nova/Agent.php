@@ -132,17 +132,6 @@ class Agent extends Resource
                 ->nullable()
                 ->sortable(),
 
-            BelongsTo::make('Creator', 'user', User::class)
-                ->default(Auth::id())
-                ->hideWhenUpdating()
-                ->hideWhenCreating()
-                ->sortable()
-                ->withMeta([
-                    'extraAttributes' => [
-                        'readonly' => true,
-                    ],
-                ]),
-
             HasMany::make('Conversations'),
 
             DateTime::make('Created At')
@@ -161,9 +150,6 @@ class Agent extends Resource
 
     public static function afterCreate(NovaRequest $request, Model $model)
     {
-        $model->user_id = Auth::id();
-        $model->save();
-
         self::changeActiveStatus($model);
 
         Log::info('App: User with ID {user-id} created an agent', [
