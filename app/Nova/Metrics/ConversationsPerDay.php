@@ -23,7 +23,7 @@ class ConversationsPerDay extends Trend
     {
         return $this->countByDays(
             $request,
-            Conversation::class
+            Conversation::withTrashed()
         )->showSumValue();
     }
 
