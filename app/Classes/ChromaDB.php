@@ -72,7 +72,10 @@ abstract class ChromaDB
                 $filename = $zip->getNameIndex($i);
                 $fileInfo = $zip->statIndex($i);
 
-                if ($fileInfo['size'] == 0 || str_contains($filename, '_MACOSX/')) {
+                if (
+                    $fileInfo['size'] == 0 ||
+                    str_contains($filename, '_MACOSX/')
+                ) {
                     continue;
                 }
 
@@ -93,8 +96,11 @@ abstract class ChromaDB
         }
     }
 
-    public static function createEmbeddingFromFile($model, $document, $pathToFile)
-    {
+    public static function createEmbeddingFromFile(
+        $model,
+        $document,
+        $pathToFile
+    ) {
         $filename = $model->name;
         $collectionId = $model->collection_id;
 
@@ -210,10 +216,13 @@ abstract class ChromaDB
                     $titleTexts = $textBoxes[0]->xpath('.//a:t');
                     if (!empty($titleTexts)) {
                         $slideData['title'] = join(
-                            '',
+                            ' ',
                             array_map(function ($t) {
-                                return (string) $t;
-                            }, $titleTexts)
+                                return trim((string) $t);
+                            }, array_filter(
+                                $titleTexts,
+                                fn($title) => !empty(trim($title))
+                            ))
                         );
                     }
 
@@ -224,10 +233,13 @@ abstract class ChromaDB
                         $texts = $sp->xpath('.//a:t');
                         if (!empty($texts)) {
                             $textString = join(
-                                '',
+                                ' ',
                                 array_map(function ($t) {
-                                    return (string) $t;
-                                }, $texts)
+                                    return trim((string) $t);
+                                }, array_filter(
+                                    $texts,
+                                    fn($text) => !empty(trim($text))
+                                ))
                             );
                             $slideData['content'][] = $textString;
                             //$slideData[(string) $index] = $textString;
