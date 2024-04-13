@@ -267,8 +267,8 @@ abstract class ChromaDB
         $document
     ) {
         $embedding_id = Str::orderedUuid()->toString();
-        $source = "Quelle: $document->name, Folie: $index";
-        $contentOnSlide = "$source\nTitle: $title\n$body";
+        $source = "Quelle: $document->name, Folie: $index, Folientitel: $title";
+        $contentOnSlide = "$source\n$body";
 
         Embedding::query()->create([
             'embedding_id' => $embedding_id,
