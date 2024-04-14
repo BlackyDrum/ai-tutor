@@ -30,7 +30,7 @@ abstract class ChromaDB
         //       does not yet offer details on embedding query metrics like prompt- and total_tokens.
         //       Consider enhancing the Adapter to include this functionality.
 
-        $enhancedMessage = __('app.user_message') . "\n$message\n\n";
+        $enhancedMessage = "\nUser Message:\n" . $message . "\n\n";
 
         foreach ($queryResponse->ids[0] as $id) {
             $embedding = Embedding::query()
@@ -54,7 +54,7 @@ abstract class ChromaDB
 
             $enhancedMessage .= "\n\"\"\"\n";
             $enhancedMessage .=
-                __('app.context_document') . "\n$embedding->content\n";
+                "Context Document:\n" . $embedding->content . "\n";
             $enhancedMessage .= "\"\"\"\n";
         }
 
@@ -267,13 +267,7 @@ abstract class ChromaDB
         $document
     ) {
         $embedding_id = Str::orderedUuid()->toString();
-        $source =
-            __('app.source') .
-            "$document->name, " .
-            __('app.slide') .
-            "$index, " .
-            __('app.slide_title') .
-            $title;
+        $source = "Quelle: $document->name, Folie: $index, Folientitel: $title";
         $contentOnSlide = "$source\n$body";
 
         Embedding::query()->create([

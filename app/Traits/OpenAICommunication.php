@@ -24,7 +24,9 @@ trait OpenAICommunication
         }
 
         if ($usesContext) {
-            $userMessage = __('app.uses_context') . "\n\n$userMessage";
+            $userMessage =
+                "Use the context (if useful) from this or from previous messages to answer the user's question.\n\n" .
+                $userMessage;
         }
 
         $messages[] = ['role' => 'user', 'content' => $userMessage];
