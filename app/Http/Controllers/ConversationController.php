@@ -131,40 +131,42 @@ class ConversationController extends Controller
             'api.openai_conversation_title_creator_model'
         );
 
-        // Here we take the first agent and user message and send them
-        // back to OpenAI to create a conversation title
-        $response2 = $this->sendMessageToOpenAI(
-            systemMessage: $systemMessage,
-            userMessage: $request->input('message'),
-            languageModel: $nameCreatorModel,
-            max_tokens: 12,
-            temperature: 0.8,
-            recentMessages: $agentResponse,
-            usesContext: false
-        );
-
-        if ($response2->failed()) {
-            Log::warning(
-                'OpenAI: Failed to create conversation title. Reason: {reason}. Status: {status}',
-                [
-                    'reason' => $response2->json()['error']['message'],
-                    'status' => $response2->status(),
-                ]
+        if ($nameCreatorModel) {
+            // Here we take the first agent and user message and send them
+            // back to OpenAI to create a conversation title
+            $response2 = $this->sendMessageToOpenAI(
+                systemMessage: $systemMessage,
+                userMessage: $request->input('message'),
+                languageModel: $nameCreatorModel,
+                max_tokens: 12,
+                temperature: 0.8,
+                recentMessages: $agentResponse,
+                usesContext: false
             );
-            // The error is just logged to monitor and troubleshoot issues. However, the failure does not stop or return an error to the user.
-            // This decision is based on the assessment that this specific failure does not critically impact the overall functionality
-            // of the conversation feature.
-        } else {
-            $conversation->update([
-                'name' => trim($response2->json()['choices'][0]['message'][
+
+            if ($response2->failed()) {
+                Log::warning(
+                    'OpenAI: Failed to create conversation title. Reason: {reason}. Status: {status}',
+                    [
+                        'reason' => $response2->json()['error']['message'],
+                        'status' => $response2->status(),
+                    ]
+                );
+                // The error is just logged to monitor and troubleshoot issues. However, the failure does not stop or return an error to the user.
+                // This decision is based on the assessment that this specific failure does not critically impact the overall functionality
+                // of the conversation feature.
+            } else {
+                $conversation->update([
+                    'name' => trim($response2->json()['choices'][0]['message'][
                     'content'
-                ], '"'),
-                'openai_language_model' => $nameCreatorModel,
-                'prompt_tokens' => $response2->json()['usage']['prompt_tokens'],
-                'completion_tokens' => $response2->json()['usage'][
+                    ], '"'),
+                    'openai_language_model' => $nameCreatorModel,
+                    'prompt_tokens' => $response2->json()['usage']['prompt_tokens'],
+                    'completion_tokens' => $response2->json()['usage'][
                     'completion_tokens'
-                ],
-            ]);
+                    ],
+                ]);
+            }
         }
 
         Message::query()->create([
