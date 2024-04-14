@@ -137,7 +137,7 @@ class ConversationController extends Controller
             systemMessage: $systemMessage,
             userMessage: $request->input('message'),
             languageModel: $nameCreatorModel,
-            max_tokens: 32,
+            max_tokens: 12,
             temperature: 0.8,
             recentMessages: $agentResponse,
             usesContext: false
@@ -156,9 +156,9 @@ class ConversationController extends Controller
             // of the conversation feature.
         } else {
             $conversation->update([
-                'name' => $response2->json()['choices'][0]['message'][
+                'name' => trim($response2->json()['choices'][0]['message'][
                     'content'
-                ],
+                ], '"'),
                 'openai_language_model' => $nameCreatorModel,
                 'prompt_tokens' => $response2->json()['usage']['prompt_tokens'],
                 'completion_tokens' => $response2->json()['usage'][
