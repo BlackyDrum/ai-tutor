@@ -138,7 +138,7 @@ class ConversationController extends Controller
                 systemMessage: $systemMessage,
                 userMessage: $request->input('message'),
                 languageModel: $nameCreatorModel,
-                max_tokens: 12,
+                max_tokens: 24,
                 temperature: 0.8,
                 recentMessages: $agentResponse,
                 usesContext: false
