@@ -300,14 +300,16 @@ class ConversationController extends Controller
             return redirect('/');
         }
 
+        $user = User::query()->find($conversation->user_id);
+
         return Inertia::render('Chat', [
             'messages' => $messages,
             'conversation_id' => $id,
             'conversation_name' => $conversation->name,
             'hasPrompt' => false,
             'showOptions' => true,
-            'username' =>
-                User::query()->find($conversation->user_id)->name ?? null,
+            'username' => $user->name,
+            'abbreviation' => $user->abbreviation,
             'info' => null,
         ]);
     }

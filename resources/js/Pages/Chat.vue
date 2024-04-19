@@ -342,7 +342,8 @@ const userAvatarLabel = computed(() => {
 
 const displayName = computed(() => {
     if (page.props.hasPrompt) return "You";
-    else if (page.props.username) return page.props.username;
+    else if (page.props.username)
+        return page.props.username + ` (${page.props.abbreviation})`;
     else return "Anonymous";
 });
 </script>
