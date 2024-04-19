@@ -423,7 +423,7 @@ return [
     "messages_per_page_desktop" => 25,
     "messages_per_page_mobile" => 10,
 
-    // Note: 'max_requests' can be adjusted on a per-user basis in the database
+    // Note: 'max_requests' can be adjusted on a per-user basis in the users table
 ];
 ```
 
