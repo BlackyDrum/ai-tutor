@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\ID;
@@ -74,11 +75,11 @@ class Embedding extends Resource
                 ),
 
             File::make('File', 'embedding_id')
-                ->acceptedTypes('.txt,.pptx,.json,.md,.zip')
+                ->acceptedTypes('.txt,.pptx,.json,.md,.zip,.pdf')
                 ->disableDownload()
                 ->hideFromDetail()
                 ->hideWhenUpdating()
-                ->rules('required', 'extensions:txt,pptx,json,md,zip')
+                ->rules('required', 'extensions:txt,pptx,json,md,zip,pdf')
                 ->storeOriginalName('name')
                 ->storeSize('size')
                 ->readonly(function () {
@@ -100,6 +101,16 @@ class Embedding extends Resource
                 ->withoutTrashed()
                 ->hideWhenUpdating()
                 ->sortable(),
+
+            Boolean::make('Is Practical Task', 'practical_task')
+                ->onlyOnForms()
+                ->withMeta(['value' => false])
+                ->resolveUsing(function ($value) {
+                    return $value;
+                })
+                ->fillUsing(function ($request, $model, $attribute, $requestAttribute) {
+                    // Since there is no column, do nothing here
+                }),
 
             DateTime::make('Created At')->onlyOnDetail(),
 

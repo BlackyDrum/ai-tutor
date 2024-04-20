@@ -24,6 +24,8 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
         "longhornopen/laravel-celtic-lti": "^1.0",
+        "lukemadhanga/php-document-parser": "^0.1.5",
+        "smalot/pdfparser": "^2.9",
         "tightenco/ziggy": "^1.0",
         "vinkla/hashids": "^12.0",
         "whitespacecode/nova-table-card": "^1.0"

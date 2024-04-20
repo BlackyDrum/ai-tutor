@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a2f2ed3b39a182bed9e3c14c9d919dea",
+    "content-hash": "81b9b871e04bf1068c86d4bc7d5a28d6",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -2995,6 +2995,48 @@
             "time": "2024-01-17T14:33:22+00:00"
         },
         {
+            "name": "lukemadhanga/php-document-parser",
+            "version": "0.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LukeMadhanga/PHPDocumentParser.git",
+                "reference": "5388b309f714fcc43e8c61a75e18549a01f32207"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LukeMadhanga/PHPDocumentParser/zipball/5388b309f714fcc43e8c61a75e18549a01f32207",
+                "reference": "5388b309f714fcc43e8c61a75e18549a01f32207",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LukeMadhanga\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Luke Madhanga",
+                    "email": "luke@madhan.ga",
+                    "homepage": "http://madhan.ga",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP parser for getting the text from a .doc, .docx, .rtf or .txt file",
+            "support": {
+                "issues": "https://github.com/LukeMadhanga/PHPDocumentParser/issues",
+                "source": "https://github.com/LukeMadhanga/PHPDocumentParser/tree/master"
+            },
+            "time": "2020-02-05T14:39:53+00:00"
+        },
+        {
             "name": "monolog/monolog",
             "version": "3.5.0",
             "source": {
@@ -4497,6 +4539,57 @@
                 }
             ],
             "time": "2024-03-06T16:03:49+00:00"
+        },
+        {
+            "name": "smalot/pdfparser",
+            "version": "v2.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/smalot/pdfparser.git",
+                "reference": "6b53144fcb24af77093d4150dd7d0dd571f25761"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/6b53144fcb24af77093d4150dd7d0dd571f25761",
+                "reference": "6b53144fcb24af77093d4150dd7d0dd571f25761",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "ext-zlib": "*",
+                "php": ">=7.1",
+                "symfony/polyfill-mbstring": "^1.18"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Smalot\\PdfParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastien MALOT",
+                    "email": "sebastien@malot.fr"
+                }
+            ],
+            "description": "Pdf parser library. Can read and extract information from pdf file.",
+            "homepage": "https://www.pdfparser.org",
+            "keywords": [
+                "extract",
+                "parse",
+                "parser",
+                "pdf",
+                "text"
+            ],
+            "support": {
+                "issues": "https://github.com/smalot/pdfparser/issues",
+                "source": "https://github.com/smalot/pdfparser/tree/v2.9.0"
+            },
+            "time": "2024-03-01T09:51:10+00:00"
         },
         {
             "name": "symfony/clock",
