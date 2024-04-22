@@ -16,17 +16,14 @@
 
 .scroll-container {
     scrollbar-width: thin;
-}
-
-.scroll-container:not(:hover) {
     scrollbar-color: transparent transparent;
 }
 
-body.light .scroll-container {
+body.light .scroll-container:hover {
     scrollbar-color: var(--app-light) transparent;
 }
 
-body.dark .scroll-container {
+body.dark .scroll-container:hover {
     scrollbar-color: #ffffff transparent;
 }
 
