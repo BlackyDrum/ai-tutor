@@ -1,6 +1,6 @@
 <script setup>
 import { Link, router, usePage } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { computed, onBeforeMount, onMounted, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 
@@ -9,6 +9,27 @@ const toast = useToast();
 const confirm = useConfirm();
 
 const isDeletingConversation = ref(false);
+const currentColorScheme = ref({});
+
+onBeforeMount(() => {
+    let colorScheme = window.localStorage.getItem("color_scheme");
+
+    if (!colorScheme) {
+        window.localStorage.setItem("color_scheme", "light");
+        colorScheme = "light";
+    }
+
+    switch (colorScheme) {
+        case "light":
+            currentColorScheme.value = { icon: "pi pi-sun", label: "Light" };
+            break;
+        case "dark":
+            currentColorScheme.value = { icon: "pi pi-moon", label: "Dark" };
+            break;
+    }
+
+    document.getElementById("body").classList.add(colorScheme);
+});
 
 const deleteAll = () => {
     if (isDeletingConversation.value) return;
@@ -52,11 +73,40 @@ const deleteAll = () => {
         },
     });
 };
+
+const toggleColorScheme = () => {
+    switch (currentColorScheme.value.label) {
+        case "Light":
+            currentColorScheme.value = { icon: "pi pi-moon", label: "Dark" };
+            break;
+        case "Dark":
+            currentColorScheme.value = { icon: "pi pi-sun", label: "Light" };
+            break;
+    }
+
+    window.localStorage.setItem(
+        "color_scheme",
+        currentColorScheme.value.label.toLowerCase(),
+    );
+
+    const body = document.getElementById("body");
+    const newColorScheme = window.localStorage.getItem("color_scheme");
+
+    if (body.classList.contains("dark") && newColorScheme === "light") {
+        body.classList.remove("dark");
+    } else {
+        body.classList.remove("light");
+    }
+
+    document
+        .getElementById("body")
+        .classList.add(window.localStorage.getItem("color_scheme"));
+};
 </script>
 
 <template>
     <div
-        :class="$page.props.auth.user.admin ? '-top-[118px]' : '-top-[80px]'"
+        :class="$page.props.auth.user.admin ? '-top-[160px]' : '-top-[120px]'"
         class="absolute z-10 w-full rounded-lg bg-gray-200 p-1 font-semibold dark:bg-app-dark"
     >
         <Link
@@ -69,6 +119,16 @@ const deleteAll = () => {
             </div>
             <div>Admin</div>
         </Link>
+
+        <div
+            @click="toggleColorScheme"
+            class="my-1 flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-gray-300 hover:dark:bg-app-light"
+        >
+            <div>
+                <span :class="currentColorScheme.icon"></span>
+            </div>
+            <div>{{ currentColorScheme.label }}</div>
+        </div>
 
         <div
             @click="deleteAll"

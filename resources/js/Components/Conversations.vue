@@ -468,11 +468,9 @@ const getSharedConversationLink = computed(() => {
     max-width: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-    .p-overlaypanel:after,
-    .p-overlaypanel:before {
-        border-bottom-color: transparent;
-        border-top-color: transparent;
-    }
+body.dark .p-overlaypanel:after,
+.p-overlaypanel:before {
+    border-bottom-color: transparent;
+    border-top-color: transparent;
 }
 </style>

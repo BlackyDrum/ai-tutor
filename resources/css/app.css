@@ -22,25 +22,20 @@
     scrollbar-color: transparent transparent;
 }
 
-@media (prefers-color-scheme: light) {
-    .scroll-container {
-        scrollbar-color: var(--app-light) transparent;
-    }
+body.light .scroll-container {
+    scrollbar-color: var(--app-light) transparent;
 }
-@media (prefers-color-scheme: dark) {
-    .scroll-container {
-        scrollbar-color: #ffffff transparent;
-    }
 
-    .p-confirm-dialog *:not(.p-button-danger):not(.p-button-icon):not(.p-button-label) {
-        background-color: var(--app-dark);
-        color: white;
-    }
+body.dark .scroll-container {
+    scrollbar-color: #ffffff transparent;
+}
 
-    .p-dialog *:not(.p-button):not(.p-button-icon):not(.p-button-label)  {
-        background-color: var(--app-dark);
-        color: white;
-    }
+body.dark
+    .p-confirm-dialog
+    *:not(.p-button-danger):not(.p-button-icon):not(.p-button-label),
+body.dark .p-dialog *:not(.p-button):not(.p-button-icon):not(.p-button-label) {
+    background-color: var(--app-dark);
+    color: white;
 }
 
 /*
@@ -50,5 +45,5 @@
     tailwind's 'typography' plugin.
 */
 pre {
-    background-color: #0D1117;
+    background-color: #0d1117;
 }
