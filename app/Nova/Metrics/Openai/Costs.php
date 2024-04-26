@@ -183,13 +183,13 @@ class Costs extends Value
     public function ranges()
     {
         return [
+            'ALL' => Nova::__('All Time'),
             7 => Nova::__('7 Days'),
             14 => Nova::__('14 Days'),
             30 => Nova::__('30 Days'),
             60 => Nova::__('60 Days'),
             90 => Nova::__('90 Days'),
             180 => Nova::__('180 Days'),
-            'ALL' => Nova::__('All Time'),
         ];
     }
 
