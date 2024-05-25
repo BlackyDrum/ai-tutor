@@ -473,4 +473,11 @@ body.dark .p-overlaypanel:after,
     border-bottom-color: transparent;
     border-top-color: transparent;
 }
+
+.p-tooltip * {
+    background-color: var(--app-dark);
+}
+.p-tooltip  .p-tooltip-arrow {
+    display: none;
+}
 </style>

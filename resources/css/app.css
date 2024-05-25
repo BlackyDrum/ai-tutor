@@ -9,9 +9,10 @@
     @tailwind utilities;
 }
 
+/* Dark Mode Colors */
 :root {
-    --app-light: #343541;
-    --app-dark: #202123;
+    --app-light: #212121;
+    --app-dark: #171717;
 }
 
 .scroll-container {
