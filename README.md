@@ -51,8 +51,6 @@ This project is the result of a bachelor thesis project at `FH Aachen` aimed at 
 -   [User Authentication via LTI 1.0](#user-authentication-via-lti-10)
     -   [How It Works](#how-it-works-1)
     -   [Setting Up LTI Integration](#setting-up-lti-integration)
--   [Using Prettier for Consistent Code Style](#using-prettier-for-consistent-code-style)
-    -   [How to Format Your Code](#how-to-format-your-code)
 
 ## Requirements
 
@@ -468,14 +466,6 @@ php artisan lti:add_platform_1.2 {name} {consumer_key} {shared_secret}
 -   `{shared_secret}`: A `secret` shared between our application and the platform to securely sign and validate requests.
 
 Replace `{name}`, `{consumer_key}`, and `{shared_secret}` with the actual values for the platform.
-
-## Using Prettier for Consistent Code Style
-
-To ensure our code maintains a uniform style, please use `Prettier`, a code formatting tool, for all `PHP`, `JavaScript` and `Vue` code. Here’s how to set it up:
-
-1. **Download the Prettier Plugin**: If you’re working with `PhpStorm` or `VSCode`, install the `Prettier` plugin from your editor's marketplace.
-2. **Configure Your Editor**: Make sure `Prettier` is set to format `PHP`, `JavaScript` and `Vue` files. This can usually be done in the editor's settings.
-3. **Use Our .prettierrc File**: We have a `.prettierrc` configuration file in the project. Your `Prettier` plugin should automatically pick this up and use it to format the files according to our project's coding standards.
 
 ### How to Format Your Code
 
