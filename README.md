@@ -466,8 +466,3 @@ php artisan lti:add_platform_1.2 {name} {consumer_key} {shared_secret}
 -   `{shared_secret}`: A `secret` shared between our application and the platform to securely sign and validate requests.
 
 Replace `{name}`, `{consumer_key}`, and `{shared_secret}` with the actual values for the platform.
-
-### How to Format Your Code
-
--   **In VSCode**: You can format a file by pressing `Shift` + `Alt` + `F`. To automatically format files when you save them, enable the `Format On Save` feature in the settings.
--   **In PhpStorm**: Use `Ctrl` + `Alt` + `Shift` + `P` to format your files. You can also set up PhpStorm to format files on save by adjusting the settings under `File` > `Settings` > `Tools` > `Actions on Save`.
