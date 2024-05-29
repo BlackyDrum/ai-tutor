@@ -83,7 +83,7 @@ class AddLTIConsumer extends Command
         $agent = new Agent();
         $agent->name = $agentName;
         $agent->instructions = 'You are a helpful tutor';
-        $agent->openai_language_model = 'gpt-3.5-turbo';
+        $agent->openai_language_model = 'gpt-4o';
         $agent->max_messages_included = 12;
         $agent->temperature = 0.7;
         $agent->max_response_tokens = 1000;
