@@ -455,14 +455,18 @@ When a user attempts to access our application from `ILIAS`:
 
 ### Setting Up LTI Integration
 
-To integrate a new `platform` with our application using `LTI 1.0`, you need to register the `platform` by creating a new database entry. This is done using the following artisan command:
+To integrate a new `consumer` with our application using `LTI 1.0`, you need to register the `consumer` by creating a new database entry. This is done using the following artisan command:
 
 ```
-php artisan lti:add_platform_1.2 {name} {consumer_key} {shared_secret}
+php artisan lti:add_consumer {name} {consumer_key} {shared_secret} {ref_id}
 ```
 
--   `{name}`: The name you wish to assign to the platform, e.g `ILIAS`.
--   `{consumer_key}`: A `unique key` that identifies the platform to our application.
+-   `{name}`: The name you wish to assign to the consumer.
+-   `{consumer_key}`: A `unique key` that identifies the consumer to our application.
 -   `{shared_secret}`: A `secret` shared between our application and the platform to securely sign and validate requests.
+-   `{ref_id}`: Unique `Ref ID` for the ILIAS course
 
-Replace `{name}`, `{consumer_key}`, and `{shared_secret}` with the actual values for the platform.
+**Example**:
+```
+php artisan lti:add_consumer "Databases & Webtechnologies (32845) - SS 2024" my-consumer-key my-shared-secret 541326
+```
