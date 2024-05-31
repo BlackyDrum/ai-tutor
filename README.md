@@ -378,7 +378,7 @@ This is a first paragraph from the second slide
 ---
 ```
 
-To upload several files simultaneously, compress the files into a `zip` archive and then upload the `zip`.
+> To upload several files simultaneously, compress the files into a `zip` archive and then upload the `zip`.
 
 ### Adding an Agent to a Module
 
