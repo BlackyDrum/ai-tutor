@@ -143,42 +143,30 @@ abstract class ChromaDB
             $documents = $result['documents'];
             $metadata = $result['metadata'];
         } elseif (str_ends_with($filename, 'pdf')) {
-            if (!request()->input('practical_task')) {
-                $parser = new Parser();
+            $parser = new Parser();
 
-                $pdf = $parser->parseFile($pathToFile);
-                $text = $pdf->getText();
+            $pdf = $parser->parseFile($pathToFile);
+            $text = $pdf->getText();
 
-                $model->embedding_id = Str::orderedUuid()->toString();
-                $model->content = $text ?? '';
-                $model->size = strlen($model->content);
-                $model->document_id = $document->id;
+            $model->embedding_id = Str::orderedUuid()->toString();
+            $model->content = $text ?? '';
+            $model->size = strlen($model->content);
+            $model->document_id = $document->id;
 
-                $result = [
-                    'ids' => [$model->embedding_id],
-                    'documents' => [$model->content],
-                    'metadata' => [
-                        [
-                            'name' => $model->name,
-                            'size' => $model->size,
-                            'document' => $document->name,
-                            'document_md5' => $document->md5,
-                        ],
+            $result = [
+                'ids' => [$model->embedding_id],
+                'documents' => [$model->content],
+                'metadata' => [
+                    [
+                        'name' => $model->name,
+                        'size' => $model->size,
+                        'document' => $document->name,
+                        'document_md5' => $document->md5,
                     ],
-                ];
+                ],
+            ];
 
-                $model->save();
-            } else {
-                $tasks = self::parsePDF($pathToFile, $model);
-
-                $result = self::createEmbeddingFromJson(
-                    $tasks,
-                    $model,
-                    $document
-                );
-
-                $model->forceDelete();
-            }
+            $model->save();
 
             $ids = $result['ids'];
             $documents = $result['documents'];
@@ -220,55 +208,6 @@ abstract class ChromaDB
                 documents: $documents
             );
         }
-    }
-
-    private static function parsePDF($pathToFile, $model)
-    {
-        $parser = new Parser();
-
-        $pdf = $parser->parseFile($pathToFile);
-        $text = $pdf->getText();
-
-        $pattern = '/(?=Aufgabe \d+)/';
-        $parts = preg_split($pattern, $text, -1, PREG_SPLIT_NO_EMPTY);
-
-        $contentArray = [];
-        $currentTaskNumber = null;
-
-        $taskName = trim(substr($model->name, 0, strrpos($model->name, '.')));
-
-        foreach ($parts as $part) {
-            if (preg_match('/^Aufgabe (\d+)/', $part, $matches)) {
-                $currentTaskNumber = $matches[1];
-
-                $taskText = trim(preg_replace('/^Aufgabe \d+/', '', $part));
-
-                $paragraphs = preg_split(
-                    '/\n+/',
-                    $taskText,
-                    -1,
-                    PREG_SPLIT_NO_EMPTY
-                );
-
-                $filteredParagraphs = array_filter($paragraphs, function (
-                    $paragraph
-                ) {
-                    return !empty(trim($paragraph));
-                });
-
-                $taskEntry = [
-                    'title' =>
-                        "Meilenstein: $taskName, Aufgabe " . $currentTaskNumber,
-                    'content' => array_map('trim', $filteredParagraphs),
-                ];
-
-                if (!empty($taskEntry['content'])) {
-                    $contentArray[] = $taskEntry;
-                }
-            }
-        }
-
-        return ['content' => $contentArray];
     }
 
     private static function parsePPTX($pathToFile)

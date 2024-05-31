@@ -102,16 +102,6 @@ class Embedding extends Resource
                 ->hideWhenUpdating()
                 ->sortable(),
 
-            Boolean::make('Is Practical Task', 'practical_task')
-                ->onlyOnForms()
-                ->withMeta(['value' => false])
-                ->resolveUsing(function ($value) {
-                    return $value;
-                })
-                ->fillUsing(function ($request, $model, $attribute, $requestAttribute) {
-                    // Since there is no column, do nothing here
-                }),
-
             DateTime::make('Created At')->onlyOnDetail(),
 
             DateTime::make('Updated At')->onlyOnDetail(),
