@@ -146,7 +146,7 @@ abstract class ChromaDB
             $parser = new Parser();
 
             $pdf = $parser->parseFile($pathToFile);
-            $text = $pdf->getText();
+            $text = preg_replace('/\x00/', '', $pdf->getText());
 
             $model->embedding_id = Str::orderedUuid()->toString();
             $model->content = $text ?? '';
