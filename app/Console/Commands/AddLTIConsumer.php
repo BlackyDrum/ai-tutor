@@ -9,6 +9,7 @@ use App\Models\Module;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AddLTIConsumer extends Command
@@ -50,6 +51,8 @@ class AddLTIConsumer extends Command
         if ($validator->fails()) {
             foreach ($validator->errors()->all() as $error) {
                 $this->error($error);
+
+                Log::error('Failed to add LTI Consumer. Reason: ' . $error);
             }
             return -1;
         }
@@ -61,7 +64,7 @@ class AddLTIConsumer extends Command
         $module->ref_id = $refId;
         $module->save();
 
-        $collectionName = "Collection_" . Collection::query()->count() + 1;
+        $collectionName = "Collection_" . Collection::query()->max('id') + 1;
         $collection = new Collection();
         $collection->name = $collectionName;
         $collection->max_results = 3;
@@ -74,12 +77,14 @@ class AddLTIConsumer extends Command
         } catch (\Exception $exception) {
             $this->error($exception->getMessage());
 
+            Log::error('Failed to add LTI Consumer. Reason: ' . $exception->getMessage());
+
             DB::rollBack();
 
             return -1;
         }
 
-        $agentName = "Agent #" . Agent::query()->count() + 1;
+        $agentName = "Agent #" . Agent::query()->max('id') + 1;
         $agent = new Agent();
         $agent->name = $agentName;
         $agent->instructions = 'You are a helpful tutor';
