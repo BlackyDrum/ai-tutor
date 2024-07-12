@@ -146,31 +146,39 @@ abstract class ChromaDB
             $parser = new Parser();
 
             $pdf = $parser->parseFile($pathToFile);
-            $text = preg_replace('/\x00/', '', $pdf->getText());
 
-            $model->embedding_id = Str::orderedUuid()->toString();
-            $model->content = $text ?? '';
-            $model->size = strlen($model->content);
-            $model->document_id = $document->id;
+            $ids = [];
+            $documents = [];
+            $metadata = [];
 
-            $result = [
-                'ids' => [$model->embedding_id],
-                'documents' => [$model->content],
-                'metadata' => [
-                    [
-                        'name' => $model->name,
-                        'size' => $model->size,
-                        'document' => $document->name,
-                        'document_md5' => $document->md5,
-                    ],
-                ],
-            ];
+            foreach ($pdf->getPages() as $page) {
+                $text = preg_replace('/\x00/', '', $page->getText());
+                $embedding_id = Str::orderedUuid()->toString();
+                $pageNumber = $page->getPageNumber();
+                $name = "$filename Page $pageNumber";
+                $source = "Quelle: $document->name, Seite: $pageNumber";
+                $text = "$source\n$text";
 
-            $model->save();
+                $ids[] = $embedding_id;
+                $documents[] = $text;
+                $metadata[] = [
+                    'name' => $name,
+                    'size' => strlen($text),
+                    'document' => $document->name,
+                    'document_md5' => $document->md5,
+                ];
 
-            $ids = $result['ids'];
-            $documents = $result['documents'];
-            $metadata = $result['metadata'];
+                Embedding::query()->create([
+                    'embedding_id' => $embedding_id,
+                    'name' => $name,
+                    'content' => $text,
+                    'size' => strlen($text),
+                    'collection_id' => $model->collection_id,
+                    'document_id' => $document->id,
+                ]);
+            }
+
+            $model->forceDelete();
         } elseif (str_ends_with($filename, 'txt')) {
             $text = file_get_contents($pathToFile);
 
