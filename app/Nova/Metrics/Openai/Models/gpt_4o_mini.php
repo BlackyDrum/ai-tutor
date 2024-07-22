@@ -4,13 +4,13 @@ namespace App\Nova\Metrics\Openai\Models;
 
 use App\Nova\Metrics\Openai\Model;
 
-class gpt_4o extends Model
+class gpt_4o_mini extends Model
 {
     // Price in dollar per million tokens
-    public float $input = 5.0;
-    public float $output = 15.0;
+    public float $input = 0.15;
+    public float $output = 0.60;
 
-    public $name = 'gpt-4o';
+    public $name = 'gpt-4o-mini';
 
     public $width = '1/2';
 }
