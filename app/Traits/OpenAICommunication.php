@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 trait OpenAICommunication
 {
@@ -38,6 +39,67 @@ trait OpenAICommunication
                 'temperature' => (float) $temperature,
                 'max_tokens' => (int) $max_tokens,
                 'messages' => $messages,
+            ]);
+    }
+
+    public function getQuizDataFromOpenAI($topic, $difficulty)
+    {
+        $token = config('api.openai_api_key');
+
+        $prompt = "Give me a multiple choice questions about $topic at an $difficulty level.";
+
+        $format = [
+            'question' => [
+                'type' => 'string',
+                'description' => 'The question'
+            ],
+            'correct_answer' => [
+                'type' => 'string',
+                'description' => 'The only correct answer'
+            ],
+            'wrong_answer_a' => [
+                'type' => 'string',
+                'description' => 'First incorrect answers'
+            ],
+            'wrong_answer_b' => [
+                'type' => 'string',
+                'description' => 'Second incorrect answers'
+            ],
+            'wrong_answer_c' => [
+                'type' => 'string',
+                'description' => 'Third incorrect answers'
+            ],
+            'description' => [
+                'type' => 'string',
+                'description' => 'The description for the correct answer'
+            ],
+        ];
+
+        $messages = [
+            ['role' => 'user', 'content' => $prompt],
+        ];
+
+        $responseFormat = [
+            'type' => 'json_schema',
+            'json_schema' => [
+                'name' => 'quiz',
+                'schema' => [
+                    'type' => 'object',
+                    'properties' => $format,
+                    'additionalProperties' => false,
+                    'required' => ['question', 'correct_answer', 'wrong_answer_a', 'wrong_answer_b', 'wrong_answer_c', 'description'],
+                ],
+                'strict' => true
+            ]
+        ];
+
+        return Http::withToken($token)
+            ->timeout(120)
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'temperature' => 0.9,
+                'messages' => $messages,
+                'response_format' => $responseFormat
             ]);
     }
 }
