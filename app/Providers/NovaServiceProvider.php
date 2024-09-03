@@ -13,6 +13,7 @@ use App\Nova\Embedding;
 use App\Nova\Message;
 use App\Nova\Module;
 use App\Nova\SharedConversation;
+use App\Nova\Skilly\QuizTopic;
 use App\Nova\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
@@ -65,10 +66,15 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Blacklist::class)->name('Blacklist'),
                 ])->icon('user')->collapsable(),
 
+                MenuSection::make('Skilly', [
+                    MenuItem::resource(QuizTopic::class),
+                ])->icon('finger-print')->collapsable(),
+
                 MenuSection::make('Health', [
                     MenuItem::externalLink('Performance', '/pulse')
                         ->openInNewTab(),
                 ])->icon('heart')->collapsable(),
+
 
                 MenuItem::externalLink('Back to ' . config('app.name'), '/')
             ];

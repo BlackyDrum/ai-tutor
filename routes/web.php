@@ -5,6 +5,7 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SharedConversationController;
+use App\Http\Controllers\Skilly\QuizController;
 use App\Http\Middleware\CheckAcceptedTerms;
 use App\Http\Middleware\CheckBlacklist;
 use App\Http\Middleware\EnsureIsAdmin;
@@ -114,6 +115,13 @@ Route::middleware(['auth', CheckBlacklist::class])->group(function () {
                     'chat',
                 ])->name('agent.chat');
             });
+        });
+
+
+    Route::prefix('skilly')
+        ->name('skilly.')
+        ->group(function () {
+            Route::get('/quiz', [QuizController::class, 'show'])->name('quiz');
         });
 });
 
