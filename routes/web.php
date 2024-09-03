@@ -122,6 +122,7 @@ Route::middleware(['auth', CheckBlacklist::class])->group(function () {
         ->name('skilly.')
         ->group(function () {
             Route::get('/quiz', [QuizController::class, 'show'])->name('quiz');
+            Route::post('/quiz/create', [QuizController::class, 'create'])->name('quiz.create');
         });
 });
 

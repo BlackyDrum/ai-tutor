@@ -12,12 +12,31 @@ import Button from "primevue/button";
 const toast = useToast();
 const page = usePage();
 
-const difficulties = ref(["Beginner", "Intermediate", "Advanced"]);
-
 const settings = ref({
     difficulty: null,
     topic: null,
 });
+
+const generate = () => {
+    if (!settings.value.topic || !settings.value.difficulty) {
+        return;
+    }
+
+    window.axios.post('/skilly/quiz/create', {
+        ...settings.value,
+    })
+        .then((response) => {
+
+        })
+        .catch((error) => {
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: error.response.data.message ?? error.response.data,
+                life: 5000,
+            });
+        })
+}
 </script>
 
 <template>
@@ -38,20 +57,19 @@ const settings = ref({
                             <Dropdown
                                 v-model="settings.topic"
                                 :options="page.props.topics"
-                                optionLabel="name"
                                 placeholder="Topic"
                             />
                         </div>
                         <div class="flex flex-col">
                             <Dropdown
                                 v-model="settings.difficulty"
-                                :options="difficulties"
+                                :options="page.props.difficulties"
                                 placeholder="Difficulty"
                             />
                         </div>
                     </div>
                     <div class="mx-auto mt-8">
-                        <Button label="Generate Quiz" />
+                        <Button label="Generate Quiz" @click="generate" />
                     </div>
                 </form>
             </div>
