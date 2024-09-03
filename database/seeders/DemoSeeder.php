@@ -63,6 +63,7 @@ class DemoSeeder extends Seeder
             [
                 'max_results' => 2,
                 'module_id' => $module->id,
+                'active' => true
             ]
         );
 
