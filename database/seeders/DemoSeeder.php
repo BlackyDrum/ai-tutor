@@ -51,7 +51,7 @@ class DemoSeeder extends Seeder
                 'temperature' => 0.7,
                 'max_response_tokens' => 1000,
                 'active' => true,
-                'user_id' => $user->id,
+                //'user_id' => $user->id,
                 'module_id' => $module->id,
             ]
         );
