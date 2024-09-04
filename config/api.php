@@ -5,6 +5,8 @@ return [
 
     'openai_conversation_title_creator_model' => env('OPENAI_CONVERSATION_TITLE_CREATOR_MODEL'),
 
+    'openai_quiz_model' => env('OPENAI_QUIZ_MODEL'),
+
     'jina_embedding_model' => env('JINA_EMBEDDING_MODEL'),
 
     'jina_api_key' => env('JINA_API_KEY'),

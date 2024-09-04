@@ -100,7 +100,7 @@ trait OpenAICommunication
         return Http::withToken($token)
             ->timeout(120)
             ->post('https://api.openai.com/v1/chat/completions', [
-                'model' => 'gpt-4o-mini',
+                'model' => config('api.openai_quiz_model'),
                 'temperature' => 1.0,
                 'messages' => $messages,
                 'response_format' => $responseFormat,
