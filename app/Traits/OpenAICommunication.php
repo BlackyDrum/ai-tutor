@@ -46,33 +46,37 @@ trait OpenAICommunication
     {
         $token = config('api.openai_api_key');
 
-        $prompt = "Give me multiple choice questions for a quiz about $topic at an $difficulty level. Always use different and unique questions and answers.";
+        $prompt = "Give me $count multiple choice questions for a quiz about $topic at an $difficulty level. Always use different and unique questions.";
 
         $format = [
-            'question' => [
-                'type' => 'string',
-                'description' => 'The unique question'
-            ],
-            'correct_answer' => [
-                'type' => 'string',
-                'description' => 'The only correct answer'
-            ],
-            'wrong_answer_a' => [
-                'type' => 'string',
-                'description' => 'First incorrect answers'
-            ],
-            'wrong_answer_b' => [
-                'type' => 'string',
-                'description' => 'Second incorrect answers'
-            ],
-            'wrong_answer_c' => [
-                'type' => 'string',
-                'description' => 'Third incorrect answers'
-            ],
-            'description' => [
-                'type' => 'string',
-                'description' => 'The description for the correct answer'
-            ],
+            'questions' => [
+                'type' => 'array',
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'question' => [
+                            'type' => 'string',
+                        ],
+                        'correct_answer' => [
+                            'type' => 'string',
+                        ],
+                        'wrong_answer_a' => [
+                            'type' => 'string',
+                        ],
+                        'wrong_answer_b' => [
+                            'type' => 'string',
+                        ],
+                        'wrong_answer_c' => [
+                            'type' => 'string',
+                        ],
+                        'description' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    'additionalProperties' => false,
+                    'required' => ['question', 'correct_answer', 'wrong_answer_a', 'wrong_answer_b', 'wrong_answer_c', 'description'],
+                ]
+            ]
         ];
 
         $messages = [
@@ -87,7 +91,7 @@ trait OpenAICommunication
                     'type' => 'object',
                     'properties' => $format,
                     'additionalProperties' => false,
-                    'required' => ['question', 'correct_answer', 'wrong_answer_a', 'wrong_answer_b', 'wrong_answer_c', 'description'],
+                    'required' => ['questions'],
                 ],
                 'strict' => true
             ]
@@ -100,7 +104,6 @@ trait OpenAICommunication
                 'temperature' => 1.0,
                 'messages' => $messages,
                 'response_format' => $responseFormat,
-                'n' => $count
             ]);
     }
 }

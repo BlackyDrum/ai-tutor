@@ -106,7 +106,7 @@ const toggleColorScheme = () => {
 
 <template>
     <div
-        :class="$page.props.auth.user.admin ? '-top-[160px]' : '-top-[120px]'"
+        :class="$page.props.auth.user.admin ? '-top-[200px]' : '-top-[160px]'"
         class="absolute z-10 w-full rounded-lg bg-gray-200 p-1 font-semibold dark:bg-app-dark"
     >
         <Link
@@ -118,6 +118,16 @@ const toggleColorScheme = () => {
                 <span class="pi pi-shield"></span>
             </div>
             <div>Admin</div>
+        </Link>
+
+        <Link
+            href="/skilly/quiz"
+            class="mb-1 block flex cursor-pointer gap-4 rounded-lg p-2 hover:bg-gray-300 hover:dark:bg-app-light"
+        >
+            <div>
+                <span class="pi pi-th-large"></span>
+            </div>
+            <div>Skilly AI Quiz</div>
         </Link>
 
         <div

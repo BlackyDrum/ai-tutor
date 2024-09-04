@@ -168,9 +168,9 @@ const generateAnotherQuiz = () => {
 
                     <div
                         v-if="data.answered"
-                        class="mt-2 rounded bg-stone-700/50 p-4"
+                        class="mt-2 rounded bg-stone-700/70 p-4 dark:bg-stone-700/50"
                     >
-                        <h3 class="text-sm font-bold text-emerald-300/60">
+                        <h3 class="text-sm font-bold text-emerald-300/80">
                             Explanation
                         </h3>
                         <p class="mt-2 text-sm font-light">

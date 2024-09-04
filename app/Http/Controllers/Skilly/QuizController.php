@@ -52,8 +52,6 @@ class QuizController extends Controller
             return response()->json(['message' => 'You are not allowed to create a quiz for this topic'], 403);
         }
 
-        $questions = [];
-
         $response = $this->getQuizDataFromOpenAI($topic->name, $request->input('difficulty'), $request->input('count'));
 
         if ($response->failed()) {
@@ -68,21 +66,23 @@ class QuizController extends Controller
             return $this->returnInternalServerError();
         }
 
-        foreach ($response['choices'] as $choice) {
-            $json = json_decode($choice['message']['content'], true);
+        $questions = json_decode($response['choices'][0]['message']['content'], true)['questions'];
 
-            $question = QuizQuestion::query()->create([
-                'question' => $json['question'],
-                'correct_answer' => $json['correct_answer'],
-                'wrong_answer_a' => $json['wrong_answer_a'],
-                'wrong_answer_b' => $json['wrong_answer_b'],
-                'wrong_answer_c' => $json['wrong_answer_c'],
-                'description' => $json['description'],
+        $finalQuestions = [];
+
+        foreach ($questions as $question) {
+            $q = QuizQuestion::query()->create([
+                'question' => $question['question'],
+                'correct_answer' => $question['correct_answer'],
+                'wrong_answer_a' => $question['wrong_answer_a'],
+                'wrong_answer_b' => $question['wrong_answer_b'],
+                'wrong_answer_c' => $question['wrong_answer_c'],
+                'description' => $question['description'],
             ]);
 
-            $questions[] = $question->only(['question', 'correct_answer', 'wrong_answer_a', 'wrong_answer_b', 'wrong_answer_c', 'description', 'id']);
+            $finalQuestions[] = $q->only(['question', 'correct_answer', 'wrong_answer_a', 'wrong_answer_b', 'wrong_answer_c', 'description', 'id']);
         }
 
-        return response()->json($questions);
+        return response()->json($finalQuestions);
     }
 }
