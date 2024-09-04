@@ -2,8 +2,10 @@
 
 namespace App\Models\Skilly;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Vinkla\Hashids\Facades\Hashids;
 
 class QuizQuestion extends Model
 {
@@ -19,4 +21,12 @@ class QuizQuestion extends Model
         'wrong_answer_c',
         'description',
     ];
+
+    protected function id(): Attribute
+    {
+        // We obfuscate the auto-incremented id here for the user
+        return Attribute::make(
+            get: fn(string $value) => Hashids::encode($value)
+        );
+    }
 }
