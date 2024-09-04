@@ -26,10 +26,10 @@ class QuizController extends Controller
     {
         $topics = QuizTopic::query()
             ->where('module_id', Auth::user()->module_id)
-            ->get()->pluck('name');
+            ->get();
 
         return Inertia::render('Skilly/Quiz', [
-            'topics' => $topics,
+            'topics' => $topics ? $topics->pluck('name') : [],
             'difficulties' => $this->difficulties,
             'counts' => $this->counts,
         ]);
