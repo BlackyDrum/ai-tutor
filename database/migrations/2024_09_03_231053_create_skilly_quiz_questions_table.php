@@ -19,9 +19,6 @@ return new class extends Migration
             $table->string('wrong_answer_b');
             $table->string('wrong_answer_c');
             $table->text('description');
-            $table->unsignedInteger('prompt_tokens');
-            $table->unsignedInteger('completion_tokens');
-            $table->string('openai_language_model');
             $table->timestamps();
         });
     }

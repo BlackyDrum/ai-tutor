@@ -5,16 +5,18 @@ namespace App\Http\Controllers\Skilly;
 use App\Http\Controllers\Controller;
 use App\Models\Skilly\QuizQuestion;
 use App\Models\Skilly\QuizTopic;
+use App\Traits\AppSupportTraits;
 use App\Traits\OpenAICommunication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class QuizController extends Controller
 {
-    use OpenAICommunication;
+    use OpenAICommunication, AppSupportTraits;
 
     private array $difficulties = ['Beginner', 'Intermediate', 'Advanced'];
 
@@ -52,10 +54,22 @@ class QuizController extends Controller
 
         $questions = [];
 
-        for ($i = 0; $i < $request->input('count'); $i++) {
-            $data = $this->getQuizDataFromOpenAI($topic->name, $request->input('difficulty'));
+        $response = $this->getQuizDataFromOpenAI($topic->name, $request->input('difficulty'), $request->input('count'));
 
-            $json = json_decode($data['choices'][0]['message']['content'], true);
+        if ($response->failed()) {
+            Log::error(
+                'OpenAI: Failed to send message. Reason: {reason}. Status: {status}',
+                [
+                    'reason' => $response->json()['error']['message'],
+                    'status' => $response->status(),
+                ]
+            );
+
+            return $this->returnInternalServerError();
+        }
+
+        foreach ($response['choices'] as $choice) {
+            $json = json_decode($choice['message']['content'], true);
 
             $question = QuizQuestion::query()->create([
                 'question' => $json['question'],
@@ -64,9 +78,6 @@ class QuizController extends Controller
                 'wrong_answer_b' => $json['wrong_answer_b'],
                 'wrong_answer_c' => $json['wrong_answer_c'],
                 'description' => $json['description'],
-                'prompt_tokens' => $data['usage']['prompt_tokens'],
-                'completion_tokens' => $data['usage']['completion_tokens'],
-                'openai_language_model' => 'gpt-4o-mini',
             ]);
 
             $questions[] = $question->only(['question', 'correct_answer', 'wrong_answer_a', 'wrong_answer_b', 'wrong_answer_c', 'description', 'id']);

@@ -42,16 +42,16 @@ trait OpenAICommunication
             ]);
     }
 
-    public function getQuizDataFromOpenAI($topic, $difficulty)
+    public function getQuizDataFromOpenAI($topic, $difficulty, $count)
     {
         $token = config('api.openai_api_key');
 
-        $prompt = "Give me a multiple choice questions about $topic at an $difficulty level.";
+        $prompt = "Give me multiple choice questions for a quiz about $topic at an $difficulty level. Always use different and unique questions and answers.";
 
         $format = [
             'question' => [
                 'type' => 'string',
-                'description' => 'The question'
+                'description' => 'The unique question'
             ],
             'correct_answer' => [
                 'type' => 'string',
@@ -76,7 +76,7 @@ trait OpenAICommunication
         ];
 
         $messages = [
-            ['role' => 'user', 'content' => $prompt],
+            ['role' => 'system', 'content' => $prompt],
         ];
 
         $responseFormat = [
@@ -97,9 +97,10 @@ trait OpenAICommunication
             ->timeout(120)
             ->post('https://api.openai.com/v1/chat/completions', [
                 'model' => 'gpt-4o-mini',
-                'temperature' => 0.9,
+                'temperature' => 1.0,
                 'messages' => $messages,
-                'response_format' => $responseFormat
+                'response_format' => $responseFormat,
+                'n' => $count
             ]);
     }
 }

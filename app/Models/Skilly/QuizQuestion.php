@@ -18,8 +18,5 @@ class QuizQuestion extends Model
         'wrong_answer_b',
         'wrong_answer_c',
         'description',
-        'prompt_tokens',
-        'completion_tokens',
-        'openai_language_model'
     ];
 }
