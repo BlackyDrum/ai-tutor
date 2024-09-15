@@ -35,6 +35,7 @@ This project is the result of a bachelor thesis project at `FH Aachen` aimed at 
     -   [Validate ChromaDB Sync](#validate-chromadb-sync)
     -   [Sync ChromaDB with Relational Ratabase](#sync-chromadb-with-relational-database)
     -   [Clearing ChromaDB Data](#clearing-chromadb-data)
+-   [Seeding (Optional)](#seeding)
 -   [OpenAI](#openai)
     -   [Setting up the OpenAI API Key](#setting-up-the-openai-api-key)
     -   [Registering New Language Models](#registering-new-language-models)
@@ -73,7 +74,7 @@ $ git clone https://github.com/BlackyDrum/ai-tutor.git
 2. Navigate to the `project directory`:
 
 ```
-$ cd chatbot
+$ cd ai-tutor
 ```
 
 3. Install the `dependencies`. You will be asked to provide a valid `Nova Username` and `License Key`. More information [here](https://nova.laravel.com/docs/installation.html):
@@ -114,23 +115,13 @@ $ npm run build
 $ docker-compose up -d
 ```
 
-10. (Optional) Seed the database with `demo` data:
-
-```
-$ php artisan db:seed
-```
-
-Username: `admin` Password: `P3X8MYcd2BwE7qa3`
-
-> **Note:** Make sure to not use this user in production!
-
-11. Start the `development server`:
+10. Start the `development server`:
 
 ```
 $ php artisan serve
 ```
 
-12. Visit `http://localhost:8000` in your web browser to access the application.
+11. Visit `http://localhost:8000` in your web browser to access the application.
 
 ## How It Works
 
@@ -248,6 +239,17 @@ To completely remove all stored data related to `ChromaDB`, including `embedding
 ```
 $ php artisan chroma:destroy
 ```
+
+## Seeding
+(Optional) Seed the database with `demo` data:
+
+```
+$ php artisan db:seed
+```
+
+Username: `admin` Password: `P3X8MYcd2BwE7qa3`
+
+> **Note:** Make sure to not use this user in production!
 
 ## OpenAI
 
